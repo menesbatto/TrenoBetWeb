@@ -3,9 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.springframework</groupId>
-    <artifactId>gs-accessing-data-rest</artifactId>
+    <groupId>com.myApp</groupId>
+    <artifactId>trenobetweb</artifactId>
     <version>0.1.0</version>
+    
+   <name>TrenoBetWeb</name> 
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -18,23 +20,65 @@
     </properties>
 
     <dependencies>
+    
+		<!--  ######################## --> 
+		<!--  ###    STARTER       ### --> 
+		<!--  ######################## --> 
+		
+		<!-- Espone tutto lo stack per lo sviluppo di Web App, incluso Tomcat e SpringMVC -->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+		<!-- Espone via rest l'accesso alle operazioni CRUD -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>
         </dependency>
+        
+        <!-- JPA Data (We are going to use Repositories, Entities, Hibernate, etc...) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
+        
+        <!-- Importa tutte le dipendenze per gli strumenti di test con JUnit -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Mostra tutti i servizi esposti dall'applicazione -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        
+        
+        
+       <!-- Permette il settaggio delle proprietà lette a runtime in application.properties -->
+       <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+		
+		<!--  ######################## --> 
+		<!--  ###       DB         ### --> 
+		<!--  ######################## --> 
+		
+		<!-- DB MySQL -->
+		<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        
+        <!-- DB H2 - in memory DB -->
+        <!-- <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency> -->
     </dependencies>
 
     <build>
