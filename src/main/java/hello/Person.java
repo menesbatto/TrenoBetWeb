@@ -1,9 +1,14 @@
 package hello;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Person {
@@ -15,7 +20,11 @@ public class Person {
 	private String firstName;
 	private String lastName;
 
-	
+	 @ManyToOne
+	 private Team supportTeam; 
+	 
+	 @OneToMany(cascade = {CascadeType.ALL})
+	 private List<Phone> phoneList;
 	
 	public Person() {
 	}
@@ -44,6 +53,22 @@ public class Person {
 	@Override
 	public String toString() {
 		return "Person [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+	}
+
+	public Team getSupportTeam() {
+		return supportTeam;
+	}
+
+	public void setSupportTeam(Team supportTeam) {
+		this.supportTeam = supportTeam;
+	}
+
+	public List<Phone> getPhoneList() {
+		return phoneList;
+	}
+
+	public void setPhoneList(List<Phone> phoneList) {
+		this.phoneList = phoneList;
 	}
 	
 	
