@@ -19,7 +19,7 @@ public class BetHouseDao {
 	private HashMap<String, BetHouse> betHousesMap;
 	
 	public BetHouse findByValue(String betHouseString) {
-		if (betHousesMap == null)
+		if (betHousesMap == null || betHousesMap.isEmpty())
 			initBetHousesMap();
 			
 		BetHouse betHouse = betHousesMap.get(betHouseString);

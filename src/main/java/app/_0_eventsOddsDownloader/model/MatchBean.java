@@ -2,6 +2,7 @@ package app._0_eventsOddsDownloader.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class MatchBean implements Serializable{
 
@@ -23,6 +24,8 @@ public class MatchBean implements Serializable{
 	
 	private ChampBean champ;
 
+	private List<_1X2OddsBean> _1X2odds;
+	
 	public MatchBean() {
 	}
 
@@ -96,6 +99,14 @@ public class MatchBean implements Serializable{
 
 	public void setChamp(ChampBean champ) {
 		this.champ = champ;
+	}
+
+	public List<_1X2OddsBean> get_1X2odds() {
+		return _1X2odds;
+	}
+
+	public void set_1X2odds(List<_1X2OddsBean> _1x2odds) {
+		_1X2odds = _1x2odds;
 	}
 
 	

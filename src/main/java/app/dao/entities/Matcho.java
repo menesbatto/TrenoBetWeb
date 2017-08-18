@@ -1,12 +1,15 @@
 package app.dao.entities;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Matcho {
@@ -30,6 +33,9 @@ public class Matcho {
 	
 	@ManyToOne
 	private Champ champ;
+	
+	@OneToMany(cascade = {CascadeType.ALL})
+	private List<_1X2Odds> _1X2odds;
 
 	public Matcho() {
 	}
@@ -104,6 +110,14 @@ public class Matcho {
 
 	public void setChamp(Champ champ) {
 		this.champ = champ;
+	}
+
+	public List<_1X2Odds> get_1X2odds() {
+		return _1X2odds;
+	}
+
+	public void set_1X2odds(List<_1X2Odds> _1x2odds) {
+		_1X2odds = _1x2odds;
 	}
 
 	

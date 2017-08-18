@@ -6,8 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import app.dao.entities.Matcho;
 
 public class _1X2OddsBean implements Serializable{
 	
@@ -22,6 +25,8 @@ public class _1X2OddsBean implements Serializable{
 	private String betHouseString;
 	
 	private String timeTypeString;
+	
+	private MatchBean match;
 	
 	@JsonIgnore
 	private String toIgnore;
@@ -98,6 +103,18 @@ public class _1X2OddsBean implements Serializable{
 	public void setTimeTypeString(String timeTypeString) {
 		this.timeTypeString = timeTypeString;
 	}
+
+
+	public MatchBean getMatch() {
+		return match;
+	}
+
+
+	public void setMatch(MatchBean match) {
+		this.match = match;
+	}
+
+
 
 
 

@@ -19,7 +19,7 @@ public class TimeTypeDao {
 	private HashMap<String, TimeType> timeTypeMap;
 	
 	public TimeType findByValue(String betHouseString) {
-		if (timeTypeMap == null)
+		if (timeTypeMap == null || timeTypeMap.isEmpty())
 			initTimeTypeMap();
 			
 		TimeType tymeType = timeTypeMap.get(betHouseString);

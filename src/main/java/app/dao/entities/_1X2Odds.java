@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import app._0_eventsOddsDownloader.model.MatchBean;
+
 @Entity
 public class _1X2Odds {
 	
@@ -23,7 +25,8 @@ public class _1X2Odds {
 	@ManyToOne
 	private TimeType timeType;
 	
-	
+	@ManyToOne
+	private Matcho match;
 	
 	private String _1;
 	private String _X;
@@ -93,6 +96,26 @@ public class _1X2Odds {
 
 	public void setBetHouse(BetHouse betHouse) {
 		this.betHouse = betHouse;
+	}
+
+
+	public TimeType getTimeType() {
+		return timeType;
+	}
+
+
+	public void setTimeType(TimeType timeType) {
+		this.timeType = timeType;
+	}
+
+
+	public Matcho getMatch() {
+		return match;
+	}
+
+
+	public void setMatch(Matcho match) {
+		this.match = match;
 	}
 
 	
