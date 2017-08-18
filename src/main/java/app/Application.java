@@ -1,4 +1,4 @@
-package hello;
+package app;
 
 import java.util.Arrays;
 
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"hello"})
+@ComponentScan(basePackages = {"app"})
 public class Application {
 
 	public static void main(String[] args) {
