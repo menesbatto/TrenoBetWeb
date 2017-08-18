@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class BetBean implements Serializable{
+public class _1X2OddsBean implements Serializable{
 	
 	private static final long serialVersionUID = 2839273854528890162L;
 
@@ -21,16 +21,18 @@ public class BetBean implements Serializable{
 	
 	private String betHouseString;
 	
+	private String timeTypeString;
+	
 	@JsonIgnore
 	private String toIgnore;
 	
 	
-	public BetBean() {
+	public _1X2OddsBean() {
 		toIgnore = "non lo vedo";
 	}
 
 
-	public BetBean(String _1, String _X, String _2) {
+	public _1X2OddsBean(String _1, String _X, String _2) {
  		this._1 = _1;
 		this._2 = _2;
 		this._X = _X;
@@ -85,6 +87,16 @@ public class BetBean implements Serializable{
 
 	public void setBetHouseString(String betHouseString) {
 		this.betHouseString = betHouseString;
+	}
+
+
+	public String getTimeTypeString() {
+		return timeTypeString;
+	}
+
+
+	public void setTimeTypeString(String timeTypeString) {
+		this.timeTypeString = timeTypeString;
 	}
 
 

@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import app._0_eventsOddsDownloader.EventsOddsDownloaderModel;
-import app._0_eventsOddsDownloader.model.BetBean;
+import app._0_eventsOddsDownloader.UtilityModel;
+import app._0_eventsOddsDownloader.model._1X2OddsBean;
 import app.user.User;
 import app.user.UserRepository;
 
@@ -22,14 +23,25 @@ public class FacadeController {
 
 	@Autowired
 	private EventsOddsDownloaderModel eventsOddsDownloader;
+
+	@Autowired
+	private UtilityModel utilityModel;
 	
     @RequestMapping(value = "/eventsOddsDownloader", method = RequestMethod.GET)
-    public @ResponseBody BetBean eventsOddsDownloader () {
+    public @ResponseBody _1X2OddsBean eventsOddsDownloader () {
 		
-    	BetBean betBean = eventsOddsDownloader.execute();
+    	_1X2OddsBean betBean = eventsOddsDownloader.execute();
 //    	BetBean betBean = null;
 		return betBean;
 	}
+
+    @RequestMapping(value = "/initTipologiche", method = RequestMethod.GET)
+    public @ResponseBody void initTipologiche () {
+    	
+    	utilityModel.execute();
+    }
+    
+    
 
 	@GetMapping(path="/all")
 	public @ResponseBody Iterable<User> getAllUsers() {

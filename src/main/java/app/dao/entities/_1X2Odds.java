@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Bet {
+public class _1X2Odds {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,6 +19,9 @@ public class Bet {
 	
 	@ManyToOne
 	private BetHouse betHouse;
+
+	@ManyToOne
+	private TimeType timeType;
 	
 	
 	
@@ -31,11 +34,11 @@ public class Bet {
 	
 	
 	
-	public Bet() {
+	public _1X2Odds() {
 	}
 
 	
-	public Bet(String _1, String _X, String _2) {
+	public _1X2Odds(String _1, String _X, String _2) {
  		this._1 = _1;
 		this._2 = _2;
 		this._X = _X;

@@ -7,19 +7,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class BetHouse {
+public class TimeType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-
-    @Column(name="value", unique=true)
+	@Column(name="value", unique=true)
 	private String value;
 
-	public BetHouse() {
+	public TimeType() {
 	}
 
-	public BetHouse(String value) {
+	public TimeType(String value) {
 		this.value = value;
 	}
 

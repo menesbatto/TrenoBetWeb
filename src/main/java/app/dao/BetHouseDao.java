@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.entities.BetHouse;
+import app.dao.entities.TimeType;
 
 @Service
 public class BetHouseDao {
@@ -25,6 +26,29 @@ public class BetHouseDao {
 		
 		return betHouse;
 	}
+	
+	public void initTable() {
+		//bet365, Betclic,  bwin, PaddyPower, Tipico, Unibet, WilliamHill
+
+		BetHouse bet365 = new BetHouse("bet365");
+		betHouseRepo.save(bet365);
+		BetHouse Betclic = new BetHouse("Betclic");
+		betHouseRepo.save(Betclic);
+		BetHouse bwin = new BetHouse("bwin");
+		betHouseRepo.save(bwin);
+		BetHouse PaddyPower = new BetHouse("PaddyPower");
+		betHouseRepo.save(PaddyPower);
+		BetHouse Tipico = new BetHouse("Tipico");
+		betHouseRepo.save(Tipico);
+		BetHouse Unibet = new BetHouse("Unibet");
+		betHouseRepo.save(Unibet);
+		BetHouse WilliamHill = new BetHouse("WilliamHill");
+		betHouseRepo.save(WilliamHill);
+
+
+	}
+	
+	
 
 	private void initBetHousesMap() {
 		betHousesMap = new HashMap<String, BetHouse>();

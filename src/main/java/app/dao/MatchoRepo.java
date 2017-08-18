@@ -7,12 +7,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import app.Person;
-import app.dao.entities.Bet;
+import app.dao.entities.Champ;
+import app.dao.entities.Matcho;
+import app.dao.entities.TimeType;
+import app.dao.entities._1X2Odds;
 
 @RepositoryRestResource
-public interface BetRepo extends PagingAndSortingRepository<Bet, Long> {
+public interface MatchoRepo extends PagingAndSortingRepository<Matcho, Long> {
 
-//	List<Person> findByLastName(@Param("name") String name);
+//	List<Match> findByNameAndStartYearAndNation(String name, int startYear, String nation);
 //	
 //	List<Person> findDistinctPeopleByFirstNameOrLastNameIgnoreCase(String lastname, String firstname);
 	
