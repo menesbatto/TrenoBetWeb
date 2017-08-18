@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,14 +17,17 @@ public class Bet {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-//	private BetHouse betHouse;
+	@ManyToOne
+	private BetHouse betHouse;
+	
+	
 	
 	private String _1;
 	private String _X;
 	private String _2;
 	
-	@JsonIgnore
-	private String toIgnore;
+//	@JsonIgnore
+//	private String toIgnore;
 	
 	
 	
@@ -68,15 +72,6 @@ public class Bet {
 	}
 
 
-	public String getToIgnore() {
-		return toIgnore;
-	}
-
-
-	public void setToIgnore(String toIgnore) {
-		this.toIgnore = toIgnore;
-	}
-
 
 	public int getId() {
 		return id;
@@ -87,15 +82,15 @@ public class Bet {
 		this.id = id;
 	}
 
-//
-//	public BetHouse getBetHouse() {
-//		return betHouse;
-//	}
-//
-//
-//	public void setBetHouse(BetHouse betHouse) {
-//		this.betHouse = betHouse;
-//	}
+
+	public BetHouse getBetHouse() {
+		return betHouse;
+	}
+
+
+	public void setBetHouse(BetHouse betHouse) {
+		this.betHouse = betHouse;
+	}
 
 	
 	

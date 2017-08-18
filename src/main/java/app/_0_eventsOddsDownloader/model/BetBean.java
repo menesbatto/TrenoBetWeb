@@ -19,6 +19,8 @@ public class BetBean implements Serializable{
 	private String _X;
 	private String _2;
 	
+	private String betHouseString;
+	
 	@JsonIgnore
 	private String toIgnore;
 	
@@ -74,6 +76,17 @@ public class BetBean implements Serializable{
 	public void setId(int id) {
 		this.id = id;
 	}
+
+
+	public String getBetHouseString() {
+		return betHouseString;
+	}
+
+
+	public void setBetHouseString(String betHouseString) {
+		this.betHouseString = betHouseString;
+	}
+
 
 
 }
