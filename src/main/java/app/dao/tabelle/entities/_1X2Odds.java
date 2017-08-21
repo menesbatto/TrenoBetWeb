@@ -1,4 +1,4 @@
-package app.dao.entities;
+package app.dao.tabelle.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,9 +11,11 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import app._0_eventsOddsDownloader.model.MatchBean;
+import app.dao.tipologiche.entities.BetHouse;
+import app.dao.tipologiche.entities.TimeType;
 
 @Entity
-public class _1X2Odds {
+public class _1X2Odds implements IBet{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -117,6 +119,8 @@ public class _1X2Odds {
 	public void setMatch(Matcho match) {
 		this.match = match;
 	}
+
+
 
 	
 	

@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import app._0_eventsOddsDownloader.EventsOddsDownloaderModel;
-import app._0_eventsOddsDownloader.UtilityModel;
 import app._0_eventsOddsDownloader.model._1X2OddsBean;
+import app.logic.EventsOddsDownloaderModel;
+import app.logic.UtilityModel;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)

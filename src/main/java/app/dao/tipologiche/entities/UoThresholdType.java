@@ -1,4 +1,4 @@
-package app.dao.entities;
+package app.dao.tipologiche.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,19 +7,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class BetHouse {
+public class UoThresholdType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-
-    @Column(name="value", unique=true)
+	@Column(name="value", unique=true)
 	private String value;
 
-	public BetHouse() {
+	public UoThresholdType() {
 	}
 
-	public BetHouse(String value) {
+	public UoThresholdType(String value) {
 		this.value = value;
 	}
 
@@ -39,9 +38,9 @@ public class BetHouse {
 		this.value = value;
 	} 
 	
+	//	_0_5, _1_5,  _2_5, _3_5, _4_5, _5_5, _6_5, _7_5, _8_5, _9_5, _10_5
+
 	
 	
 	
-	
-	//bet365, Betclic,  bwin, PaddyPower, Tipico, Unibet, WilliamHill
 }

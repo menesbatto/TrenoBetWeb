@@ -1,4 +1,4 @@
-package app.dao;
+package app.dao.tipologiche;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app.dao.entities.BetHouse;
-import app.dao.entities.TimeType;
+import app.dao.tipologiche.entities.BetHouse;
+import app.dao.tipologiche.entities.TimeType;
 
 @Service
 public class BetHouseDao {
@@ -16,13 +16,13 @@ public class BetHouseDao {
 	@Autowired
 	private BetHouseRepo betHouseRepo;
 	
-	private HashMap<String, BetHouse> betHousesMap;
+	private HashMap<String, BetHouse> cacheMap;
 	
 	public BetHouse findByValue(String betHouseString) {
-		if (betHousesMap == null || betHousesMap.isEmpty())
-			initBetHousesMap();
+		if (cacheMap == null || cacheMap.isEmpty())
+			initCacheMap();
 			
-		BetHouse betHouse = betHousesMap.get(betHouseString);
+		BetHouse betHouse = cacheMap.get(betHouseString);
 		
 		return betHouse;
 	}
@@ -50,12 +50,12 @@ public class BetHouseDao {
 	
 	
 
-	private void initBetHousesMap() {
-		betHousesMap = new HashMap<String, BetHouse>();
+	private void initCacheMap() {
+		cacheMap = new HashMap<String, BetHouse>();
 		Iterable<BetHouse> findAll = betHouseRepo.findAll();
 		for (Iterator<BetHouse> iter = findAll.iterator(); iter.hasNext(); ) {
 			BetHouse element = iter.next();
-			betHousesMap.put(element.getValue(), element);
+			cacheMap.put(element.getValue(), element);
 		}	
 	}
 	

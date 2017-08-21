@@ -1,16 +1,18 @@
-package app._0_eventsOddsDownloader;
+package app.logic;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app._0_eventsOddsDownloader.model._1X2OddsBean;
-import app.dao._1X2OddsDao;
-import app.dao.BetHouseDao;
-import app.dao.ChampDao;
-import app.dao.MatchoDao;
-import app.dao.TeamDao;
-import app.dao.TimeTypeDao;
+import app.dao.tabelle.ChampDao;
+import app.dao.tabelle.MatchoDao;
+import app.dao.tabelle.TeamDao;
+import app.dao.tabelle._1X2OddsDao;
+import app.dao.tipologiche.BetHouseDao;
+import app.dao.tipologiche.HomeVariationTypeDao;
+import app.dao.tipologiche.TimeTypeDao;
+import app.dao.tipologiche.UoThresholdTypeDao;
 
 @Service
 public class UtilityModel {
@@ -28,6 +30,12 @@ public class UtilityModel {
 
 	@Autowired
 	private TeamDao teamDao;
+
+	@Autowired
+	private UoThresholdTypeDao uoThresholdTypeDao;
+	
+	@Autowired
+	private HomeVariationTypeDao homeVariationTypeao;
 	
 	
 	
@@ -38,6 +46,8 @@ public class UtilityModel {
 		timeTypeDao.initTable();
 		champDao.initTable();
 		teamDao.initTable();
+		uoThresholdTypeDao.initTable();
+		homeVariationTypeao.initTable();
 		
 		
 	}

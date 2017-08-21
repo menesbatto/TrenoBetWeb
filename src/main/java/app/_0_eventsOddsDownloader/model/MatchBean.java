@@ -24,7 +24,11 @@ public class MatchBean implements Serializable{
 	
 	private ChampBean champ;
 
-	private List<_1X2OddsBean> _1X2odds;
+	private List<_1X2OddsBean> _1X2;
+
+	private List<EhOddsBean> eh;
+	
+	private List<UoOddsBean> uo;
 	
 	public MatchBean() {
 	}
@@ -101,12 +105,28 @@ public class MatchBean implements Serializable{
 		this.champ = champ;
 	}
 
-	public List<_1X2OddsBean> get_1X2odds() {
-		return _1X2odds;
+	public List<_1X2OddsBean> get_1X2() {
+		return _1X2;
 	}
 
-	public void set_1X2odds(List<_1X2OddsBean> _1x2odds) {
-		_1X2odds = _1x2odds;
+	public void set_1X2(List<_1X2OddsBean> _1x2odds) {
+		_1X2 = _1x2odds;
+	}
+
+	public List<EhOddsBean> getEh() {
+		return eh;
+	}
+
+	public void setEh(List<EhOddsBean> ehOdds) {
+		this.eh = ehOdds;
+	}
+
+	public List<UoOddsBean> getUo() {
+		return uo;
+	}
+
+	public void setUo(List<UoOddsBean> uoOdds) {
+		this.uo = uoOdds;
 	}
 
 	

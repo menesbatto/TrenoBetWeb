@@ -1,4 +1,4 @@
-package app.dao;
+package app.dao.tipologiche;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import app.dao.entities.TimeType;
-import app.dao.entities._1X2Odds;
+import app.dao.tabelle.entities._1X2Odds;
+import app.dao.tipologiche.entities.TimeType;
 
 @RepositoryRestResource
 public interface TimeTypeRepo extends PagingAndSortingRepository<TimeType, Long> {

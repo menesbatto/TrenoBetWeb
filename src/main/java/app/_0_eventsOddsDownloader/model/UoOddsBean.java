@@ -12,19 +12,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import app.dao.tabelle.entities.Matcho;
 
-public class _1X2OddsBean implements Serializable, IBetBean{
+public class UoOddsBean implements Serializable, IBetBean{
 	
-	private static final long serialVersionUID = 2839273854528890162L;
+	private static final long serialVersionUID = 2839273334528890162L;
 
 	private int id;
 	
-	private String _1;
-	private String _X;
-	private String _2;
+	private String u;
+	private String o;
 	
 	private String betHouseString;
 	
 	private String timeTypeString;
+
+	private String thresholdTypeString;
 	
 	private MatchBean match;
 	
@@ -32,46 +33,14 @@ public class _1X2OddsBean implements Serializable, IBetBean{
 	private String toIgnore;
 	
 	
-	public _1X2OddsBean() {
+	public UoOddsBean() {
 		toIgnore = "non lo vedo";
 	}
 
 
-	public _1X2OddsBean(String _1, String _X, String _2) {
- 		this._1 = _1;
-		this._2 = _2;
-		this._X = _X;
-	}
-
-
-
-
-	public String get_1() {
-		return _1;
-	}
-	public void set_1(String _1) {
-		this._1 = _1;
-	}
-	
-	public String get_X() {
-		return _X;
-	}
-	public void set_X(String _X) {
-		this._X = _X;
-	}
-	
-	public String get_2() {
-		return _2;
-	}
-	public void set_2(String _2) {
-		this._2 = _2;
-	}
-
-	public String getToIgnore() {
-		return toIgnore;
-	}
-	public void setToIgnore(String toIgnore) {
-		this.toIgnore = toIgnore;
+	public UoOddsBean(String u, String o) {
+ 		this.u = u;
+		this.o = o;
 	}
 
 
@@ -82,6 +51,26 @@ public class _1X2OddsBean implements Serializable, IBetBean{
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+
+	public String getU() {
+		return u;
+	}
+
+
+	public void setU(String u) {
+		this.u = u;
+	}
+
+
+	public String getO() {
+		return o;
+	}
+
+
+	public void setO(String o) {
+		this.o = o;
 	}
 
 
@@ -105,6 +94,16 @@ public class _1X2OddsBean implements Serializable, IBetBean{
 	}
 
 
+	public String getThresholdTypeString() {
+		return thresholdTypeString;
+	}
+
+
+	public void setThresholdTypeString(String thresholdTypeString) {
+		this.thresholdTypeString = thresholdTypeString;
+	}
+
+
 	public MatchBean getMatch() {
 		return match;
 	}
@@ -114,6 +113,20 @@ public class _1X2OddsBean implements Serializable, IBetBean{
 		this.match = match;
 	}
 
+
+	public String getToIgnore() {
+		return toIgnore;
+	}
+
+
+	public void setToIgnore(String toIgnore) {
+		this.toIgnore = toIgnore;
+	}
+
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 
 

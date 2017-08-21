@@ -1,4 +1,4 @@
-package app.dao;
+package app.dao.tabelle;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app._0_eventsOddsDownloader.model.ChampBean;
-import app.dao.entities.BetHouse;
-import app.dao.entities.Champ;
-import app.dao.entities.TimeType;
+import app.dao.tabelle.entities.Champ;
+import app.dao.tipologiche.entities.BetHouse;
+import app.dao.tipologiche.entities.TimeType;
 
 @Service
 public class ChampDao {

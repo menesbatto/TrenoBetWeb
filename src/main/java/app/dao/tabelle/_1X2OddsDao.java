@@ -1,11 +1,14 @@
-package app.dao;
+package app.dao.tabelle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app._0_eventsOddsDownloader.model._1X2OddsBean;
-import app.dao.entities._1X2Odds;
-import app.dao.entities.BetHouse;
+import app.dao.tabelle.entities._1X2Odds;
+import app.dao.tipologiche.BetHouseDao;
+import app.dao.tipologiche.TimeTypeDao;
+import app.dao.tipologiche.entities.BetHouse;
+import app.dao.tipologiche.entities.TimeType;
 import ma.glasnost.orika.MapperFacade;
 
 @Service
@@ -19,6 +22,9 @@ public class _1X2OddsDao {
 	private BetHouseDao betHouseDao;
 
 	@Autowired
+	private TimeTypeDao timeTypeDao;
+
+	@Autowired
 	private MapperFacade mapper;
 
 	
@@ -26,6 +32,10 @@ public class _1X2OddsDao {
 		_1X2Odds betEnt = new _1X2Odds();
 		BetHouse betHouseEnt = betHouseDao.findByValue(betBean.getBetHouseString());
 		betEnt.setBetHouse(betHouseEnt);
+		
+		TimeType timeTypeEnt =  timeTypeDao.findByValue(betBean.getTimeTypeString());
+		betEnt.setTimeType(timeTypeEnt);
+		
 		mapper.map(betBean, betEnt);
 		
 		betEnt = betRepo.save(betEnt);

@@ -1,4 +1,4 @@
-package app.dao;
+package app.dao.tipologiche;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app.dao.entities.BetHouse;
-import app.dao.entities.TimeType;
+import app.dao.tipologiche.entities.BetHouse;
+import app.dao.tipologiche.entities.TimeType;
 
 @Service
 public class TimeTypeDao {
@@ -16,13 +16,13 @@ public class TimeTypeDao {
 	@Autowired
 	private TimeTypeRepo timeTypeRepo;
 	
-	private HashMap<String, TimeType> timeTypeMap;
+	private HashMap<String, TimeType> cacheMap;
 	
 	public TimeType findByValue(String betHouseString) {
-		if (timeTypeMap == null || timeTypeMap.isEmpty())
-			initTimeTypeMap();
+		if (cacheMap == null || cacheMap.isEmpty())
+			initCacheMap();
 			
-		TimeType tymeType = timeTypeMap.get(betHouseString);
+		TimeType tymeType = cacheMap.get(betHouseString);
 		
 		return tymeType;
 	}
@@ -36,12 +36,12 @@ public class TimeTypeDao {
 		timeTypeRepo.save(_2);
 	}
 	
-	private void initTimeTypeMap() {
-		timeTypeMap = new HashMap<String, TimeType>();
+	private void initCacheMap() {
+		cacheMap = new HashMap<String, TimeType>();
 		Iterable<TimeType> findAll = timeTypeRepo.findAll();
 		for (Iterator<TimeType> iter = findAll.iterator(); iter.hasNext(); ) {
 			TimeType element = iter.next();
-			timeTypeMap.put(element.getValue(), element);
+			cacheMap.put(element.getValue(), element);
 		}	
 	}
 	

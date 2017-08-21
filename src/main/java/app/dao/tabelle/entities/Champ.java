@@ -1,4 +1,4 @@
-package app.dao.entities;
+package app.dao.tabelle.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

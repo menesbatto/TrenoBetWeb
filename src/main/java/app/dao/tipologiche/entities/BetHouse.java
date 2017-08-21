@@ -1,4 +1,4 @@
-package app.dao.entities;
+package app.dao.tipologiche.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,18 +7,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class TimeType {
+public class BetHouse {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(name="value", unique=true)
+
+    @Column(name="value", unique=true)
 	private String value;
 
-	public TimeType() {
+	public BetHouse() {
 	}
 
-	public TimeType(String value) {
+	public BetHouse(String value) {
 		this.value = value;
 	}
 

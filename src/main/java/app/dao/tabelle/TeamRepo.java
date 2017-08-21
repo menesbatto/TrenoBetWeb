@@ -1,20 +1,25 @@
-package app.dao;
+package app.dao.tabelle;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import app.dao.entities.Champ;
-import app.dao.entities.Matcho;
-import app.dao.entities.TimeType;
-import app.dao.entities._1X2Odds;
+import app.dao.tabelle.entities.Champ;
+import app.dao.tabelle.entities.Team;
+import app.dao.tipologiche.entities.BetHouse;
 
 @RepositoryRestResource
-public interface ChampRepo extends PagingAndSortingRepository<Champ, Long> {
+public interface TeamRepo extends PagingAndSortingRepository<Team, Long> {
 
-	List<Champ> findByNameAndStartYearAndNation(String name, int startYear, String nation);
+	List<Team> findByName(String name);
+//
+//	List<BetHouse> findByValue(@Param("value") String string);
+	
+	
+//	List<Person> findByLastName(@Param("name") String name);
 //	
 //	List<Person> findDistinctPeopleByFirstNameOrLastNameIgnoreCase(String lastname, String firstname);
 	

@@ -1,4 +1,4 @@
-package app.dao.entities;
+package app.dao.tabelle.entities;
 
 import java.util.Date;
 import java.util.List;
@@ -35,9 +35,25 @@ public class Matcho {
 	private Champ champ;
 	
 	@OneToMany(cascade = {CascadeType.ALL})
-	private List<_1X2Odds> _1X2odds;
+	private List<_1X2Odds> _1X2;
+	
+	
+	@OneToMany(cascade = {CascadeType.ALL})
+	private List<EhOdds> eh;
+	
+	@OneToMany(cascade = {CascadeType.ALL})
+	private List<UoOdds> uo;
 
 	public Matcho() {
+	}
+
+	
+	public List<_1X2Odds> get_1X2() {
+		return _1X2;
+	}
+
+	public void set_1X2(List<_1X2Odds> _1x2) {
+		_1X2 = _1x2;
 	}
 
 	public int getId() {
@@ -112,12 +128,24 @@ public class Matcho {
 		this.champ = champ;
 	}
 
-	public List<_1X2Odds> get_1X2odds() {
-		return _1X2odds;
+
+	public List<EhOdds> getEh() {
+		return eh;
 	}
 
-	public void set_1X2odds(List<_1X2Odds> _1x2odds) {
-		_1X2odds = _1x2odds;
+
+	public void setEh(List<EhOdds> eh) {
+		this.eh = eh;
+	}
+
+
+	public List<UoOdds> getUo() {
+		return uo;
+	}
+
+
+	public void setUo(List<UoOdds> uo) {
+		this.uo = uo;
 	}
 
 	
