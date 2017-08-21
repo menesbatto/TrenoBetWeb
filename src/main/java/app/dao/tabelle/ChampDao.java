@@ -7,10 +7,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app._0_eventsOddsDownloader.model.ChampBean;
 import app.dao.tabelle.entities.Champ;
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
+import app.logic.app._0_eventsOddsDownloader.model.ChampBean;
 
 @Service
 public class ChampDao {

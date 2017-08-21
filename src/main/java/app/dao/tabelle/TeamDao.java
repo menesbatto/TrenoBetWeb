@@ -7,11 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app._0_eventsOddsDownloader.model.TeamBean;
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.Team;
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
+import app.logic.app._0_eventsOddsDownloader.model.TeamBean;
 
 @Service
 public class TeamDao {

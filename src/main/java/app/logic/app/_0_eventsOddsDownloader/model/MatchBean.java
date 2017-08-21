@@ -1,4 +1,4 @@
-package app._0_eventsOddsDownloader.model;
+package app.logic.app._0_eventsOddsDownloader.model;
 
 import java.io.Serializable;
 import java.util.Date;

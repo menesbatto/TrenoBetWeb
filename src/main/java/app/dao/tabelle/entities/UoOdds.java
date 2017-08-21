@@ -10,10 +10,10 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import app._0_eventsOddsDownloader.model.MatchBean;
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
+import app.logic.app._0_eventsOddsDownloader.model.MatchBean;
 
 @Entity
 public class UoOdds implements IBet{

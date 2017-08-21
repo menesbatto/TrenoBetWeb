@@ -1,4 +1,4 @@
-package app.logic;
+package app.logic.app._0_eventsOddsDownloader;
 
 
 import java.util.ArrayList;
@@ -8,17 +8,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app._0_eventsOddsDownloader.model.ChampBean;
-import app._0_eventsOddsDownloader.model.EhOddsBean;
-import app._0_eventsOddsDownloader.model.MatchBean;
-import app._0_eventsOddsDownloader.model.TeamBean;
-import app._0_eventsOddsDownloader.model.UoOddsBean;
-import app._0_eventsOddsDownloader.model._1X2OddsBean;
 import app.dao.tabelle.ChampDao;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.TeamDao;
 import app.dao.tabelle._1X2OddsDao;
 import app.dao.tipologiche.BetHouseDao;
+import app.logic.app._0_eventsOddsDownloader.model.ChampBean;
+import app.logic.app._0_eventsOddsDownloader.model.EhOddsBean;
+import app.logic.app._0_eventsOddsDownloader.model.MatchBean;
+import app.logic.app._0_eventsOddsDownloader.model.TeamBean;
+import app.logic.app._0_eventsOddsDownloader.model.UoOddsBean;
+import app.logic.app._0_eventsOddsDownloader.model._1X2OddsBean;
 
 @Service
 public class EventsOddsDownloaderModel {

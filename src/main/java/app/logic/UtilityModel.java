@@ -4,7 +4,6 @@ package app.logic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app._0_eventsOddsDownloader.model._1X2OddsBean;
 import app.dao.tabelle.ChampDao;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.TeamDao;
@@ -13,6 +12,7 @@ import app.dao.tipologiche.BetHouseDao;
 import app.dao.tipologiche.HomeVariationTypeDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.UoThresholdTypeDao;
+import app.logic.app._0_eventsOddsDownloader.model._1X2OddsBean;
 
 @Service
 public class UtilityModel {

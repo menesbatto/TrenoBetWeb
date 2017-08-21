@@ -3,9 +3,6 @@ package app.dao.tabelle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app._0_eventsOddsDownloader.model.EhOddsBean;
-import app._0_eventsOddsDownloader.model.UoOddsBean;
-import app._0_eventsOddsDownloader.model._1X2OddsBean;
 import app.dao.tabelle.entities.EhOdds;
 import app.dao.tabelle.entities.UoOdds;
 import app.dao.tabelle.entities._1X2Odds;
@@ -17,6 +14,9 @@ import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
+import app.logic.app._0_eventsOddsDownloader.model.EhOddsBean;
+import app.logic.app._0_eventsOddsDownloader.model.UoOddsBean;
+import app.logic.app._0_eventsOddsDownloader.model._1X2OddsBean;
 import ma.glasnost.orika.MapperFacade;
 
 @Service
