@@ -1,6 +1,5 @@
 package app.dao.tabelle.entities;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,13 +13,12 @@ public class Team {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
-	// da togliere l'unique
-	@Column(name="name", unique=true)
 	private String name;
 	
 	@ManyToOne
 	private Champ champ;
 
+	
 	
 	public Team() {
 	}

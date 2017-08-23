@@ -17,6 +17,8 @@ public interface TeamRepo extends PagingAndSortingRepository<Team, Long> {
 	List<Team> findByName(String name);
 //
 //	List<BetHouse> findByValue(@Param("value") String string);
+
+	List<Team> findByNameAndChamp(String name, Champ champ);
 	
 	
 //	List<Person> findByLastName(@Param("name") String name);

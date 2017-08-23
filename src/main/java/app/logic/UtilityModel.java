@@ -12,7 +12,7 @@ import app.dao.tipologiche.BetHouseDao;
 import app.dao.tipologiche.HomeVariationTypeDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.UoThresholdTypeDao;
-import app.logic.app._0_eventsOddsDownloader.model._1X2OddsBean;
+import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
 
 @Service
 public class UtilityModel {
@@ -44,8 +44,8 @@ public class UtilityModel {
 	public void execute() {
 		betHouseDao.initTable();
 		timeTypeDao.initTable();
-		champDao.initTable();
-		teamDao.initTable();
+//		champDao.initTable();
+//		teamDao.initTable();
 		uoThresholdTypeDao.initTable();
 		homeVariationTypeao.initTable();
 		

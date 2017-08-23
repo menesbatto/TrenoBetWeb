@@ -1,19 +1,15 @@
 package app.dao.tabelle.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
-import app.logic.app._0_eventsOddsDownloader.model.MatchBean;
 
 @Entity
 public class UoOdds implements IBet{
@@ -35,8 +31,8 @@ public class UoOdds implements IBet{
 	@ManyToOne
 	private Matcho match;
 	
-	private String u;
-	private String o;
+	private Double u;
+	private Double o;
 	
 	public UoOdds() {
 	}
@@ -81,19 +77,19 @@ public class UoOdds implements IBet{
 		this.match = match;
 	}
 
-	public String getU() {
+	public Double getU() {
 		return u;
 	}
 
-	public void setU(String u) {
+	public void setU(Double u) {
 		this.u = u;
 	}
 
-	public String getO() {
+	public Double getO() {
 		return o;
 	}
 
-	public void setO(String o) {
+	public void setO(Double o) {
 		this.o = o;
 	}
 	

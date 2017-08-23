@@ -1,7 +1,6 @@
 package app.dao.tabelle;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +8,8 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.Team;
-import app.dao.tipologiche.entities.BetHouse;
-import app.dao.tipologiche.entities.TimeType;
-import app.logic.app._0_eventsOddsDownloader.model.TeamBean;
+import app.logic._1_matchResultParser.modelNew.TeamBean;
+import app.utils.ChampEnum;
 
 @Service
 public class TeamDao {
@@ -22,15 +20,36 @@ public class TeamDao {
 	@Autowired
 	private ChampDao champDao;
 	
-//	private HashMap<String, Team> teamsMap;
+	private HashMap<Champ, HashMap<String, Team>> cacheMap;
 	
-	public Team findByName(String name) {
-		List<Team> list = teamRepo.findByName(name);
+	public Team findByName(TeamBean team) {
+		List<Team> list = teamRepo.findByName(team.getName());
 		Team first = list.get(0);
 		return first;
 		
 	}
+
+	public Team findByNameAndChamp(String name, Champ champ) {
+		Team first = findInCache(name, champ);
+		if (first == null) {
+			List<Team> list = teamRepo.findByNameAndChamp(name, champ);
+			if (list.isEmpty())
+				first = saveTeam(name, champ);
+			else 
+				first = list.get(0);
+		}
+		return first;
+	}
 	
+	private Team saveTeam(String name, Champ champ) {
+		Team team = new Team();
+		team.setName(name);
+		team.setChamp(champ);
+		teamRepo.save(team);
+		return team;
+		
+	}
+
 	public void initTable() {
 		//bet365, Betclic,  bwin, PaddyPower, Tipico, Unibet, WilliamHill
 		Champ serieA = champDao.findByNameAndStartYearAndNation("Serie A", 2017, "Italy");
@@ -46,21 +65,17 @@ public class TeamDao {
 
 	}
 	
+
+	private Team findInCache(String teamName, Champ champ) {
+		if (cacheMap == null) {
+			cacheMap = new HashMap<Champ, HashMap<String, Team>>();
+		}
+		HashMap<String, Team> teamMap = cacheMap.get(champ);
+		if (teamMap == null)
+			teamMap = new HashMap<String, Team>();
+		
+		return teamMap.get(teamName);
+	}
 	
-
-	private void initBetHousesMap() {
-//		teamsMap = new HashMap<String, BetHouse>();
-//		Iterable<BetHouse> findAll = teamRepo.findAll();
-//		for (Iterator<BetHouse> iter = findAll.iterator(); iter.hasNext(); ) {
-//			BetHouse element = iter.next();
-//			teamsMap.put(element.getValue(), element);
-//		}	
-	}
-
-	public Team findByName(TeamBean team) {
-		String teamName = team.getName();
-		List<Team> list = teamRepo.findByName(teamName);
-		Team first = list.get(0);
-		return first;
-	}
+	
 }

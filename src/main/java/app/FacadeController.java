@@ -10,15 +10,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.dao.tabelle.MatchoRepo;
 import app.dao.tabelle.entities.Matcho;
+import app.logic.ResultParserNew;
 import app.logic.UtilityModel;
-import app.logic.app._0_eventsOddsDownloader.EventsOddsDownloaderModel;
-import app.logic.app._0_eventsOddsDownloader.model._1X2OddsBean;
+import app.logic._1_matchResultParser.ResultParserNewModel;
+import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
 public class FacadeController {
 	@Autowired
-	private EventsOddsDownloaderModel eventsOddsDownloader;
+	private ResultParserNewModel eventsOddsDownloader;
 
 	@Autowired
 	private UtilityModel utilityModel;
@@ -47,6 +48,16 @@ public class FacadeController {
     	List<Matcho> findAll = matchRepo.findAll();
 		return findAll;
     }
+    
+    @Autowired
+    private ResultParserNew resultParserNew;
+    @RequestMapping(value = "/avviaVecchio1", method = RequestMethod.GET)
+    public void avviaVecchio1() {
+    	
+    	resultParserNew.execute();
+    }
+    
+    
     
     
 

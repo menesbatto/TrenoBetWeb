@@ -1,4 +1,4 @@
-package app.logic.app._0_eventsOddsDownloader;
+package app.logic._1_matchResultParser;
 
 
 import java.util.ArrayList;
@@ -8,33 +8,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app.dao.tabelle.ChampDao;
 import app.dao.tabelle.MatchoDao;
-import app.dao.tabelle.TeamDao;
-import app.dao.tabelle._1X2OddsDao;
-import app.dao.tipologiche.BetHouseDao;
-import app.logic.app._0_eventsOddsDownloader.model.ChampBean;
-import app.logic.app._0_eventsOddsDownloader.model.EhOddsBean;
-import app.logic.app._0_eventsOddsDownloader.model.MatchBean;
-import app.logic.app._0_eventsOddsDownloader.model.TeamBean;
-import app.logic.app._0_eventsOddsDownloader.model.UoOddsBean;
-import app.logic.app._0_eventsOddsDownloader.model._1X2OddsBean;
+import app.logic._1_matchResultParser.modelNew.ChampBean;
+import app.logic._1_matchResultParser.modelNew.EhOddsBean;
+import app.logic._1_matchResultParser.modelNew.MatchBean;
+import app.logic._1_matchResultParser.modelNew.TeamBean;
+import app.logic._1_matchResultParser.modelNew.UoOddsBean;
+import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
 
 @Service
-public class EventsOddsDownloaderModel {
+public class ResultParserNewModel {
 
 
 
-	@Autowired
-	private _1X2OddsDao betDao;
-
-
-	@Autowired
-	private BetHouseDao betHouseDao;
-	@Autowired
-	private TeamDao teamDao;
-	@Autowired
-	private ChampDao champDao;
 	@Autowired
 	private MatchoDao matchDao;
 	

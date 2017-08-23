@@ -1,4 +1,4 @@
-package app.logic.app._0_eventsOddsDownloader.model;
+package app.logic._1_matchResultParser.modelNew;
 
 import java.io.Serializable;
 
