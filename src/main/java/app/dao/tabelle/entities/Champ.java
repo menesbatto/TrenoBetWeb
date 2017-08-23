@@ -1,10 +1,10 @@
 package app.dao.tabelle.entities;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Champ {
@@ -13,15 +13,17 @@ public class Champ {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
-	//Da togliere unique
-	@Column(name="name", unique=true)
 	private String name;
 	
 	private int startYear;
 	
-	private int endYear;
-
 	private String nation;
+	
+	@OneToOne
+	private ChampUrls urls;
+
+	@OneToOne
+	private ChampImpPos impPos;
 	
 	
 	
@@ -29,10 +31,9 @@ public class Champ {
 		super();
 	}
 
-	public Champ(String name, int startYear, int endYear, String nation) {
+	public Champ(String name, int startYear, String nation) {
 		this.name= name;
 		this.startYear= startYear;
-		this.endYear = endYear;
 		this.setNation(nation);
 	}
 
@@ -60,20 +61,28 @@ public class Champ {
 		this.startYear = startYear;
 	}
 
-	public int getEndYear() {
-		return endYear;
-	}
-
-	public void setEndYear(int endYear) {
-		this.endYear = endYear;
-	}
-
 	public String getNation() {
 		return nation;
 	}
 
 	public void setNation(String nation) {
 		this.nation = nation;
+	}
+
+	public ChampImpPos getImpPos() {
+		return impPos;
+	}
+
+	public void setImpPos(ChampImpPos impPos) {
+		this.impPos = impPos;
+	}
+
+	public ChampUrls getUrls() {
+		return urls;
+	}
+
+	public void setUrls(ChampUrls urls) {
+		this.urls = urls;
 	}
 	
 	

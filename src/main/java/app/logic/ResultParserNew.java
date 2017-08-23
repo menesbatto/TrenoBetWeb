@@ -50,6 +50,8 @@ public class ResultParserNew {
 	
 	
 	public void execute(){
+		TimeTypeEnum._1.get_1x2urlSuffix();
+		
 //		initStaticFields();
 		
 //		ArrayList<MatchResult> matchResult;
@@ -141,6 +143,9 @@ public class ResultParserNew {
 		tableRows.add(obj3); // add first item
 		tableRows.add(obj4); // add first item
 		// VIA 
+		
+		
+		
 		int savedMatches = 0;
 		for (Element row : tableRows){
 //			if (row.hasClass("dark")){

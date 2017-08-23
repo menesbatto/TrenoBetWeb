@@ -1,3 +1,4 @@
+
 package app.utils;
 
 import java.util.ArrayList;
@@ -16,7 +17,9 @@ public enum ChampEnum {
 							new RankCritEnum[]{	RankCritEnum.POINTS, 
 												RankCritEnum.GOALS_DIFFERENCE, 
 												RankCritEnum.GOALS_SCORED},
-							"england"),
+							"England",
+							"Premier League",
+							2017),
 //							
 //	SPA_LIGA 			(	AppConstants.SPA_LIGA_RESULTS,
 //							AppConstants.SPA_LIGA_WIN_ODDS, 	
@@ -256,7 +259,7 @@ public enum ChampEnum {
 	
 	
 	
-	private ChampEnum(String resultsUrl, String oddsWinUrl, String oddsUoUrl, String oddsHtUrl, String resultPath, Integer[] importantPositions, RankCritEnum[] rankCriteria, String nation ){
+	private ChampEnum(String resultsUrl, String oddsWinUrl, String oddsUoUrl, String oddsHtUrl, String resultPath, Integer[] importantPositions, RankCritEnum[] rankCriteria, String nation, String name, int startYear ){
 		this.importantPositions = new ArrayList<Integer>(Arrays.asList(importantPositions));
 		this.rankCriteria = new ArrayList<RankCritEnum>(Arrays.asList(rankCriteria));
 		this.resultsUrl = resultsUrl;
@@ -265,6 +268,8 @@ public enum ChampEnum {
 		this.oddsHtUrl = oddsHtUrl;
 		this.resultPath = resultPath;
 		this.nation = nation;
+		this.name = name;
+		this.startYear = startYear;
     }
 	
     private final ArrayList<Integer> importantPositions;
@@ -275,6 +280,8 @@ public enum ChampEnum {
     private final String oddsHtUrl;
     private final String resultPath;
     private final String nation;
+    private final String name;
+    private final int startYear;
     
     public ArrayList<RankCritEnum> getRankCriteria(){
     	return rankCriteria;
@@ -306,6 +313,14 @@ public enum ChampEnum {
 
 	public String getNation() {
 		return nation;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getStartYear() {
+		return startYear;
 	}
 
 }

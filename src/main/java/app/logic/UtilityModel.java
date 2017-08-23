@@ -10,9 +10,11 @@ import app.dao.tabelle.TeamDao;
 import app.dao.tabelle._1X2OddsDao;
 import app.dao.tipologiche.BetHouseDao;
 import app.dao.tipologiche.HomeVariationTypeDao;
+import app.dao.tipologiche.RankingCriteriaDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.UoThresholdTypeDao;
 import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.utils.ChampEnum;
 
 @Service
 public class UtilityModel {
@@ -24,6 +26,9 @@ public class UtilityModel {
 
 	@Autowired
 	private TimeTypeDao timeTypeDao;
+
+	@Autowired
+	private RankingCriteriaDao rankingCriteriaDao;
 
 	@Autowired
 	private BetHouseDao betHouseDao;
@@ -44,12 +49,16 @@ public class UtilityModel {
 	public void execute() {
 		betHouseDao.initTable();
 		timeTypeDao.initTable();
-//		champDao.initTable();
+		rankingCriteriaDao.initTable();
 //		teamDao.initTable();
 		uoThresholdTypeDao.initTable();
 		homeVariationTypeao.initTable();
 		
-		
+	}
+	
+	
+	public void initChampsTable() {
+		champDao.initTable();
 	}
 	
 }

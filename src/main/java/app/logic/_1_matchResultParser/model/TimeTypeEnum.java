@@ -14,7 +14,7 @@ public enum TimeTypeEnum implements Serializable{
 	private TimeTypeEnum(String _1x2urlSuffix, String uourlSuffix, String ehUrlSuffix){
 		this._1x2urlSuffix = _1x2urlSuffix;
 		this.uoUrlSuffix = uourlSuffix;
-		this.setEhUrlSuffix(ehUrlSuffix);
+		this.ehUrlSuffix = ehUrlSuffix;
     }
 
 	public String getUoUrlSuffix() {

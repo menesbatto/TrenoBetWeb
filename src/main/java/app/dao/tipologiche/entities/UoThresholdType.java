@@ -9,7 +9,6 @@ import javax.persistence.Id;
 @Entity
 public class UoThresholdType {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
 	@Column(name="value", unique=true)
@@ -19,6 +18,10 @@ public class UoThresholdType {
 	}
 
 	public UoThresholdType(String value) {
+		this.value = value;
+	}
+	public UoThresholdType(int id, String value) {
+		this.id = id;
 		this.value = value;
 	}
 

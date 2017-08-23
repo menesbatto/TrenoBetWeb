@@ -38,6 +38,12 @@ public class FacadeController {
     	utilityModel.execute();
     }
     
+    @RequestMapping(value = "/initChampTable", method = RequestMethod.GET)
+    public @ResponseBody void initChampTable () {
+    	
+    	utilityModel.initChampsTable();
+    }
+    
     
     
     @Autowired

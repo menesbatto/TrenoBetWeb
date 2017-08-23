@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
+import app.logic._1_matchResultParser.model.TimeTypeEnum;
 
 @Service
 public class TimeTypeDao {
@@ -34,6 +35,8 @@ public class TimeTypeDao {
 		timeTypeRepo.save(_1);
 		TimeType _2 = new TimeType("_2");
 		timeTypeRepo.save(_2);
+		TimeTypeEnum._1.set_1x2urlSuffix("pere");
+		
 	}
 	
 	private void initCacheMap() {

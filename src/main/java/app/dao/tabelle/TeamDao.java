@@ -50,6 +50,29 @@ public class TeamDao {
 		
 	}
 
+	
+	
+
+	private Team findInCache(String teamName, Champ champ) {
+		if (cacheMap == null) {
+			cacheMap = new HashMap<Champ, HashMap<String, Team>>();
+		}
+		HashMap<String, Team> teamMap = cacheMap.get(champ);
+		if (teamMap == null)
+			teamMap = new HashMap<String, Team>();
+		
+		return teamMap.get(teamName);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Deprecated
 	public void initTable() {
 		//bet365, Betclic,  bwin, PaddyPower, Tipico, Unibet, WilliamHill
 		Champ serieA = champDao.findByNameAndStartYearAndNation("Serie A", 2017, "Italy");
@@ -63,18 +86,6 @@ public class TeamDao {
 		teamRepo.save(pescara);
 
 
-	}
-	
-
-	private Team findInCache(String teamName, Champ champ) {
-		if (cacheMap == null) {
-			cacheMap = new HashMap<Champ, HashMap<String, Team>>();
-		}
-		HashMap<String, Team> teamMap = cacheMap.get(champ);
-		if (teamMap == null)
-			teamMap = new HashMap<String, Team>();
-		
-		return teamMap.get(teamName);
 	}
 	
 	
