@@ -8,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
-import app.dao.tabelle.entities.ChampImpPos;
-import app.dao.tabelle.entities.ChampRanCri;
-import app.dao.tabelle.entities.ChampUrls;
+//import app.dao.tabelle.entities.ChampUrls;
+//import app.dao.tabelle.entities.ChampImpPos;
+//import app.dao.tabelle.entities.ChampRanCri;
+//import app.dao.tabelle.entities.ChampUrls;
 import app.dao.tipologiche.RankingCriteriaDao;
 import app.dao.tipologiche.RankingCriteriaRepo;
 import app.dao.tipologiche.entities.RankingCriteria;
@@ -25,14 +26,14 @@ public class ChampDao {
 	@Autowired
 	private ChampRepo champRepo;
 
-	@Autowired
-	private ChampUrlsRepo champUrlsRepo;
-	
-	@Autowired
-	private ChampImpPosRepo champImpPosRepo;
-	
-	@Autowired
-	private ChampRanCriRepo champRanCriRepo;
+//	@Autowired
+//	private ChampUrlsRepo champUrlsRepo;
+//	
+//	@Autowired
+//	private ChampImpPosRepo champImpPosRepo;
+//	
+//	@Autowired
+//	private ChampRanCriRepo champRanCriRepo;
 
 	@Autowired
 	private RankingCriteriaDao rankingCriteriaDao;
@@ -68,56 +69,58 @@ public class ChampDao {
 	public void initTable() {
 		ChampEnum champEnum = ChampEnum.ENG_PREMIER;
 		Champ champEnt = saveChamp(champEnum);
-		ChampUrls chamUrlsEnt = saveChampUrls(champEnum, champEnt);
-		ChampImpPos champImpPosEnt =  saveChampImpPos(champEnum, champEnt);
-		ChampRanCri champRanCriEnt =  saveChampRanCri(champEnum, champEnt);
-//		Champ findByChampEnum = findByChampEnum(champEnum);
+//		ChampUrls chamUrlsEnt = saveChampUrls(champEnum, champEnt);
+//		ChampImpPos champImpPosEnt =  saveChampImpPos(champEnum, champEnt);
+//		ChampRanCri champRanCriEnt =  saveChampRanCri(champEnum, champEnt);
+		
 //		champEnt.setUrls(chamUrlsEnt);
 //		champEnt.setImpPos(champImpPosEnt);
-//		champRepo.save(champEnt);
+//		champEnt.setRanCri(champRanCriEnt);
+		champRepo.save(champEnt);
 		//...
 		System.out.println("");
 		
 	}
 	
-	private ChampRanCri saveChampRanCri(ChampEnum champEnum, Champ champEnt) {
-		List<RankingCriteria> criteriaEnt = new ArrayList<RankingCriteria>();
-		RankingCriteria criteriumEnt;
-		for (RankCritEnum criterium : champEnum.getRankCriteria()) {
-			criteriumEnt = rankingCriteriaDao.findByValue(criterium.name());
-			criteriaEnt.add(criteriumEnt);
-		}
-		ChampRanCri champRanCri = new ChampRanCri(champEnt, criteriaEnt);
-		champRanCriRepo.save(champRanCri);
-		return champRanCri;
-	}
+//	private ChampRanCri saveChampRanCri(ChampEnum champEnum, Champ champEnt) {
+//		List<RankingCriteria> criteriaEnt = new ArrayList<RankingCriteria>();
+//		RankingCriteria criteriumEnt;
+//		for (RankCritEnum criterium : champEnum.getRankCriteria()) {
+//			criteriumEnt = rankingCriteriaDao.findByValue(criterium.name());
+//			criteriaEnt.add(criteriumEnt);
+//		}
+//		ChampRanCri champRanCri = new ChampRanCri(champEnt, criteriaEnt);
+//		champRanCriRepo.save(champRanCri);
+//		return champRanCri;
+//	}
 
 
 
-	private ChampImpPos saveChampImpPos(ChampEnum champEnum, Champ champEnt) {
-		ChampImpPos champImpPos = new ChampImpPos(champEnt, champEnum.getImportantPositions());
-		champImpPosRepo.save(champImpPos);
-		return champImpPos;
-	}
+//	private ChampImpPos saveChampImpPos(ChampEnum champEnum, Champ champEnt) {
+//		ChampImpPos champImpPos = new ChampImpPos(champEnt, champEnum.getImportantPositions());
+//		champImpPosRepo.save(champImpPos);
+//		return champImpPos;
+//	}
 
 	private Champ saveChamp(ChampEnum champEnum) {
-		Champ champEnt = new Champ(champEnum.getName(), champEnum.getStartYear(), champEnum.getNation());
+		Champ champEnt = new Champ(	champEnum.getName(),		champEnum.getStartYear(), 	champEnum.getNation(), 
+									champEnum.getResultsUrl(), 	champEnum.getOddsWinUrl(), 	champEnum.getOddsUoUrl(), champEnum.getOddsHtUrl());
 		champRepo.save(champEnt);
 		return champEnt;
 	}
 	
-	public ChampUrls saveChampDett(ChampEnum champEnum, String resultsUrl, String oddsWinUrl, String oddsUoUrl,	String oddsHtUrl) {
-		Champ champ = findByChampEnum(champEnum);
-		ChampUrls champUrls = new ChampUrls(champ, resultsUrl, oddsWinUrl, oddsUoUrl, oddsHtUrl);
-		champUrlsRepo.save(champUrls);
-		return champUrls;
-	}
-
-	public ChampUrls saveChampUrls(ChampEnum champEnum, Champ champEnt) {
-		ChampUrls champUrls = new ChampUrls(champEnt, champEnum.getResultsUrl(), champEnum.getOddsWinUrl(),	champEnum.getOddsUoUrl(), champEnum.getOddsHtUrl());
-		champUrlsRepo.save(champUrls);
-		return champUrls;
-	}	
+//	public ChampUrls saveChampDett(ChampEnum champEnum, String resultsUrl, String oddsWinUrl, String oddsUoUrl,	String oddsHtUrl) {
+//		Champ champ = findByChampEnum(champEnum);
+//		ChampUrls champUrls = new ChampUrls(champ, resultsUrl, oddsWinUrl, oddsUoUrl, oddsHtUrl);
+//		champUrlsRepo.save(champUrls);
+//		return champUrls;
+//	}
+//
+//	public ChampUrls saveChampUrls(ChampEnum champEnum, Champ champEnt) {
+//		ChampUrls champUrls = new ChampUrls(champEnt, champEnum.getResultsUrl(), champEnum.getOddsWinUrl(),	champEnum.getOddsUoUrl(), champEnum.getOddsHtUrl());
+//		champUrlsRepo.save(champUrls);
+//		return champUrls;
+//	}	
 	
 	
 	

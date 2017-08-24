@@ -262,24 +262,24 @@ public class ResultParserNew {
 //		System.out.println(m.get_1x2());
 		
 		//		ASIAN HANDICAP
-		populateMatchAH(m, matchUrl);
+//		populateMatchAH(m, matchUrl);
 
 		// 		UNDER OVER
-		populateMatchUO(m, matchUrl);
+//		populateMatchUO(m, matchUrl);
 //		System.out.println(m.getUo());
 		
 		// 		EUROPEAN HANDICAP
-		populateMatchEH(m, matchUrl);
+//		populateMatchEH(m, matchUrl);
 //		System.out.println(m.getEh().get(TimeTypeEnum._2));
 		
 		// 		DOUBLE CHANCE
-		populateMatchDC(m, matchUrl);
+//		populateMatchDC(m, matchUrl);
 		
 		// 		CORRECT SCORE
-		populateMatchCS(m, matchUrl);
+//		populateMatchCS(m, matchUrl);
 		
 		// 		DRAW NO BET
-		populateMatchDNB(m, matchUrl);
+//		populateMatchDNB(m, matchUrl);
 		
 //		System.out.println(m);
 		System.out.print(".");

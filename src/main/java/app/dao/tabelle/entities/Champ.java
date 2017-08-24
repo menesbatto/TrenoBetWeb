@@ -1,5 +1,6 @@
 package app.dao.tabelle.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,22 +20,37 @@ public class Champ {
 	
 	private String nation;
 	
-	@OneToOne
-	private ChampUrls urls;
-
-	@OneToOne
-	private ChampImpPos impPos;
+	private String resultsUrl;
+	private String oddsWinUrl;
+	private String oddsUoUrl;
+	private String oddsHtUrl;
 	
+//	@OneToOne(cascade=CascadeType.ALL, mappedBy = "champ") //nome nella ENTITY ChampUrls del campo che referenzia Champ
+//	private ChampUrls urls;
+//
+//	@OneToOne
+//	private ChampImpPos impPos;
+//
+//	@OneToOne
+//	private ChampRanCri ranCri;
+//	
 	
 	
 	public Champ() {
 		super();
 	}
 
-	public Champ(String name, int startYear, String nation) {
+	public Champ(	String name, 		int startYear, 		String nation,
+					String resultsUrl, 	String oddsWinUrl, 	String oddsUoUrl, String oddsHtUrl) {
+
 		this.name= name;
 		this.startYear= startYear;
 		this.setNation(nation);
+		
+		this.resultsUrl = resultsUrl;
+		this.oddsWinUrl = oddsWinUrl;
+		this.oddsUoUrl = oddsUoUrl;
+		this.oddsHtUrl = oddsHtUrl;
 	}
 
 	public int getId() {
@@ -69,22 +85,63 @@ public class Champ {
 		this.nation = nation;
 	}
 
-	public ChampImpPos getImpPos() {
-		return impPos;
+	public String getResultsUrl() {
+		return resultsUrl;
 	}
 
-	public void setImpPos(ChampImpPos impPos) {
-		this.impPos = impPos;
+	public void setResultsUrl(String resultsUrl) {
+		this.resultsUrl = resultsUrl;
 	}
 
-	public ChampUrls getUrls() {
-		return urls;
+	public String getOddsWinUrl() {
+		return oddsWinUrl;
 	}
 
-	public void setUrls(ChampUrls urls) {
-		this.urls = urls;
+	public void setOddsWinUrl(String oddsWinUrl) {
+		this.oddsWinUrl = oddsWinUrl;
 	}
+
+	public String getOddsUoUrl() {
+		return oddsUoUrl;
+	}
+
+	public void setOddsUoUrl(String oddsUoUrl) {
+		this.oddsUoUrl = oddsUoUrl;
+	}
+
+	public String getOddsHtUrl() {
+		return oddsHtUrl;
+	}
+
+	public void setOddsHtUrl(String oddsHtUrl) {
+		this.oddsHtUrl = oddsHtUrl;
+	}
+
 	
+//	public ChampImpPos getImpPos() {
+//		return impPos;
+//	}
+//
+//	public void setImpPos(ChampImpPos impPos) {
+//		this.impPos = impPos;
+//	}
+//
+//	public ChampUrls getUrls() {
+//		return urls;
+//	}
+//
+//	public void setUrls(ChampUrls urls) {
+//		this.urls = urls;
+//	}
+//
+//	public ChampRanCri getRanCri() {
+//		return ranCri;
+//	}
+//
+//	public void setRanCri(ChampRanCri ranCri) {
+//		this.ranCri = ranCri;
+//	}
+//	
 	
 	
 }

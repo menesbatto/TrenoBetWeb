@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 
@@ -25,6 +26,7 @@ public class _1X2Odds implements IBet{
 	private TimeType timeType;
 	
 	@ManyToOne
+	//@JoinColumn(name = "matchId")
 	private Matcho match;
 	
 	private Double _1;

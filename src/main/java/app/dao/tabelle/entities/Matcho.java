@@ -34,7 +34,7 @@ public class Matcho {
 	@ManyToOne
 	private Champ champ;
 	
-	@OneToMany(cascade = {CascadeType.ALL})
+	@OneToMany(cascade = CascadeType.ALL)//, mappedBy = "match")
 	private List<_1X2Odds> _1X2;
 	
 	

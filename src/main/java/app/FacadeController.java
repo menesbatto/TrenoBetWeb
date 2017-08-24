@@ -36,6 +36,7 @@ public class FacadeController {
     public @ResponseBody void initTipologiche () {
     	
     	utilityModel.execute();
+    	initChampTable();
     }
     
     @RequestMapping(value = "/initChampTable", method = RequestMethod.GET)
@@ -59,7 +60,7 @@ public class FacadeController {
     private ResultParserNew resultParserNew;
     @RequestMapping(value = "/avviaVecchio1", method = RequestMethod.GET)
     public void avviaVecchio1() {
-    	
+//    	initTipologiche();
     	resultParserNew.execute();
     }
     

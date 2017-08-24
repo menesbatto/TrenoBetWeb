@@ -35,7 +35,6 @@ public class TimeTypeDao {
 		timeTypeRepo.save(_1);
 		TimeType _2 = new TimeType("_2");
 		timeTypeRepo.save(_2);
-		TimeTypeEnum._1.set_1x2urlSuffix("pere");
 		
 	}
 	

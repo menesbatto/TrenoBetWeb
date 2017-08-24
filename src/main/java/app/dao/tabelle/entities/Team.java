@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -16,6 +17,7 @@ public class Team {
 	private String name;
 	
 	@ManyToOne
+//	@JoinColumn(name = "champ_id")
 	private Champ champ;
 
 	
@@ -24,7 +26,14 @@ public class Team {
 	}
 	public Team(String name, Champ champ) {
 		this.name = name;
-		this.champ = champ;
+		this.setChamp(champ);
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -40,12 +49,8 @@ public class Team {
 	public void setChamp(Champ champ) {
 		this.champ = champ;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
+
 	
 
 }
