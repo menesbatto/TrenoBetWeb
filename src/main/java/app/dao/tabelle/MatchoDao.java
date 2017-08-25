@@ -42,6 +42,7 @@ import app.logic._1_matchResultParser.modelNew.IBetBean;
 import app.logic._1_matchResultParser.modelNew.MatchBean;
 import app.logic._1_matchResultParser.modelNew.UoOddsBean;
 import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.utils.ChampEnum;
 import ma.glasnost.orika.MapperFacade;
 
 @Service
@@ -256,6 +257,13 @@ public class MatchoDao {
 		return ent;
 	}
 	
+	public int getDownloadedMatchByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		Long count = matchRepo.countByChamp(champ);
+		return count.intValue();
+	}
+	
+	
 	
 	// ###################################################################################################
 	
@@ -339,5 +347,7 @@ public class MatchoDao {
 //			timeTypeMap.put(element.getValue(), element);
 //		}	
 	}
+
+
 	
 }

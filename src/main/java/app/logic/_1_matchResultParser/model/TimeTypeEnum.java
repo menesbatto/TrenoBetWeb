@@ -5,7 +5,8 @@ import java.io.Serializable;
 public enum TimeTypeEnum implements Serializable{
 	 _final("?r=1#1X2;2", "?r=1#over-under;2", "?r=1#eh;2"),
 	 _1("?r=1#1X2;3", "?r=1#over-under;3", "?r=1#eh;3"),
-	 _2("?r=1#1X2;3", "?r=1#over-under;4", "?r=1#eh;4");
+	 _2("?r=1#1X2;4", "?r=1#over-under;4", "?r=1#eh;4");
+	 //_2("?r=1#1X2;3", "?r=1#over-under;4", "?r=1#eh;4");
 
 	private String uoUrlSuffix;
 	private String _1x2urlSuffix;

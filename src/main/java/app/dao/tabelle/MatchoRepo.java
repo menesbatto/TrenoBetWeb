@@ -15,6 +15,8 @@ import app.dao.tipologiche.entities.TimeType;
 public interface MatchoRepo extends PagingAndSortingRepository<Matcho, Long> {
 
 	List<Matcho> findAll();
+
+	Long countByChamp(Champ champ);
 //	List<Match> findByNameAndStartYearAndNation(String name, int startYear, String nation);
 //	
 //	List<Person> findDistinctPeopleByFirstNameOrLastNameIgnoreCase(String lastname, String firstname);

@@ -10,16 +10,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.dao.tabelle.MatchoRepo;
 import app.dao.tabelle.entities.Matcho;
-import app.logic.ResultParserNew;
 import app.logic.UtilityModel;
-import app.logic._1_matchResultParser.ResultParserNewModel;
+import app.logic._0_nextMatchesDownloader.NextMatchesDownloader;
+import app.logic._0_nextMatchesDownloader.MatchesDownloader;
+import app.logic._1_matchResultParser.PastMatchesDownlaoder;
+import app.logic._1_matchResultParser.ResultParserOLD;
 import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
 public class FacadeController {
 	@Autowired
-	private ResultParserNewModel eventsOddsDownloader;
+	private ResultParserOLD eventsOddsDownloaderOld;
 
 	@Autowired
 	private UtilityModel utilityModel;
@@ -27,7 +29,7 @@ public class FacadeController {
     @RequestMapping(value = "/eventsOddsDownloader", method = RequestMethod.GET)
     public @ResponseBody _1X2OddsBean eventsOddsDownloader () {
 		
-    	_1X2OddsBean betBean = eventsOddsDownloader.execute();
+    	_1X2OddsBean betBean = eventsOddsDownloaderOld.execute();
 //    	BetBean betBean = null;
 		return betBean;
 	}
@@ -56,12 +58,19 @@ public class FacadeController {
 		return findAll;
     }
     
+    
     @Autowired
-    private ResultParserNew resultParserNew;
+    private NextMatchesDownloader eventsOddsDownloader;
+    @RequestMapping(value = "/avviaVecchio0", method = RequestMethod.GET)
+    public void avviaVecchio0() {
+    	eventsOddsDownloader.execute();
+    }
+
+    @Autowired
+    private PastMatchesDownlaoder resultParser;
     @RequestMapping(value = "/avviaVecchio1", method = RequestMethod.GET)
     public void avviaVecchio1() {
-//    	initTipologiche();
-    	resultParserNew.execute();
+    	resultParser.execute();
     }
     
     

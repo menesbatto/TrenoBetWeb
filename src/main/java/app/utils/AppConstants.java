@@ -47,10 +47,10 @@ public class AppConstants {
 	
 	
 	public static String ENG_PREMIER_RESULTS = 					SITE_URL + "/soccer/england/premier-league/results";
-	public static String ENG_PREMIER_WIN_ODDS = 				SITE_URL + "/soccer/england/premier-league";
-	public static String ENG_PREMIER_UO_ODDS = 					ENG_PREMIER_WIN_ODDS + "over-under/";
-	public static String ENG_PREMIER_DOUBLE_CHANCE_ODDS = 		ENG_PREMIER_WIN_ODDS + "double-chance/";
-	public static String ENG_PREMIER_HALF_TIME_ODDS = 			ENG_PREMIER_WIN_ODDS + "half-time/";	
+	public static String ENG_PREMIER_NEXT_MATCHES = 				SITE_URL + "/soccer/england/premier-league";
+	public static String ENG_PREMIER_UO_ODDS = 					ENG_PREMIER_NEXT_MATCHES + "over-under/";
+	public static String ENG_PREMIER_DOUBLE_CHANCE_ODDS = 		ENG_PREMIER_NEXT_MATCHES + "double-chance/";
+	public static String ENG_PREMIER_HALF_TIME_ODDS = 			ENG_PREMIER_NEXT_MATCHES + "half-time/";	
 	
 //	public static String ENG_PREMIER_RESULTS = 					SITE_URL + "/soccer/italy/serie-a/results";
 //	public static String ENG_PREMIER_WIN_ODDS = 				"http://www.statto.com/football/odds/england/premier-league/";

@@ -1,4 +1,4 @@
-package app.logic;
+package app.logic._1_matchResultParser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.MatchoDao;
+import app.logic._0_nextMatchesDownloader.MatchesDownloader;
 import app.logic._1_matchResultParser.model.BetHouseEnum;
 import app.logic._1_matchResultParser.model.EhEnum;
 import app.logic._1_matchResultParser.model.EhTimeType;
@@ -33,7 +34,7 @@ import app.utils.IOUtils;
 import app.utils.Utils;
 
 @Service
-public class ResultParserNew {
+public class PastMatchesDownlaoder {
 
 	@Autowired
 	private MatchoDao matchDao;
@@ -47,11 +48,14 @@ public class ResultParserNew {
 //		allMatchResults = retrieveAllMatchResults();
 //		allTeams = retrieveTeams();
 //	}
-	
+	@Autowired
+	private MatchesDownloader matchesDownloader;
 	
 	public void execute(){
-		TimeTypeEnum._1.get_1x2urlSuffix();
-		
+		matchesDownloader.execute("Past");
+	}
+	
+	public void executeOld(){
 //		initStaticFields();
 		
 //		ArrayList<MatchResult> matchResult;
@@ -90,7 +94,8 @@ public class ResultParserNew {
 //			alreadySavedMatches = new ArrayList<MatchResult>();
 //		}
 		
-		int size = 0; // @TODO vedi a db quante partite hai gia salvato, e riprendi da li;
+		int size = matchDao.getDownloadedMatchByChamp(champ);
+		
 		Element matchesTable;
 //		ArrayList<MatchResult> matchesResultsSubset;
 		if (size < 50){

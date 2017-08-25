@@ -17,7 +17,7 @@ import app.logic._1_matchResultParser.modelNew.UoOddsBean;
 import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
 
 @Service
-public class ResultParserNewModel {
+public class ResultParserOLD {
 
 
 

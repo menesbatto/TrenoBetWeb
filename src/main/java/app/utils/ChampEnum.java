@@ -9,10 +9,7 @@ import java.util.Arrays;
 public enum ChampEnum {
 	
 	ENG_PREMIER			(	AppConstants.ENG_PREMIER_RESULTS,
-							AppConstants.ENG_PREMIER_WIN_ODDS, 	
-							AppConstants.ENG_PREMIER_UO_ODDS, 
-							AppConstants.ENG_PREMIER_HALF_TIME_ODDS,
-							AppConstants.ENG_PREMIER_HISTORY_RESULTS,
+							AppConstants.ENG_PREMIER_NEXT_MATCHES, 	
 							new Integer[]{ 1,3,4,7,17 }, 
 							new RankCritEnum[]{	RankCritEnum.POINTS, 
 												RankCritEnum.GOALS_DIFFERENCE, 
@@ -259,14 +256,11 @@ public enum ChampEnum {
 	
 	
 	
-	private ChampEnum(String resultsUrl, String oddsWinUrl, String oddsUoUrl, String oddsHtUrl, String resultPath, Integer[] importantPositions, RankCritEnum[] rankCriteria, String nation, String name, int startYear ){
+	private ChampEnum(String resultsUrl, String nextMatchesUrl, Integer[] importantPositions, RankCritEnum[] rankCriteria, String nation, String name, int startYear ){
 		this.importantPositions = new ArrayList<Integer>(Arrays.asList(importantPositions));
 		this.rankCriteria = new ArrayList<RankCritEnum>(Arrays.asList(rankCriteria));
 		this.resultsUrl = resultsUrl;
-		this.oddsWinUrl = oddsWinUrl;
-		this.oddsUoUrl = oddsUoUrl;
-		this.oddsHtUrl = oddsHtUrl;
-		this.resultPath = resultPath;
+		this.nextMatchesUrl = nextMatchesUrl;
 		this.nation = nation;
 		this.name = name;
 		this.startYear = startYear;
@@ -275,10 +269,7 @@ public enum ChampEnum {
     private final ArrayList<Integer> importantPositions;
     private final ArrayList<RankCritEnum> rankCriteria;
     private final String resultsUrl;
-    private final String oddsWinUrl;
-    private final String oddsUoUrl;
-    private final String oddsHtUrl;
-    private final String resultPath;
+    private final String nextMatchesUrl;
     private final String nation;
     private final String name;
     private final int startYear;
@@ -291,20 +282,8 @@ public enum ChampEnum {
         return importantPositions;
     }
 
-	public String getOddsWinUrl() {
-		return oddsWinUrl;
-	}
-
-	public String getOddsUoUrl() {
-		return oddsUoUrl;
-	}
-
-	public String getOddsHtUrl() {
-		return oddsHtUrl;
-	}
-
-	public String getResultPath() {
-		return resultPath;
+	public String getNextMatchesUrl() {
+		return nextMatchesUrl;
 	}
 
 	public String getResultsUrl() {

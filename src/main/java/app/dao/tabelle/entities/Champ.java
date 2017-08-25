@@ -21,9 +21,7 @@ public class Champ {
 	private String nation;
 	
 	private String resultsUrl;
-	private String oddsWinUrl;
-	private String oddsUoUrl;
-	private String oddsHtUrl;
+	private String nextMatchesUrl;
 	
 //	@OneToOne(cascade=CascadeType.ALL, mappedBy = "champ") //nome nella ENTITY ChampUrls del campo che referenzia Champ
 //	private ChampUrls urls;
@@ -41,16 +39,14 @@ public class Champ {
 	}
 
 	public Champ(	String name, 		int startYear, 		String nation,
-					String resultsUrl, 	String oddsWinUrl, 	String oddsUoUrl, String oddsHtUrl) {
+					String resultsUrl, 	String nextMatchesUrl) {
 
 		this.name= name;
 		this.startYear= startYear;
 		this.setNation(nation);
 		
 		this.resultsUrl = resultsUrl;
-		this.oddsWinUrl = oddsWinUrl;
-		this.oddsUoUrl = oddsUoUrl;
-		this.oddsHtUrl = oddsHtUrl;
+		this.nextMatchesUrl = nextMatchesUrl;
 	}
 
 	public int getId() {
@@ -93,31 +89,14 @@ public class Champ {
 		this.resultsUrl = resultsUrl;
 	}
 
-	public String getOddsWinUrl() {
-		return oddsWinUrl;
+	public String getNextMatchesUrl() {
+		return nextMatchesUrl;
 	}
 
-	public void setOddsWinUrl(String oddsWinUrl) {
-		this.oddsWinUrl = oddsWinUrl;
+	public void setNextMatchesUrl(String nextMatchesUrl) {
+		this.nextMatchesUrl = nextMatchesUrl;
 	}
 
-	public String getOddsUoUrl() {
-		return oddsUoUrl;
-	}
-
-	public void setOddsUoUrl(String oddsUoUrl) {
-		this.oddsUoUrl = oddsUoUrl;
-	}
-
-	public String getOddsHtUrl() {
-		return oddsHtUrl;
-	}
-
-	public void setOddsHtUrl(String oddsHtUrl) {
-		this.oddsHtUrl = oddsHtUrl;
-	}
-
-	
 //	public ChampImpPos getImpPos() {
 //		return impPos;
 //	}

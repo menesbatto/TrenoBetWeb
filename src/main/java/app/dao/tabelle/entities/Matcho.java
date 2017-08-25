@@ -23,11 +23,11 @@ public class Matcho {
 	@ManyToOne
 	private Team awayTeam;
 	
-	private int fullTimeHomeGoals;
-	private int fullTimeAwayGoals;
+	private Integer fullTimeHomeGoals;
+	private Integer fullTimeAwayGoals;
 
-	private int halfTimeHomeGoals;
-	private int halfTimeAwayGoals;
+	private Integer halfTimeHomeGoals;
+	private Integer halfTimeAwayGoals;
 	
 	private Date matchDate;
 	
@@ -80,35 +80,35 @@ public class Matcho {
 		this.awayTeam = awayTeam;
 	}
 
-	public int getFullTimeHomeGoals() {
+	public Integer getFullTimeHomeGoals() {
 		return fullTimeHomeGoals;
 	}
 
-	public void setFullTimeHomeGoals(int fullTimeHomeGoals) {
+	public void setFullTimeHomeGoals(Integer fullTimeHomeGoals) {
 		this.fullTimeHomeGoals = fullTimeHomeGoals;
 	}
 
-	public int getFullTimeAwayGoals() {
+	public Integer getFullTimeAwayGoals() {
 		return fullTimeAwayGoals;
 	}
 
-	public void setFullTimeAwayGoals(int fullTimeAwayGoals) {
+	public void setFullTimeAwayGoals(Integer fullTimeAwayGoals) {
 		this.fullTimeAwayGoals = fullTimeAwayGoals;
 	}
 
-	public int getHalfTimeHomeGoals() {
+	public Integer getHalfTimeHomeGoals() {
 		return halfTimeHomeGoals;
 	}
 
-	public void setHalfTimeHomeGoals(int halfTimeHomeGoals) {
+	public void setHalfTimeHomeGoals(Integer halfTimeHomeGoals) {
 		this.halfTimeHomeGoals = halfTimeHomeGoals;
 	}
 
-	public int getHalfTimeAwayGoals() {
+	public Integer getHalfTimeAwayGoals() {
 		return halfTimeAwayGoals;
 	}
 
-	public void setHalfTimeAwayGoals(int halfTimeAwayGoals) {
+	public void setHalfTimeAwayGoals(Integer halfTimeAwayGoals) {
 		this.halfTimeAwayGoals = halfTimeAwayGoals;
 	}
 

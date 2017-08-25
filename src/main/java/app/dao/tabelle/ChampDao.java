@@ -104,7 +104,7 @@ public class ChampDao {
 
 	private Champ saveChamp(ChampEnum champEnum) {
 		Champ champEnt = new Champ(	champEnum.getName(),		champEnum.getStartYear(), 	champEnum.getNation(), 
-									champEnum.getResultsUrl(), 	champEnum.getOddsWinUrl(), 	champEnum.getOddsUoUrl(), champEnum.getOddsHtUrl());
+									champEnum.getResultsUrl(), 	champEnum.getNextMatchesUrl());
 		champRepo.save(champEnt);
 		return champEnt;
 	}
