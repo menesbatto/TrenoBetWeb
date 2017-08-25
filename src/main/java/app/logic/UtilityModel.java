@@ -13,7 +13,7 @@ import app.dao.tipologiche.HomeVariationTypeDao;
 import app.dao.tipologiche.RankingCriteriaDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.UoThresholdTypeDao;
-import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import app.utils.ChampEnum;
 
 @Service

@@ -1,4 +1,4 @@
-package app.logic._0_nextMatchesDownloader;
+package app.logic._1_matchesDownlaoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

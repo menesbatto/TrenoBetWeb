@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
-import app.logic._1_matchResultParser.model.TimeTypeEnum;
+import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 
 @Service
 public class TimeTypeDao {

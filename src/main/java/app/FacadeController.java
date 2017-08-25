@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import app.dao.tabelle.MatchoRepo;
 import app.dao.tabelle.entities.Matcho;
 import app.logic.UtilityModel;
-import app.logic._0_nextMatchesDownloader.NextMatchesDownloader;
-import app.logic._0_nextMatchesDownloader.MatchesDownloader;
-import app.logic._1_matchResultParser.PastMatchesDownlaoder;
-import app.logic._1_matchResultParser.ResultParserOLD;
-import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.logic._1_matchesDownlaoder.MatchesDownloader;
+import app.logic._1_matchesDownlaoder.NextMatchesDownloader;
+import app.logic._1_matchesDownlaoder.PastMatchesDownlaoder;
+import app.logic._1_matchesDownlaoder.ResultParserOLD;
+import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)

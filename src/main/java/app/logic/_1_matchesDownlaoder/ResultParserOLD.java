@@ -1,4 +1,4 @@
-package app.logic._1_matchResultParser;
+package app.logic._1_matchesDownlaoder;
 
 
 import java.util.ArrayList;
@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.MatchoDao;
-import app.logic._1_matchResultParser.modelNew.ChampBean;
-import app.logic._1_matchResultParser.modelNew.EhOddsBean;
-import app.logic._1_matchResultParser.modelNew.MatchBean;
-import app.logic._1_matchResultParser.modelNew.TeamBean;
-import app.logic._1_matchResultParser.modelNew.UoOddsBean;
-import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.logic._1_matchesDownlaoder.modelNew.ChampBean;
+import app.logic._1_matchesDownlaoder.modelNew.EhOddsBean;
+import app.logic._1_matchesDownlaoder.modelNew.MatchBean;
+import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
+import app.logic._1_matchesDownlaoder.modelNew.UoOddsBean;
+import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 
 @Service
 public class ResultParserOLD {

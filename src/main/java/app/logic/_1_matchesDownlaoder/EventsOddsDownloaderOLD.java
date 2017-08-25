@@ -1,4 +1,4 @@
-package app.logic._0_eventOddsDownloader;
+package app.logic._1_matchesDownlaoder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,8 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import app.logic._0_eventOddsDownloader.model.BetType;
-import app.logic._0_eventOddsDownloader.model.EventOdds;
+import app.logic._1_matchesDownlaoder.model.BetType;
+import app.logic._1_matchesDownlaoder.model.EventOdds;
 import app.utils.AppConstants;
 import app.utils.ChampEnum;
 import app.utils.HttpUtils;

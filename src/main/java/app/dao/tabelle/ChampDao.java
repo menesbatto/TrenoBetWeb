@@ -15,7 +15,7 @@ import app.dao.tabelle.entities.Champ;
 import app.dao.tipologiche.RankingCriteriaDao;
 import app.dao.tipologiche.RankingCriteriaRepo;
 import app.dao.tipologiche.entities.RankingCriteria;
-import app.logic._1_matchResultParser.modelNew.ChampBean;
+import app.logic._1_matchesDownlaoder.modelNew.ChampBean;
 import app.utils.AppConstants;
 import app.utils.ChampEnum;
 import app.utils.RankCritEnum;

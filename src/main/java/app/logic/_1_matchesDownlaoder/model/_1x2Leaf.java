@@ -1,4 +1,4 @@
-package app.logic._1_matchResultParser.model;
+package app.logic._1_matchesDownlaoder.model;
 
 import java.io.Serializable;
 

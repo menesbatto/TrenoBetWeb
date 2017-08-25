@@ -14,9 +14,9 @@ import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
-import app.logic._1_matchResultParser.modelNew.EhOddsBean;
-import app.logic._1_matchResultParser.modelNew.UoOddsBean;
-import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.logic._1_matchesDownlaoder.modelNew.EhOddsBean;
+import app.logic._1_matchesDownlaoder.modelNew.UoOddsBean;
+import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import ma.glasnost.orika.MapperFacade;
 
 @Service

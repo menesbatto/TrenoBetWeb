@@ -8,7 +8,7 @@ import app.dao.tipologiche.BetHouseDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
-import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import ma.glasnost.orika.MapperFacade;
 
 @Service

@@ -6,7 +6,7 @@ import ma.glasnost.orika.impl.ConfigurableMapper;
 import org.springframework.stereotype.Component;
 
 import app.dao.tabelle.entities._1X2Odds;
-import app.logic._1_matchResultParser.modelNew._1X2OddsBean;
+import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
  
 @Component
 public class MyCustomMapper extends ConfigurableMapper {

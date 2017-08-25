@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.Team;
-import app.logic._1_matchResultParser.modelNew.TeamBean;
+import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
 import app.utils.ChampEnum;
 
 @Service

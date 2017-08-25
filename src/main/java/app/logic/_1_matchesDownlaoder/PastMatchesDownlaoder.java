@@ -1,4 +1,4 @@
-package app.logic._0_nextMatchesDownloader;
+package app.logic._1_matchesDownlaoder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,17 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.MatchoDao;
-import app.logic._1_matchResultParser.model.BetHouseEnum;
-import app.logic._1_matchResultParser.model.EhEnum;
-import app.logic._1_matchResultParser.model.EhTimeType;
-import app.logic._1_matchResultParser.model.MatchResult;
-import app.logic._1_matchResultParser.model.TimeTypeEnum;
-import app.logic._1_matchResultParser.model.UoFull;
-import app.logic._1_matchResultParser.model.UoLeaf;
-import app.logic._1_matchResultParser.model.UoThresholdEnum;
-import app.logic._1_matchResultParser.model.UoTimeType;
-import app.logic._1_matchResultParser.model._1x2Full;
-import app.logic._1_matchResultParser.model._1x2Leaf;
+import app.logic._1_matchesDownlaoder.model.BetHouseEnum;
+import app.logic._1_matchesDownlaoder.model.EhEnum;
+import app.logic._1_matchesDownlaoder.model.EhTimeType;
+import app.logic._1_matchesDownlaoder.model.MatchResult;
+import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
+import app.logic._1_matchesDownlaoder.model.UoFull;
+import app.logic._1_matchesDownlaoder.model.UoLeaf;
+import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
+import app.logic._1_matchesDownlaoder.model.UoTimeType;
+import app.logic._1_matchesDownlaoder.model._1x2Full;
+import app.logic._1_matchesDownlaoder.model._1x2Leaf;
 import app.utils.AppConstants;
 import app.utils.ChampEnum;
 import app.utils.HttpUtils;
@@ -33,46 +33,75 @@ import app.utils.IOUtils;
 import app.utils.Utils;
 
 @Service
-public class MatchesDownloader {
+public class PastMatchesDownlaoder {
 
 	@Autowired
 	private MatchoDao matchDao;
 	
+//	private HashMap<ChampEnum, ArrayList<MatchResult>> allMatchResults;
+//	private HashMap<ChampEnum, ArrayList<String>> allTeams;
 	
 	
-	public void execute(String type){
+	
+//	private void initStaticFields() {
+//		allMatchResults = retrieveAllMatchResults();
+//		allTeams = retrieveTeams();
+//	}
+	@Autowired
+	private MatchesDownloader matchesDownloader;
+	
+	public void execute(){
+		matchesDownloader.execute("Past");
+	}
+	
+	public void executeOld(){
+//		initStaticFields();
 		
+//		ArrayList<MatchResult> matchResult;
+		ArrayList<String> teams;
+
 		//Ciclo su tutti i campionati per i risultati dei match giocati e le quote
 		for (ChampEnum champ : ChampEnum.values()){
+
+			int savedMatchesNum = downloadChampionshipResults(champ.getResultsUrl(), champ);
+			//allMatchResults.put(champ, matchResult);
 			
-			int savedMatchesNum = downloadChampionshipResults(champ, type);
+//			teams = getTeams(matchResult);
+//			allTeams.put(champ, teams);
+//			IOUtils.write(AppConstants.TEAMS_PATH, allTeams);
+
+//			saveAllMatchesResults();
 		}
 		
+//		IOUtils.write(AppConstants.TEAMS_PATH, allTeams);
+//		IOUtils.write(AppConstants.MATCHES_RESULTS_PATH, allMatchResults);
+			
 	}
 
 	
-	private int downloadChampionshipResults(ChampEnum champ, String type) {
-		
-		String champSuffixUrl; 
-		if (type == "Next")
-			champSuffixUrl = champ.getNextMatchesUrl();
-		else //if (type == "Past")
-			champSuffixUrl = champ.getResultsUrl();
-		
+	private int downloadChampionshipResults(String champSuffixUrl, ChampEnum champ) {
 		Document doc = null;
 		
 		String champSubsetUrl = champSuffixUrl; 
 		doc = HttpUtils.getHtmlPage(champSubsetUrl);
 
-		int size;
-		if (type == "Next")
-			size = 0;
-		else //if (type == "Past")
-			size = matchDao.getDownloadedMatchByChamp(champ); 
+//		ArrayList<MatchResult> alreadySavedMatches = allMatchResults.get(champ);
+//		int size = 0;
+//		if (alreadySavedMatches != null){
+//			size = alreadySavedMatches.size();
+//		}else {
+//			alreadySavedMatches = new ArrayList<MatchResult>();
+//		}
+		
+		int size = matchDao.getDownloadedMatchByChamp(champ);
 		
 		Element matchesTable;
+//		ArrayList<MatchResult> matchesResultsSubset;
 		if (size < 50){
 			matchesTable = doc.getElementById("tournamentTable");
+//			matchesResultsSubset = createMatches(matchesTable, champSubsetUrl, champ);
+//			alreadySavedMatches.addAll(matchesResultsSubset);
+//			saveAllMatchesResults();
 			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ);
 			size = savedMatchesNum;
 		}
@@ -87,6 +116,9 @@ public class MatchesDownloader {
 				champSubsetUrl = champSuffixUrl + "/#/page/" + i + "/";
 				doc = HttpUtils.getHtmlPage(champSubsetUrl);
 				matchesTable = doc.getElementById("tournamentTable");
+//				matchesResultsSubset = createMatches(matchesTable, champSubsetUrl, champ);
+//				alreadySavedMatches.addAll(matchesResultsSubset);
+//				saveAllMatchesResults();
 				int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ);
 				size += savedMatchesNum;
 			}
@@ -98,6 +130,7 @@ public class MatchesDownloader {
 	
 	
 	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ) {
+//		ArrayList<MatchResult> matchesResults = new ArrayList<MatchResult>();
 		Elements tableRows = matchesTable.getElementsByTag("tr");
 		Date matchDate = null;
 		MatchResult matchResult = null;
@@ -108,30 +141,14 @@ public class MatchesDownloader {
 		Element obj2 = tableRows.get(1); // remember first item
 		Element obj3 = tableRows.get(2); // remember first item
 		Element obj4 = tableRows.get(3); // remember first item
-		Element obj5 = tableRows.get(4); // remember first item
-		Element obj6 = tableRows.get(5); // remember first item
-		Element obj7 = tableRows.get(6); // remember first item
-		Element obj8 = tableRows.get(7); // remember first item
 		tableRows.clear(); // clear complete list
 		tableRows.add(obj); // add first item
 		tableRows.add(obj2); // add first item
 		tableRows.add(obj3); // add first item
 		tableRows.add(obj4); // add first item
-		tableRows.add(obj5); // add first item
-		tableRows.add(obj6); // add first item
-		tableRows.add(obj7); // add first item
-		tableRows.add(obj8); // add first item
 		// VIA 
 		
 		
-//		<tr class="odd" xeid="EVzOVbsd">
-//		 <td class="table-time datet t1503756000-1-1-0-0 ">14:00</td>
-//		 <td class="name table-participant" colspan="2"><a href="/soccer/england/premier-league/watford-brighton-EVzOVbsd/">Watford - Brighton</a></td>
-//		 <td class="odds-nowrp" xodd="1.9" xoid="E-2odiqxv464x0x6d3k2"><a href="" onclick="globals.ch.togle(this , 'E-2odiqxv464x0x6d3k2');return false;" xparam="odds_text">1.90</a></td>
-//		 <td class="odds-nowrp" xodd="3.36" xoid="E-2odiqxv498x0x0"><a href="" onclick="globals.ch.togle(this , 'E-2odiqxv498x0x0');return false;" xparam="odds_text">3.36</a></td>
-//		 <td class="odds-nowrp" xodd="4.19" xoid="E-2odiqxv464x0x6d3k3"><a href="" onclick="globals.ch.togle(this , 'E-2odiqxv464x0x6d3k3');return false;" xparam="odds_text">4.19</a></td>
-//		 <td class="center info-value">6</td>
-//		</tr>
 		
 		int savedMatches = 0;
 		for (Element row : tableRows){
@@ -144,20 +161,17 @@ public class MatchesDownloader {
 					dateString = dateString.substring(7) + " 2017";
 				else if (dateString.contains("Yesterday"))
 					dateString = dateString.substring(11) + " 2017";
-				else if (dateString.contains("Tomorrow"))
-					dateString = dateString.substring(10) + " 2017";
 				
 				matchDate = Utils.convertDateString(dateString); 
 			}
-//			else if (row.hasClass("deactivate")){ 
-//			else if (row.hasClass("odd") || row.hasAttr("heid")){ //next xxx
-			else if (row.hasClass("deactivate") || row.hasClass("odd") || row.hasAttr("heid")){ //results
+			else if (row.hasClass("deactivate")){
 					long startTime = System.nanoTime();
 					System.out.println("Match " + matchNum++);
 				matchResult = createMatchResult(row, matchDate, champSubsetUrl); 
 				matchResult.setChamp(champ);
 				matchDao.save(matchResult);
 				savedMatches++;
+//				matchesResults.add(matchResult);
 				
 					long currentTime = System.nanoTime();
 					long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
@@ -172,9 +186,26 @@ public class MatchesDownloader {
 	}
 
 
+	
+//	private void saveAllMatchesResults() {
+//		IOUtils.write(AppConstants.MATCHES_RESULTS_PATH, allMatchResults);
+//	}
+
 	private static MatchResult createMatchResult(Element row, Date matchDate, String champSubsetUrl) {
 		
 		MatchResult m = new MatchResult();
+
+		
+//		<tr class="odd deactivate" xeid="dQnalo0H">
+//		 <td class="table-time datet t1495997100-1-1-0-0 ">18:45</td>
+//		 <td class="name table-participant"><a href="/soccer/italy/serie-a/crotone-lazio-dQnalo0H/"><span class="bold">Crotone</span> - Lazio</a></td>
+//		 <td class="center bold table-odds table-score">3:1</td>
+//		 <td class="odds-nowrp" xoid="E-2g6u2xv464x0x5cmkr" xodd="xz88fxzp	result-ok 	"><a href="" onclick="globals.ch.togle(this , 'E-2g6u2xv464x0x5cmkr');return false;" xparam="odds_text">2.70</a></td>
+//		 <td class="odds-nowrp" xoid="E-2g6u2xv498x0x0" 	xodd="cz8fczpe				"><a href="" onclick="globals.ch.togle(this , 'E-2g6u2xv498x0x0');return false;" xparam="odds_text">3.75</a></td>
+//		 <td class="odds-nowrp" xoid="E-2g6u2xv464x0x5cmks" xodd="xzpfxztc				"><a href="" onclick="globals.ch.togle(this , 'E-2g6u2xv464x0x5cmks');return false;" xparam="odds_text">2.43</a></td>
+//		 <td class="center info-value">7</td>
+//		</tr>
+
 		
 		// GENERAL INFO
 		String time = row.getElementsByClass("datet").get(0).text();
@@ -197,24 +228,11 @@ public class MatchesDownloader {
 		String awayTeam = teams.split(" - ")[1];;
 		m.setAwayTeam(awayTeam);
 		
-		Elements tableScoreElems = row.getElementsByClass("table-score");
-		if (tableScoreElems != null && !tableScoreElems.isEmpty()) {
-			String result = tableScoreElems.get(0).text();
-			Integer homeScoreScoredGoals = Integer.valueOf(result.split(":")[0]);
-			m.setFTHG(homeScoreScoredGoals);
-			Integer awayScoredGoals = Integer.valueOf(result.split(":")[1]);
-			m.setFTAG(awayScoredGoals);
-			
-			String finalResult;
-			if (homeScoreScoredGoals > awayScoredGoals)
-				finalResult = "H";
-			else if (homeScoreScoredGoals == awayScoredGoals)
-				finalResult = "D";
-			else
-				finalResult = "A";
-				
-			m.setFTR(finalResult);
-		}
+		String result = row.getElementsByClass("table-score").get(0).text();
+		Integer homeScoreScoredGoals = Integer.valueOf(result.split(":")[0]);
+		m.setFTHG(homeScoreScoredGoals);
+		Integer awayScoredGoals = Integer.valueOf(result.split(":")[1]);
+		m.setFTAG(awayScoredGoals);
 		
 		Double H = Double.valueOf(row.getElementsByClass("odds-nowrp").get(0).text());
 		Double D = Double.valueOf(row.getElementsByClass("odds-nowrp").get(1).text());
@@ -225,30 +243,46 @@ public class MatchesDownloader {
 		_1x2Leaf avg1x2Odds = new _1x2Leaf(H, D, A);
 		m.get_1x2().get(TimeTypeEnum._final).setAvg1x2Odds(avg1x2Odds);
 		
+		
+		
+		String finalResult;
+		if (homeScoreScoredGoals > awayScoredGoals)
+			finalResult = "H";
+		else if (homeScoreScoredGoals == awayScoredGoals)
+			finalResult = "D";
+		else
+			finalResult = "A";
+			
+		m.setFTR(finalResult);
+		
+
+		
 		// ADDITIONAL MATCH INFO
-		Elements elementsByTag = teamsElement.getElementsByTag("a");
-		String matchSuffixUrl = elementsByTag.last().attr("href");
+		String matchSuffixUrl = teamsElement.getElementsByTag("a").attr("href");
 		
 		// 		1x2
 		String matchUrl = AppConstants.SITE_URL + matchSuffixUrl;
 		populateMatch1X2(m, matchUrl);
+//		System.out.println(m.get_1x2());
 		
-//		//		ASIAN HANDICAP
+		//		ASIAN HANDICAP
 //		populateMatchAH(m, matchUrl);
-//
-//		// 		UNDER OVER
-		populateMatchUO(m, matchUrl);
-//		
-//		// 		EUROPEAN HANDICAP
-		populateMatchEH(m, matchUrl);
-//		
-//		// 		DOUBLE CHANCE
+
+		// 		UNDER OVER
+//		populateMatchUO(m, matchUrl);
+//		System.out.println(m.getUo());
+		
+		// 		EUROPEAN HANDICAP
+//		populateMatchEH(m, matchUrl);
+//		System.out.println(m.getEh().get(TimeTypeEnum._2));
+		
+		// 		DOUBLE CHANCE
 //		populateMatchDC(m, matchUrl);
-//		
-//		// 		CORRECT SCORE
+		
+		// 		CORRECT SCORE
 //		populateMatchCS(m, matchUrl);
-//		
-//		// 		DRAW NO BET
+		
+		// 		DRAW NO BET
 //		populateMatchDNB(m, matchUrl);
 		
 //		System.out.println(m);
@@ -333,6 +367,32 @@ public class MatchesDownloader {
 	private static UoFull getUoThreshold(UoThresholdEnum uoThresholdEnum, UoTimeType uoType) {
 		UoFull uoThreshold = null;
 		uoThreshold = uoType.getMap().get(uoThresholdEnum);
+//		switch (uoThresholdEnum) {
+//		case _0_5:
+//			uoThreshold = uoType.getUo0_5(); 	break;
+//		case _1_5:
+//			uoThreshold = uoType.getUo1_5(); 	break;
+//		case _2_5:
+//			uoThreshold = uoType.getUo2_5();	break;
+//		case _3_5:
+//			uoThreshold = uoType.getUo3_5(); 	break;
+//		case _4_5:
+//			uoThreshold = uoType.getUo4_5(); 	break;
+//		case _5_5:
+//			uoThreshold = uoType.getUo5_5(); 	break;
+//		case _6_5:
+//			uoThreshold = uoType.getUo6_5(); 	break;
+//		case _7_5:
+//			uoThreshold = uoType.getUo7_5(); 	break;
+//		case _8_5:
+//			uoThreshold = uoType.getUo7_5(); 	break;
+//		case _9_5:
+//			uoThreshold = uoType.getUo7_5(); 	break;
+//		case _10_5:
+//			uoThreshold = uoType.getUo7_5(); 	break;
+//		default:
+//			break;
+//		}
 		return uoThreshold;
 	}
 
@@ -356,6 +416,7 @@ public class MatchesDownloader {
 	private static void populateMatchEHSpecificType(MatchResult m, String matchUrl, TimeTypeEnum timeType) {
 		String infoUrl = matchUrl + timeType.getEhUrlSuffix();
 		Document matchPage = HttpUtils.getHtmlPageEH(infoUrl);
+//		System.out.println(matchPage);
 		Elements handicaps = matchPage.getElementById("odds-data-table").getElementsByClass("table-container");
 
 		
@@ -416,6 +477,46 @@ public class MatchesDownloader {
 	private static _1x2Full getEhThreshold(EhEnum ehThresholdEnum, EhTimeType ehTimeType) {
 		_1x2Full handicap = null;
 		handicap = ehTimeType.getMap().get(ehThresholdEnum);
+//		switch (ehThresholdEnum) {
+//		case m1:
+//			handicap = ehTimeType.getM1(); 	break;
+//		case m2:
+//			handicap = ehTimeType.getM2(); 	break;
+//		case m3:
+//			handicap = ehTimeType.getM3(); 	break;
+//		case m4:
+//			handicap = ehTimeType.getM4(); 	break;
+//		case m5:
+//			handicap = ehTimeType.getM5(); 	break;
+//		case m6:
+//			handicap = ehTimeType.getM6(); 	break;
+//		case m7:
+//			handicap = ehTimeType.getM6(); 	break;
+//		case m8:
+//			handicap = ehTimeType.getM6(); 	break;
+//		case m9:
+//			handicap = ehTimeType.getM6(); 	break;
+//		case p1:
+//			handicap = ehTimeType.getP1(); 	break;
+//		case p2:
+//			handicap = ehTimeType.getP2(); 	break;
+//		case p3:
+//			handicap = ehTimeType.getP3(); 	break;
+//		case p4:
+//			handicap = ehTimeType.getP4(); 	break;
+//		case p5:
+//			handicap = ehTimeType.getP5(); 	break;
+//		case p6:
+//			handicap = ehTimeType.getP6(); 	break;
+//		case p7:
+//			handicap = ehTimeType.getP6(); 	break;
+//		case p8:
+//			handicap = ehTimeType.getP6(); 	break;
+//		case p9:
+//			handicap = ehTimeType.getP6(); 	break;
+//		default:
+//			break;
+//		}
 		return handicap;
 	}
 
@@ -445,15 +546,12 @@ public class MatchesDownloader {
 		String infoUrl = matchUrl + timeType.get_1x2urlSuffix();
 		Document infoPage = HttpUtils.getHtmlPage(infoUrl);
 		
-		Elements halfTimeResultElems = infoPage.getElementsByClass("result");		//
-		if (halfTimeResultElems != null && !halfTimeResultElems.isEmpty()) {
+		String halfTimeResultString = infoPage.getElementsByClass("result").get(0).text().split("\\(")[1].split(",")[0];
+		Integer hthg = Integer.valueOf(halfTimeResultString.split(":")[0]);
+		Integer htag = Integer.valueOf(halfTimeResultString.split(":")[1]);
+		m.setHTHG(hthg);
+		m.setHTAG(htag);
 		
-			String halfTimeResultString = halfTimeResultElems.get(0).text().split("\\(")[1].split(",")[0];
-			Integer hthg = Integer.valueOf(halfTimeResultString.split(":")[0]);
-			Integer htag = Integer.valueOf(halfTimeResultString.split(":")[1]);
-			m.setHTHG(hthg);
-			m.setHTAG(htag);
-		}
 		Elements betHouses = infoPage.getElementById("col-content").getElementsByClass("detail-odds").get(0).getElementsByClass("lo");
 		
 		_1x2Full _1x2 = m.get_1x2().get(timeType);

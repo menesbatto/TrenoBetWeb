@@ -1,4 +1,4 @@
-package app.logic._1_matchResultParser.modelNew;
+package app.logic._1_matchesDownlaoder.modelNew;
 
 import java.io.Serializable;
 
@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import app.dao.tabelle.entities.Matcho;
 
-public class EhOddsBean implements Serializable, IBetBean{
+public class _1X2OddsBean implements Serializable, IBetBean{
 	
-	private static final long serialVersionUID = 2839273854528890133L;
+	private static final long serialVersionUID = 2839273854528890162L;
 
 	private int id;
 	
@@ -26,16 +26,18 @@ public class EhOddsBean implements Serializable, IBetBean{
 	
 	private String timeTypeString;
 	
-	private String homeVariationTypeString;
-	
 	private MatchBean match;
 	
+	@JsonIgnore
+	private String toIgnore;
 	
-	public EhOddsBean() {
+	
+	public _1X2OddsBean() {
+		toIgnore = "non lo vedo";
 	}
 
 
-	public EhOddsBean(String _1, String _X, String _2) {
+	public _1X2OddsBean(String _1, String _X, String _2) {
  		this._1 = _1;
 		this._2 = _2;
 		this._X = _X;
@@ -64,6 +66,14 @@ public class EhOddsBean implements Serializable, IBetBean{
 	public void set_2(String _2) {
 		this._2 = _2;
 	}
+
+	public String getToIgnore() {
+		return toIgnore;
+	}
+	public void setToIgnore(String toIgnore) {
+		this.toIgnore = toIgnore;
+	}
+
 
 	public int getId() {
 		return id;
@@ -102,16 +112,6 @@ public class EhOddsBean implements Serializable, IBetBean{
 
 	public void setMatch(MatchBean match) {
 		this.match = match;
-	}
-
-
-	public String getHomeVariationTypeString() {
-		return homeVariationTypeString;
-	}
-
-
-	public void setHomeVariationTypeString(String homeVariationTypeString) {
-		this.homeVariationTypeString = homeVariationTypeString;
 	}
 
 
