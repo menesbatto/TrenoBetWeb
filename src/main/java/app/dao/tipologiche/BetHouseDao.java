@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.TimeType;
+import app.logic._1_matchesDownlaoder.model.BetHouseEnum;
+import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 
 @Service
 public class BetHouseDao {
@@ -18,13 +20,16 @@ public class BetHouseDao {
 	
 	private HashMap<String, BetHouse> cacheMap;
 	
-	public BetHouse findByValue(String betHouseString) {
+	private HashMap<String, BetHouseEnum> cacheMapBean;
+
+	
+	public BetHouse findByValue(String value) {
 		if (cacheMap == null || cacheMap.isEmpty())
 			initCacheMap();
 			
-		BetHouse betHouse = cacheMap.get(betHouseString);
+		BetHouse entity = cacheMap.get(value);
 		
-		return betHouse;
+		return entity;
 	}
 	
 	public void initTable() {
@@ -58,12 +63,26 @@ public class BetHouseDao {
 			cacheMap.put(element.getValue(), element);
 		}	
 	}
+
+	public BetHouseEnum findBeanByEnt(BetHouse ent) {
+		if (cacheMapBean == null || cacheMapBean.isEmpty())
+			initCacheMapBean();
+		
+		BetHouseEnum bean = cacheMapBean.get(ent.getValue());
+		
+		return bean;
+	}
 	
-//	private HashMap<>
-//	
-//	public List<BetHouse> getAllBetHouses() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	
+	
+	private void initCacheMapBean() {
+		cacheMapBean = new HashMap<String, BetHouseEnum>();
+		Iterable<BetHouse> findAll = betHouseRepo.findAll();
+		for (Iterator<BetHouse> iter = findAll.iterator(); iter.hasNext(); ) {
+			BetHouse element = iter.next();
+			BetHouseEnum bean = BetHouseEnum.valueOf(element.getValue());
+			cacheMapBean.put(element.getValue(), bean);
+		}
+	}
 
 }

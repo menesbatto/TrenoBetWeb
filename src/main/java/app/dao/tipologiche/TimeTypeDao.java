@@ -18,18 +18,31 @@ public class TimeTypeDao {
 	private TimeTypeRepo timeTypeRepo;
 	
 	private HashMap<String, TimeType> cacheMap;
+
+	private HashMap<String, TimeTypeEnum> cacheMapBean;
+
 	
-	public TimeType findByValue(String betHouseString) {
+	
+	public TimeType findByValue(String value) {
 		if (cacheMap == null || cacheMap.isEmpty())
 			initCacheMap();
 			
-		TimeType tymeType = cacheMap.get(betHouseString);
+		TimeType entity = cacheMap.get(value);
 		
-		return tymeType;
+		return entity;
+	}
+
+	public TimeTypeEnum findBeanByEnt(TimeType ent) {
+		if (cacheMapBean == null || cacheMapBean.isEmpty())
+			initCacheMapBean();
+		
+		TimeTypeEnum bean = cacheMapBean.get(ent.getValue());
+		
+		return bean;
 	}
 
 	public void initTable() {
-		TimeType _final = new TimeType("final");
+		TimeType _final = new TimeType("_final");
 		timeTypeRepo.save(_final);
 		TimeType _1 = new TimeType("_1");
 		timeTypeRepo.save(_1);
@@ -45,6 +58,16 @@ public class TimeTypeDao {
 			TimeType element = iter.next();
 			cacheMap.put(element.getValue(), element);
 		}	
+	}
+
+	private void initCacheMapBean() {
+		cacheMapBean = new HashMap<String, TimeTypeEnum>();
+		Iterable<TimeType> findAll = timeTypeRepo.findAll();
+		for (Iterator<TimeType> iter = findAll.iterator(); iter.hasNext(); ) {
+			TimeType element = iter.next();
+			TimeTypeEnum bean = TimeTypeEnum.valueOf(element.getValue());
+			cacheMapBean.put(element.getValue(), bean);
+		}
 	}
 	
 }

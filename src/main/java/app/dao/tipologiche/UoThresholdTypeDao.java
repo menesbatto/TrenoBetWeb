@@ -20,13 +20,13 @@ public class UoThresholdTypeDao {
 	
 	private HashMap<String, UoThresholdType> cacheMap;
 	
-	public UoThresholdType findByValue(String uoThresholdString) {
+	public UoThresholdType findByValue(String value) {
 		if (cacheMap == null || cacheMap.isEmpty())
 			initCacheMap();
 			
-		UoThresholdType uoThresholdType = cacheMap.get(uoThresholdString);
+		UoThresholdType entity = cacheMap.get(value);
 		
-		return uoThresholdType;
+		return entity;
 	}
 
 	public void initTable() {

@@ -9,19 +9,17 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.Team;
+import app.dao.tabelle.entities.WinRangeStats;
 import app.dao.tipologiche.entities.BetHouse;
-import app.utils.ChampEnum;
 
 @RepositoryRestResource
-public interface TeamRepo extends PagingAndSortingRepository<Team, Long> {
+public interface WinRangeStatsRepo extends PagingAndSortingRepository<WinRangeStats, Long> {
 
-	List<Team> findByName(String name);
+//	List<Team> findByName(String name);
 //
 //	List<BetHouse> findByValue(@Param("value") String string);
 
-	List<Team> findByNameAndChamp(String name, Champ champ);
-
-	List<Team> findByChamp(Champ champ);
+	List<WinRangeStats> findByTeam(Team team);
 	
 	
 //	List<Person> findByLastName(@Param("name") String name);

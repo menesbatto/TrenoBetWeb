@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,6 +36,7 @@ public class Matcho {
 	private Champ champ;
 	
 	@OneToMany(cascade = CascadeType.ALL)//, mappedBy = "match")
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matcho")
 	private List<_1X2Odds> _1X2;
 	
 	

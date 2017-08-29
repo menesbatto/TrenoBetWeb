@@ -19,13 +19,13 @@ public class HomeVariationTypeDao {
 	
 	private HashMap<String, HomeVariationType> cacheMap;
 	
-	public HomeVariationType findByValue(String homeVariationString) {
+	public HomeVariationType findByValue(String value) {
 		if (cacheMap == null || cacheMap.isEmpty())
 			initCacheMap();
 			
-		HomeVariationType homeVariationType = cacheMap.get(homeVariationString);
+		HomeVariationType entity = cacheMap.get(value);
 		
-		return homeVariationType;
+		return entity;
 	}
 
 	public void initTable() {

@@ -1,4 +1,4 @@
-package app.dao.tabelle;
+package app.dao.tipologiche;
 
 import java.util.List;
 
@@ -7,21 +7,15 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-import app.dao.tabelle.entities.Champ;
-import app.dao.tabelle.entities.Team;
 import app.dao.tipologiche.entities.BetHouse;
-import app.utils.ChampEnum;
+import app.dao.tipologiche.entities.OddsRange;
 
 @RepositoryRestResource
-public interface TeamRepo extends PagingAndSortingRepository<Team, Long> {
+public interface OddsRangeRepo extends PagingAndSortingRepository<OddsRange, Long> {
 
-	List<Team> findByName(String name);
+//	List<BetHouse> findAll();
 //
 //	List<BetHouse> findByValue(@Param("value") String string);
-
-	List<Team> findByNameAndChamp(String name, Champ champ);
-
-	List<Team> findByChamp(Champ champ);
 	
 	
 //	List<Person> findByLastName(@Param("name") String name);

@@ -1,11 +1,16 @@
 package app.dao.tabelle.entities;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+
+import app.dao.tipologiche.entities.RankingCriteria;
 
 @Entity
 public class Champ {
@@ -23,15 +28,13 @@ public class Champ {
 	private String resultsUrl;
 	private String nextMatchesUrl;
 	
-//	@OneToOne(cascade=CascadeType.ALL, mappedBy = "champ") //nome nella ENTITY ChampUrls del campo che referenzia Champ
-//	private ChampUrls urls;
-//
-//	@OneToOne
-//	private ChampImpPos impPos;
-//
-//	@OneToOne
-//	private ChampRanCri ranCri;
-//	
+
+	@ElementCollection
+	private List<Integer> importantPositions;
+
+	@ElementCollection
+	private List<RankingCriteria> rankingCriteria;
+	
 	
 	
 	public Champ() {
@@ -95,6 +98,22 @@ public class Champ {
 
 	public void setNextMatchesUrl(String nextMatchesUrl) {
 		this.nextMatchesUrl = nextMatchesUrl;
+	}
+
+	public List<Integer> getImportantPositions() {
+		return importantPositions;
+	}
+
+	public void setImportantPositions(List<Integer> importantPositions) {
+		this.importantPositions = importantPositions;
+	}
+
+	public List<RankingCriteria> getRankingCriteria() {
+		return rankingCriteria;
+	}
+
+	public void setRankingCriteria(List<RankingCriteria> rankingCriteria) {
+		this.rankingCriteria = rankingCriteria;
 	}
 
 //	public ChampImpPos getImpPos() {

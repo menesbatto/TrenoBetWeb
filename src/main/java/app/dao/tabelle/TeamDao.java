@@ -1,5 +1,6 @@
 package app.dao.tabelle;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,13 +23,24 @@ public class TeamDao {
 	
 	private HashMap<Champ, HashMap<String, Team>> cacheMap;
 	
-	public Team findByName(TeamBean team) {
-		List<Team> list = teamRepo.findByName(team.getName());
-		Team first = list.get(0);
-		return first;
-		
-	}
+//	public Team findByTeamBean(TeamBean team) {
+//		List<Team> list = teamRepo.findByName(team.getName());
+//		Team first = list.get(0);
+//		return first;
+//		
+//	}
 
+	public ArrayList<String> findByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		List<Team> teams = teamRepo.findByChamp(champ);
+		ArrayList<String> teamsNames = new ArrayList<String>();
+		for (Team team : teams) {
+			teamsNames.add(team.getName());
+		}
+		return teamsNames;
+	}
+	
+	
 	public Team findByNameAndChamp(String name, Champ champ) {
 		Team first = findInCache(name, champ);
 		if (first == null) {
@@ -88,6 +100,8 @@ public class TeamDao {
 
 
 	}
+
+	
 	
 	
 }

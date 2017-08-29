@@ -88,7 +88,7 @@ public class MatchoDao {
 
 	public MatchResult save(MatchResult bean) {
 		Matcho ent = new Matcho();
-		
+		ent = matchRepo.save(ent);
 		Champ champEnt = champDao.findByChampEnum(bean.getChamp());
 		ent.setChamp(champEnt);
 		
@@ -257,10 +257,80 @@ public class MatchoDao {
 		return ent;
 	}
 	
-	public int getDownloadedMatchByChamp(ChampEnum champEnum) {
+	public int countDownloadedMatchByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Long count = matchRepo.countByChamp(champ);
 		return count.intValue();
+	}
+	
+	public ArrayList<MatchResult> getDownloadedMatchByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		List<Matcho> listEnt = matchRepo.findByChamp(champ);
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
+		return listBean;
+	}
+
+	public ArrayList<MatchResult> getDownloadedMatchByChampAndAwayTeam(ChampEnum champEnum, String homeTeam) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
+		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeam(champ, team);
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
+		return listBean;
+	}
+	
+	public ArrayList<MatchResult> getDownloadedMatchByChampAndHomeTeam(ChampEnum champEnum, String homeTeam) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
+		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeam(champ, team);
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
+		
+		return listBean;
+	}
+
+
+	private ArrayList<MatchResult> mapMatchosToMatchesResults(ChampEnum champEnum, List<Matcho> listEnt) {
+		ArrayList<MatchResult> listBean = new ArrayList<MatchResult>();
+		for (Matcho ent : listEnt) {
+			MatchResult bean = new MatchResult();
+			
+			bean.setChamp(champEnum);
+			bean.setMatchDate(ent.getMatchDate());
+			
+			bean.setHomeTeam(ent.getHomeTeam().getName());
+			bean.setAwayTeam(ent.getAwayTeam().getName());
+			
+			bean.setFTHG(ent.getFullTimeHomeGoals());
+			bean.setFTAG(ent.getFullTimeAwayGoals());
+			bean.setHTHG(ent.getHalfTimeHomeGoals());
+			bean.setHTAG(ent.getHalfTimeAwayGoals());
+			
+			HashMap<TimeTypeEnum, _1x2Full> _1x2 = new HashMap<TimeTypeEnum, _1x2Full>();
+			for (_1X2Odds oddsEnt : ent.get_1X2()) {
+				TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(oddsEnt.getTimeType());
+				
+				Double _1 = oddsEnt.get_1();
+				Double _2 = oddsEnt.get_2();
+				Double x = oddsEnt.get_X();
+				_1x2Leaf oddsBean = new _1x2Leaf(_1, x, _2);
+				
+				_1x2Full _1x2Full = bean.get_1x2().get(timeTypeEnum);
+
+				BetHouse betHouseEnt = oddsEnt.getBetHouse();
+				if ( betHouseEnt != null) {
+					BetHouseEnum betHouseEnum = betHouseDao.findBeanByEnt(betHouseEnt);
+					_1x2Full.getBetHouseTo1x2Odds().put(betHouseEnum, oddsBean);
+				}
+				else {
+					_1x2Full.setAvg1x2Odds(oddsBean);
+				}
+							
+			}
+					
+			bean.set_1x2(_1x2);
+			
+			listBean.add(bean);
+		}
+		return listBean;
 	}
 	
 	
@@ -269,63 +339,63 @@ public class MatchoDao {
 	
 	@Deprecated
 	public MatchBean save(MatchBean matchBean) {
-		Matcho matchEnt = new Matcho();
-		mapper.map(matchBean, matchEnt);
-		
-		List<_1X2Odds> _1x2oddsEnt = matchEnt.get_1X2();
-		List<_1X2OddsBean> _1x2oddsBean = matchBean.get_1X2();
-		
-		for (int i = 0; i < _1x2oddsBean.size(); i++) {
-			_1X2OddsBean oddsBean = _1x2oddsBean.get(i);
-			_1X2Odds oddsEnt = _1x2oddsEnt.get(i);
-
-			populateOddsCommonFields(oddsBean, oddsEnt);
-			
-		} 
-		
-		List<EhOdds> ehOddsEnt = matchEnt.getEh();
-		List<EhOddsBean> ehOddsBean = matchBean.getEh();
-		
-		for (int i = 0; i < ehOddsBean.size(); i++) {
-			EhOddsBean oddsBean = ehOddsBean.get(i);
-			EhOdds oddsEnt = ehOddsEnt.get(i);
-
-			populateOddsCommonFields(oddsBean, oddsEnt);
-			
-			HomeVariationType homeVariationTypeEnt = homeVariationTypeDao.findByValue(oddsBean.getHomeVariationTypeString());
-			oddsEnt.setHomeVariationType(homeVariationTypeEnt);
-			
-		} 
-		
-		List<UoOdds> uoOddsEnt = matchEnt.getUo();
-		List<UoOddsBean> uoOddsBean = matchBean.getUo();
-		
-		for (int i = 0; i < _1x2oddsBean.size(); i++) {
-			UoOddsBean oddsBean = uoOddsBean.get(i);
-			UoOdds oddsEnt = uoOddsEnt.get(i);
-
-			populateOddsCommonFields(oddsBean, oddsEnt);
-			
-			UoThresholdType uoThresholdTypeEnt = uoThresholdTypeDao.findByValue(oddsBean.getThresholdTypeString());
-			oddsEnt.setThresholdType(uoThresholdTypeEnt);
-			
-		} 
-		
-		
-		
-		
-		Team homeTeam = teamDao.findByName(matchBean.getHomeTeam());
-		matchEnt.setHomeTeam(homeTeam);
-
-		Team awayTeam = teamDao.findByName(matchBean.getAwayTeam());
-		matchEnt.setAwayTeam(awayTeam);
-		
-		Champ champ = champDao.findByChampBean(matchBean.getChamp());
-		matchEnt.setChamp(champ);
-		
-		matchRepo.save(matchEnt);
-
-		mapper.map(matchEnt, matchBean);
+//		Matcho matchEnt = new Matcho();
+//		mapper.map(matchBean, matchEnt);
+//		
+//		List<_1X2Odds> _1x2oddsEnt = matchEnt.get_1X2();
+//		List<_1X2OddsBean> _1x2oddsBean = matchBean.get_1X2();
+//		
+//		for (int i = 0; i < _1x2oddsBean.size(); i++) {
+//			_1X2OddsBean oddsBean = _1x2oddsBean.get(i);
+//			_1X2Odds oddsEnt = _1x2oddsEnt.get(i);
+//
+//			populateOddsCommonFields(oddsBean, oddsEnt);
+//			
+//		} 
+//		
+//		List<EhOdds> ehOddsEnt = matchEnt.getEh();
+//		List<EhOddsBean> ehOddsBean = matchBean.getEh();
+//		
+//		for (int i = 0; i < ehOddsBean.size(); i++) {
+//			EhOddsBean oddsBean = ehOddsBean.get(i);
+//			EhOdds oddsEnt = ehOddsEnt.get(i);
+//
+//			populateOddsCommonFields(oddsBean, oddsEnt);
+//			
+//			HomeVariationType homeVariationTypeEnt = homeVariationTypeDao.findByValue(oddsBean.getHomeVariationTypeString());
+//			oddsEnt.setHomeVariationType(homeVariationTypeEnt);
+//			
+//		} 
+//		
+//		List<UoOdds> uoOddsEnt = matchEnt.getUo();
+//		List<UoOddsBean> uoOddsBean = matchBean.getUo();
+//		
+//		for (int i = 0; i < _1x2oddsBean.size(); i++) {
+//			UoOddsBean oddsBean = uoOddsBean.get(i);
+//			UoOdds oddsEnt = uoOddsEnt.get(i);
+//
+//			populateOddsCommonFields(oddsBean, oddsEnt);
+//			
+//			UoThresholdType uoThresholdTypeEnt = uoThresholdTypeDao.findByValue(oddsBean.getThresholdTypeString());
+//			oddsEnt.setThresholdType(uoThresholdTypeEnt);
+//			
+//		} 
+//		
+//		
+//		
+//		
+//		Team homeTeam = teamDao.findByTeamBean(matchBean.getHomeTeam());
+//		matchEnt.setHomeTeam(homeTeam);
+//
+//		Team awayTeam = teamDao.findByTeamBean(matchBean.getAwayTeam());
+//		matchEnt.setAwayTeam(awayTeam);
+//		
+//		Champ champ = champDao.findByChampBean(matchBean.getChamp());
+//		matchEnt.setChamp(champ);
+//		
+//		matchRepo.save(matchEnt);
+//
+//		mapper.map(matchEnt, matchBean);
 		return matchBean;
 		
 	}

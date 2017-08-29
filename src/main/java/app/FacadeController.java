@@ -16,6 +16,7 @@ import app.logic._1_matchesDownlaoder.NextMatchesDownloader;
 import app.logic._1_matchesDownlaoder.PastMatchesDownlaoder;
 import app.logic._1_matchesDownlaoder.ResultParserOLD;
 import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
+import app.logic._2_matchResultAnalyzer.ResultAnalyzer;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
@@ -60,17 +61,24 @@ public class FacadeController {
     
     
     @Autowired
-    private NextMatchesDownloader eventsOddsDownloader;
+    private NextMatchesDownloader nextMatchesDownloader;
     @RequestMapping(value = "/avviaVecchio0", method = RequestMethod.GET)
     public void avviaVecchio0() {
-    	eventsOddsDownloader.execute();
+    	nextMatchesDownloader.execute();
     }
 
     @Autowired
-    private PastMatchesDownlaoder resultParser;
+    private PastMatchesDownlaoder pastMatchesDownloader;
     @RequestMapping(value = "/avviaVecchio1", method = RequestMethod.GET)
     public void avviaVecchio1() {
-    	resultParser.execute();
+    	pastMatchesDownloader.execute();
+    }
+
+    @Autowired
+    private ResultAnalyzer resultAnalyzer;
+    @RequestMapping(value = "/avviaVecchio3", method = RequestMethod.GET)
+    public void avviaVecchio3() {
+    	resultAnalyzer.execute();
     }
     
     

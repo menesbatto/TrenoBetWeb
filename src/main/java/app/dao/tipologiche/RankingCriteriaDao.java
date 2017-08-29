@@ -19,13 +19,13 @@ public class RankingCriteriaDao {
 	
 	private HashMap<String, RankingCriteria> cacheMap;
 	
-	public RankingCriteria findByValue(String string) {
+	public RankingCriteria findByValue(String value) {
 		if (cacheMap == null || cacheMap.isEmpty())
 			initCacheMap();
 			
-		RankingCriteria ent = cacheMap.get(string);
+		RankingCriteria entity = cacheMap.get(value);
 		
-		return ent;
+		return entity;
 	}
 	
 	public void initTable() {

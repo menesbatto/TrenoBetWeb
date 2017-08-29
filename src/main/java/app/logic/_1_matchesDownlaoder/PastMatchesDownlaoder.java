@@ -93,7 +93,7 @@ public class PastMatchesDownlaoder {
 //			alreadySavedMatches = new ArrayList<MatchResult>();
 //		}
 		
-		int size = matchDao.getDownloadedMatchByChamp(champ);
+		int size = matchDao.countDownloadedMatchByChamp(champ);
 		
 		Element matchesTable;
 //		ArrayList<MatchResult> matchesResultsSubset;

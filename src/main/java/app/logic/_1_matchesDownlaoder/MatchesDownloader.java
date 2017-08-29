@@ -68,7 +68,7 @@ public class MatchesDownloader {
 		if (type == "Next")
 			size = 0;
 		else //if (type == "Past")
-			size = matchDao.getDownloadedMatchByChamp(champ); 
+			size = matchDao.countDownloadedMatchByChamp(champ); 
 		
 		Element matchesTable;
 		if (size < 50){
@@ -117,10 +117,10 @@ public class MatchesDownloader {
 		tableRows.add(obj2); // add first item
 		tableRows.add(obj3); // add first item
 		tableRows.add(obj4); // add first item
-		tableRows.add(obj5); // add first item
-		tableRows.add(obj6); // add first item
-		tableRows.add(obj7); // add first item
-		tableRows.add(obj8); // add first item
+//		tableRows.add(obj5); // add first item
+//		tableRows.add(obj6); // add first item
+//		tableRows.add(obj7); // add first item
+//		tableRows.add(obj8); // add first item
 		// VIA 
 		
 		
@@ -237,10 +237,10 @@ public class MatchesDownloader {
 //		populateMatchAH(m, matchUrl);
 //
 //		// 		UNDER OVER
-		populateMatchUO(m, matchUrl);
+//		populateMatchUO(m, matchUrl);
 //		
 //		// 		EUROPEAN HANDICAP
-		populateMatchEH(m, matchUrl);
+//		populateMatchEH(m, matchUrl);
 //		
 //		// 		DOUBLE CHANCE
 //		populateMatchDC(m, matchUrl);

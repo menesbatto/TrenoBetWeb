@@ -2,6 +2,7 @@ package app.dao.tabelle.entities;
 
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,8 @@ public class _1X2Odds implements IBet{
 	private TimeType timeType;
 	
 	@ManyToOne
-	//@JoinColumn(name = "matchId")
+//	(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "matcho_id") //questo è il nome della colonna che referenzierà la colonna Matcho
 	private Matcho match;
 	
 	private Double _1;

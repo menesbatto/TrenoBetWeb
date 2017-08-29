@@ -8,15 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
-//import app.dao.tabelle.entities.ChampUrls;
-//import app.dao.tabelle.entities.ChampImpPos;
-//import app.dao.tabelle.entities.ChampRanCri;
-//import app.dao.tabelle.entities.ChampUrls;
 import app.dao.tipologiche.RankingCriteriaDao;
-import app.dao.tipologiche.RankingCriteriaRepo;
 import app.dao.tipologiche.entities.RankingCriteria;
 import app.logic._1_matchesDownlaoder.modelNew.ChampBean;
-import app.utils.AppConstants;
 import app.utils.ChampEnum;
 import app.utils.RankCritEnum;
 
@@ -25,15 +19,6 @@ public class ChampDao {
 
 	@Autowired
 	private ChampRepo champRepo;
-
-//	@Autowired
-//	private ChampUrlsRepo champUrlsRepo;
-//	
-//	@Autowired
-//	private ChampImpPosRepo champImpPosRepo;
-//	
-//	@Autowired
-//	private ChampRanCriRepo champRanCriRepo;
 
 	@Autowired
 	private RankingCriteriaDao rankingCriteriaDao;
@@ -69,30 +54,27 @@ public class ChampDao {
 	public void initTable() {
 		ChampEnum champEnum = ChampEnum.ENG_PREMIER;
 		Champ champEnt = saveChamp(champEnum);
-//		ChampUrls chamUrlsEnt = saveChampUrls(champEnum, champEnt);
 //		ChampImpPos champImpPosEnt =  saveChampImpPos(champEnum, champEnt);
-//		ChampRanCri champRanCriEnt =  saveChampRanCri(champEnum, champEnt);
+		List<RankingCriteria> rankingCriteriaEnts =  getRankingCriteria(champEnum, champEnt);
 		
-//		champEnt.setUrls(chamUrlsEnt);
 //		champEnt.setImpPos(champImpPosEnt);
-//		champEnt.setRanCri(champRanCriEnt);
+		champEnt.setRankingCriteria(rankingCriteriaEnts);
 		champRepo.save(champEnt);
 		//...
 		System.out.println("");
 		
 	}
 	
-//	private ChampRanCri saveChampRanCri(ChampEnum champEnum, Champ champEnt) {
-//		List<RankingCriteria> criteriaEnt = new ArrayList<RankingCriteria>();
-//		RankingCriteria criteriumEnt;
-//		for (RankCritEnum criterium : champEnum.getRankCriteria()) {
-//			criteriumEnt = rankingCriteriaDao.findByValue(criterium.name());
-//			criteriaEnt.add(criteriumEnt);
-//		}
-//		ChampRanCri champRanCri = new ChampRanCri(champEnt, criteriaEnt);
-//		champRanCriRepo.save(champRanCri);
-//		return champRanCri;
-//	}
+	private List<RankingCriteria> getRankingCriteria(ChampEnum champEnum, Champ champEnt) {
+		List<RankingCriteria> criteriaEnt = new ArrayList<RankingCriteria>();
+		RankingCriteria criteriumEnt;
+		for (RankCritEnum criterium : champEnum.getRankCriteria()) {
+			criteriumEnt = rankingCriteriaDao.findByValue(criterium.name());
+			criteriaEnt.add(criteriumEnt);
+		}
+		
+		return criteriaEnt;
+	}
 
 
 
