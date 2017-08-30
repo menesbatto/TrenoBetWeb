@@ -453,6 +453,17 @@ public class MatchesDownloader {
 			Integer htag = Integer.valueOf(halfTimeResultString.split(":")[1]);
 			m.setHTHG(hthg);
 			m.setHTAG(htag);
+			
+			String halfTimeResult;
+			if (hthg > htag)
+				halfTimeResult = "H";
+			else if (hthg == htag)
+				halfTimeResult = "D";
+			else
+				halfTimeResult = "A";
+				
+			m.setHTR(halfTimeResult);
+			
 		}
 		Elements betHouses = infoPage.getElementById("col-content").getElementsByClass("detail-odds").get(0).getElementsByClass("lo");
 		

@@ -1,5 +1,6 @@
 package app.dao.tipologiche;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,14 @@ public class TimeTypeDao {
 	private HashMap<String, TimeTypeEnum> cacheMapBean;
 
 	
+	public List<TimeType> findAll(){
+		return timeTypeRepo.findAll();
+	}
+	
+
+	public List<TimeTypeEnum> findAllTimeTypeEnum(){
+		return new ArrayList<TimeTypeEnum>(cacheMapBean.values());
+	}
 	
 	public TimeType findByValue(String value) {
 		if (cacheMap == null || cacheMap.isEmpty())

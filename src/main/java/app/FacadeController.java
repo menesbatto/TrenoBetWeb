@@ -42,6 +42,14 @@ public class FacadeController {
     	initChampTable();
     }
     
+    
+    @RequestMapping(value = "/resetMatches", method = RequestMethod.GET)
+    public @ResponseBody void resetMatches () {
+    	
+//    	utilityModel.deleteAllMatches();
+    	utilityModel.deleteAllWinRangeStats();
+    }
+    
     @RequestMapping(value = "/initChampTable", method = RequestMethod.GET)
     public @ResponseBody void initChampTable () {
     	

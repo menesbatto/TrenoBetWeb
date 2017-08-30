@@ -1,5 +1,6 @@
 package app.dao.tipologiche;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -74,6 +75,7 @@ public class OddsRangeDao {
 	}
 	
 	private void initCacheList() {
+		cacheList = new ArrayList<OddsRange>();
 		Iterable<OddsRange> findAll = oddsEdgeRepo.findAll();
 		for (Iterator<OddsRange> iter = findAll.iterator(); iter.hasNext(); ) {
 			OddsRange element = iter.next();

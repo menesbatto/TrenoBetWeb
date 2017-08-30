@@ -98,6 +98,10 @@ public class MatchoDao {
 		Team awayHome = teamDao.findByNameAndChamp(bean.getAwayTeam(), champEnt);
 		ent.setAwayTeam(awayHome);
 		
+		ent.setFullTimeResult(bean.getFTR());
+
+		ent.setHalfTimeResult(bean.getHTR());
+		
 		ent.setFullTimeHomeGoals(bean.getFTHG());
 		ent.setFullTimeAwayGoals(bean.getFTAG());
 		ent.setHalfTimeHomeGoals(bean.getHTHG());
@@ -263,25 +267,25 @@ public class MatchoDao {
 		return count.intValue();
 	}
 	
-	public ArrayList<MatchResult> getDownloadedMatchByChamp(ChampEnum champEnum) {
+	public ArrayList<MatchResult> getDownloadedPastMatchByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
-		List<Matcho> listEnt = matchRepo.findByChamp(champ);
+		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeHomeGoalsIsNotNull(champ);
 		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
 		return listBean;
 	}
 
-	public ArrayList<MatchResult> getDownloadedMatchByChampAndAwayTeam(ChampEnum champEnum, String homeTeam) {
+	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndAwayTeam(ChampEnum champEnum, String homeTeam) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
-		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeam(champ, team);
+		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeamAndFullTimeHomeGoalsIsNotNull(champ, team);
 		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
 		return listBean;
 	}
 	
-	public ArrayList<MatchResult> getDownloadedMatchByChampAndHomeTeam(ChampEnum champEnum, String homeTeam) {
+	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndHomeTeam(ChampEnum champEnum, String homeTeam) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
-		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeam(champ, team);
+		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeamAndFullTimeHomeGoalsIsNotNull(champ, team);
 		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
 		
 		return listBean;
@@ -304,6 +308,9 @@ public class MatchoDao {
 			bean.setHTHG(ent.getHalfTimeHomeGoals());
 			bean.setHTAG(ent.getHalfTimeAwayGoals());
 			
+			bean.setFTR(ent.getFullTimeResult());
+			bean.setHTR(ent.getHalfTimeResult());
+			
 			HashMap<TimeTypeEnum, _1x2Full> _1x2 = new HashMap<TimeTypeEnum, _1x2Full>();
 			for (_1X2Odds oddsEnt : ent.get_1X2()) {
 				TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(oddsEnt.getTimeType());
@@ -323,11 +330,9 @@ public class MatchoDao {
 				else {
 					_1x2Full.setAvg1x2Odds(oddsBean);
 				}
-							
+			
 			}
 					
-			bean.set_1x2(_1x2);
-			
 			listBean.add(bean);
 		}
 		return listBean;

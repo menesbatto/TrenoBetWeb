@@ -32,6 +32,10 @@ public class Matcho {
 	
 	private Date matchDate;
 	
+	private String fullTimeResult;
+	
+	private String halfTimeResult;
+	
 	@ManyToOne
 	private Champ champ;
 	
@@ -148,6 +152,26 @@ public class Matcho {
 
 	public void setUo(List<UoOdds> uo) {
 		this.uo = uo;
+	}
+
+
+	public String getFullTimeResult() {
+		return fullTimeResult;
+	}
+
+
+	public void setFullTimeResult(String fullTimeResult) {
+		this.fullTimeResult = fullTimeResult;
+	}
+
+
+	public String getHalfTimeResult() {
+		return halfTimeResult;
+	}
+
+
+	public void setHalfTimeResult(String halfTimeResult) {
+		this.halfTimeResult = halfTimeResult;
 	}
 
 	

@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import app.dao.tipologiche.entities.OddsRange;
+import app.dao.tipologiche.entities.TimeType;
 
 @Entity
 public class WinRangeStats {
@@ -24,6 +25,11 @@ public class WinRangeStats {
 //	private String teamName;
 	@OneToOne
 	private OddsRange range;
+	
+	@ManyToOne
+	private TimeType timeType;
+	
+	private String playingField;
 	
 //	private String range;
 	
@@ -46,6 +52,10 @@ public class WinRangeStats {
 	private Double losePerc;
 
 	private Integer total;
+	
+
+	
+	
 	
 	
 	
@@ -136,6 +146,26 @@ public class WinRangeStats {
 	}
 	public void setTotal(Integer total) {
 		this.total = total;
+	}
+	public String getPlayingField() {
+		return playingField;
+	}
+	public void setPlayingField(String playingField) {
+		this.playingField = playingField;
+	}
+	public TimeType getTimeType() {
+		return timeType;
+	}
+	public void setTimeType(TimeType timeType) {
+		this.timeType = timeType;
+	}
+	@Override
+	public String toString() {
+		return "WinRangeStats [id=" + id + ", team=" + team + ", range=" + range + ", timeType=" + timeType
+				+ ", playingField=" + playingField + ", homeHits=" + homeHits + ", homeMisses=" + homeMisses
+				+ ", winPerc=" + winPerc + ", drawHits=" + drawHits + ", drawMisses=" + drawMisses + ", drawPerc="
+				+ drawPerc + ", awayHits=" + awayHits + ", awayMisses=" + awayMisses + ", losePerc=" + losePerc
+				+ ", total=" + total + "]";
 	}
 
 

@@ -16,10 +16,10 @@ public interface MatchoRepo extends JpaRepository<Matcho, Long> {
 
 	Long countByChamp(Champ champ);
 
-	List<Matcho> findByChamp(Champ champ);
+	List<Matcho> findByChampAndFullTimeHomeGoalsIsNotNull(Champ champ);
 
-	List<Matcho> findByChampAndHomeTeam(Champ champ, Team team);
-	List<Matcho> findByChampAndAwayTeam(Champ champ, Team team);
+	List<Matcho> findByChampAndHomeTeamAndFullTimeHomeGoalsIsNotNull(Champ champ, Team team);
+	List<Matcho> findByChampAndAwayTeamAndFullTimeHomeGoalsIsNotNull(Champ champ, Team team);
 //	List<Match> findByNameAndStartYearAndNation(String name, int startYear, String nation);
 //	
 //	List<Person> findDistinctPeopleByFirstNameOrLastNameIgnoreCase(String lastname, String firstname);

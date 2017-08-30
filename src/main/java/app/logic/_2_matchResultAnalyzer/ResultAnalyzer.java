@@ -12,8 +12,12 @@ import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.TeamDao;
 import app.dao.tabelle.WinRangeStatsDao;
 import app.dao.tabelle.entities.WinRangeStats;
+import app.dao.tipologiche.TimeTypeDao;
+import app.dao.tipologiche.entities.TimeType;
 import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.MatchResultEnum;
+import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
+import app.logic._1_matchesDownlaoder.model._1x2Leaf;
 import app.logic._2_matchResultAnalyzer.model.GoalsStatsBean;
 import app.logic._2_matchResultAnalyzer.model.WinRangeStatsBean;
 import app.utils.AppConstants;
@@ -30,6 +34,9 @@ public class ResultAnalyzer {
 	
 	@Autowired
 	private TeamDao teamDao;
+	
+	@Autowired
+	private TimeTypeDao timeTypeDao;
 	
 	private static HashMap<ChampEnum, ArrayList<MatchResult>> allMatchesResults;
 	private static HashMap<ChampEnum, ArrayList<String>> allTeams;
@@ -223,8 +230,8 @@ public class ResultAnalyzer {
 
 		ArrayList<String> teams = teamDao.findByChamp(champ);
 		for (String teamName : teams) {
-			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedMatchByChampAndHomeTeam(champ, teamName);
-			analyzeTeamResultWin(teamName, teamHomeMatches, champ);
+			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeam(champ, teamName);
+			analyzeTeamResultWin(teamName, teamHomeMatches, champ, "H");
 		}
 //		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesHome.get(champ).entrySet()) {
 //		    analyzeTeamResultWin(entry.getKey(), entry.getValue(), champ);
@@ -232,16 +239,23 @@ public class ResultAnalyzer {
 //		}
 //		enrichTeamResult(teamToRangeStatsHome, "HOME");
 		
-		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesAway.get(champ).entrySet()) {
-			analyzeTeamResultWin(entry.getKey(), entry.getValue(), champ);
-			//System.out.println(entry.getKey() + "/" + entry.getValue());
+		
+		for (String teamName : teams) {
+			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndAwayTeam(champ, teamName);
+			analyzeTeamResultWin(teamName, teamHomeMatches, champ, "A");
 		}
+//		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesAway.get(champ).entrySet()) {
+//			analyzeTeamResultWin(entry.getKey(), entry.getValue(), champ);
+//			//System.out.println(entry.getKey() + "/" + entry.getValue());
+//		}
 //		enrichTeamResult(teamToRangeStatsAway, "AWAY");
-
-		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesAll.get(champ).entrySet()) {
-			analyzeTeamResultWin(entry.getKey(), entry.getValue(), champ);
-			//System.out.println(entry.getKey() + "/" + entry.getValue());
+		for (String teamName : teams) {
+			winRangeStatsDao.calculateWinStatsNoPlayingField(teamName, champ);
 		}
+//		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesAll.get(champ).entrySet()) {
+//			analyzeTeamResultWin(entry.getKey(), entry.getValue(), champ);
+//			//System.out.println(entry.getKey() + "/" + entry.getValue());
+//		}
 
 //		allAnalyzedChampsWinHome.put(champ, teamToRangeStatsHome);
 //		allAnalyzedChampsWinAway.put(champ, teamToRangeStatsAway);
@@ -255,13 +269,13 @@ public class ResultAnalyzer {
 			Double winPerc = null;
 			Double drawPerc = null;
 			Double losePerc = null;
-			if (range.getTotal()!= 0){
-				if (where.equals("HOME")){
+			if (range.getTotal() != null && range.getTotal() != 0){
+				if (where.equals("H")){
 					winPerc = new Double(range.getHomeHits()) / new Double (range.getTotal());
 					drawPerc = new Double(range.getDrawHits()) / new Double (range.getTotal());
 					losePerc = new Double(range.getAwayHits()) / new Double (range.getTotal());
 				}
-				else {//if (where.equals("AWAY")){
+				else {//if (where.equals("A")){
 					winPerc = new Double(range.getAwayHits()) / new Double (range.getTotal());
 					drawPerc = new Double(range.getDrawHits()) / new Double (range.getTotal());
 					losePerc = new Double(range.getHomeHits()) / new Double (range.getTotal());
@@ -276,79 +290,117 @@ public class ResultAnalyzer {
 
 	// Ogni volta che l'atalanta che gioca in casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
 	// Ogni volta che l'atalanta che gioca fuori casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
-	private void analyzeTeamResultWin(String teamName, ArrayList<MatchResult> matches, ChampEnum champ) {
+	private void analyzeTeamResultWin(String teamName, ArrayList<MatchResult> matches, ChampEnum champ, String playingField) {
 		//ArrayList<WinRangeStatsBean> ranges = initStats(teamName);
-		ArrayList<WinRangeStatsBean> ranges = initStats(teamName, champ);
+		List<TimeTypeEnum> timeTypes = timeTypeDao.findAllTimeTypeEnum();
 		
-		for (MatchResult m : matches){
-			if (m.getFTHG() == null){
-				continue;
-			}
-			Integer homeGoals = m.getFTHG();
-			Integer awayGoals = m.getFTAG();
-			String resultString = m.getFTR();
-			MatchResultEnum result = MatchResultEnum.valueOf(resultString);
-			Double homeOdds = m.getB365H();
-			Double drawOdds = m.getB365D();
-			Double awayOdds = m.getB365A();
-			if (homeOdds == null || drawOdds == null || awayOdds == null){
-//				System.out.println("NO BET 365 " + no365++);
-				homeOdds = m.getBWH();
-				drawOdds = m.getBWD();
-				awayOdds = m.getBWA();
-			}
-			if (homeOdds == null || drawOdds == null || awayOdds == null){
-				homeOdds = m.getPSCH();
-				drawOdds = m.getPSCD();
-				awayOdds = m.getPSCA();
-			}	
-			if (homeOdds == null || drawOdds == null || awayOdds == null){
-				homeOdds = 0.0;
-				drawOdds = 0.0;
-				awayOdds = 0.0;
-			}
-//			all++;
-			Double percHome = 1/homeOdds;
-			Double percDraw = 1/drawOdds;
-			Double percAway = 1/awayOdds;
+		for (TimeTypeEnum timeType : timeTypes) {
 			
-			Double percTotal = percHome + percDraw + percAway;
+			ArrayList<WinRangeStatsBean> ranges = initWinStatsByTimeType(teamName, champ, timeType, playingField);
+			
+			for (MatchResult m : matches){
+				if (m.getFTHG() == null){
+					continue;
+				}
+				
+				
+				Integer homeGoals = 0;
+				Integer awayGoals = 0;
+				String resultString = "";
+				_1x2Leaf avg1x2Odds =  m.get_1x2().get(timeType).getAvg1x2Odds();
+				Double homeOdds = avg1x2Odds.getOdd1();
+				Double drawOdds = avg1x2Odds.getOddX();
+				Double awayOdds = avg1x2Odds.getOdd2();
+				MatchResultEnum result = null;
 
-			Double percHomeAdjusted = percHome  / percTotal;
-			Double percDrawAdjusted = percDraw  / percTotal;
-			Double percAwayAdjusted = percAway  / percTotal;
-			
-			Double homeOddsAdjusted = 1 / percHomeAdjusted;
-			Double drawOddsAdjusted = 1 / percDrawAdjusted;
-			Double awayOddsAdjusted = 1 / percAwayAdjusted;
-			
-			
-			
-			Double under2_5Odds = m.getBbAvU2_5();
-			Double over2_5Odds = m.getBbAvO2_5();
-			
-			Double oddsOfTeamAnalyzed = null;
-			
-			// capisce se la quota su cui andare a inserire la statistica � della squadra in casa o fuoricasa
-			if (teamName.equals(m.getHomeTeam()))
-				oddsOfTeamAnalyzed = homeOddsAdjusted;
-			else 
-				oddsOfTeamAnalyzed = awayOddsAdjusted;
-			
-			switch (result) {
-			case H:		updateRangeStats(ranges, MatchResultEnum.H, oddsOfTeamAnalyzed);				break;
-			case D:		updateRangeStats(ranges, MatchResultEnum.D, oddsOfTeamAnalyzed);				break;
-			case A:		updateRangeStats(ranges, MatchResultEnum.A, oddsOfTeamAnalyzed);				break;
-			default:				break;
+				switch (timeType) {
+					case _final:
+						homeGoals = m.getFTHG();
+						awayGoals = m.getFTAG();
+						resultString = m.getFTR();
+						result = MatchResultEnum.valueOf(resultString);
+						break;
+					case _1:
+						homeGoals = m.getHTHG();
+						awayGoals = m.getHTAG();
+						resultString = m.getHTR();
+						result = MatchResultEnum.valueOf(resultString);
+						break;
+					case _2:
+						homeGoals = m.getFTHG() - m.getHTHG();
+						awayGoals = m.getFTAG() - m.getHTAG();
+						
+						if (homeGoals > awayGoals)				resultString = "H";
+						else if (homeGoals == awayGoals)		resultString = "D";
+						else									resultString = "A";
+						
+						result = MatchResultEnum.valueOf(resultString);
+						break;
+	
+					default:
+						break;
+				}
+				
+				
+				if (homeOdds == null || drawOdds == null || awayOdds == null){
+	//				System.out.println("NO BET 365 " + no365++);
+					homeOdds = m.getBWH();
+					drawOdds = m.getBWD();
+					awayOdds = m.getBWA();
+				}
+				if (homeOdds == null || drawOdds == null || awayOdds == null){
+					homeOdds = m.getPSCH();
+					drawOdds = m.getPSCD();
+					awayOdds = m.getPSCA();
+				}	
+				if (homeOdds == null || drawOdds == null || awayOdds == null){
+					homeOdds = 0.0;
+					drawOdds = 0.0;
+					awayOdds = 0.0;
+				}
+	//			all++;
+				Double percHome = 1/homeOdds;
+				Double percDraw = 1/drawOdds;
+				Double percAway = 1/awayOdds;
+				
+				Double percTotal = percHome + percDraw + percAway;
+	
+				Double percHomeAdjusted = percHome  / percTotal;
+				Double percDrawAdjusted = percDraw  / percTotal;
+				Double percAwayAdjusted = percAway  / percTotal;
+				
+				Double homeOddsAdjusted = 1 / percHomeAdjusted;
+				Double drawOddsAdjusted = 1 / percDrawAdjusted;
+				Double awayOddsAdjusted = 1 / percAwayAdjusted;
+				
+				
+				
+//				Double under2_5Odds = m.getBbAvU2_5();
+//				Double over2_5Odds = m.getBbAvO2_5();
+				
+				Double oddsOfTeamAnalyzed = null;
+				
+				// capisce se la quota su cui andare a inserire la statistica � della squadra in casa o fuoricasa
+				if (teamName.equals(m.getHomeTeam()))
+					oddsOfTeamAnalyzed = homeOddsAdjusted;
+				else 
+					oddsOfTeamAnalyzed = awayOddsAdjusted;
+				
+				updateRangeStats(ranges, result, oddsOfTeamAnalyzed);
+//				switch (result) {
+//				case H:		updateRangeStats(ranges, MatchResultEnum.H, oddsOfTeamAnalyzed);				break;
+//				case D:		updateRangeStats(ranges, MatchResultEnum.D, oddsOfTeamAnalyzed);				break;
+//				case A:		updateRangeStats(ranges, MatchResultEnum.A, oddsOfTeamAnalyzed);				break;
+//				default:				break;
+//				}
+				
 			}
 			
+			if (!matches.isEmpty())
+				enrichTeamResult(ranges, playingField);
+		
+			List<WinRangeStats> saveWinRangeStats = winRangeStatsDao.saveWinRangeStats(ranges, teamName, champ, timeType, playingField);
 		}
-		
-		
-		enrichTeamResult(ranges, "HOME");
-		
-		
-		List<WinRangeStats> saveWinRangeStats = winRangeStatsDao.saveWinRangeStats(ranges, champ);
 		//teamToRangeStats.put(teamName, ranges);
 			
 		
@@ -379,9 +431,9 @@ public class ResultAnalyzer {
 		
 	}
 
-	private ArrayList<WinRangeStatsBean> initStats(String teamName, ChampEnum champ) {
+	private ArrayList<WinRangeStatsBean> initWinStatsByTimeType(String teamName, ChampEnum champ, TimeTypeEnum timeType, String playingField) {
 		
-		ArrayList<WinRangeStatsBean> winRangeStatsList = winRangeStatsDao.findByTeamNameAndChamp(teamName, champ);
+		ArrayList<WinRangeStatsBean> winRangeStatsList = winRangeStatsDao.findByTeamNameAndChampAndTimeType(teamName, champ, timeType, playingField);
 //		ArrayList<WinRangeStatsBean> stats = new ArrayList<WinRangeStatsBean>();
 //		WinRangeStatsBean current;
 //		for (int i = 0; i < AppConstants.RANGE_EDGES.size()-1; i++) {
