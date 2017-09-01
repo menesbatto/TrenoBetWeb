@@ -139,6 +139,10 @@ public class GoalsStatsDao {
 		
 		List<GoalsStats> existingGoalsStats = goalsStatsRepo.findByTeamAndTimeTypeAndPlayingField(teamEnt,timeType, playingField);
 
+		if (existingGoalsStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
+			existingGoalsStats = initGoalsStatsForTeam(teamEnt, timeType, playingField);
+		}
+		
 		for (GoalsStats ent : existingGoalsStats) {
 			for ( Entry<UoThresholdEnum, UoThresholdStats> entry : bean.getThresholdMap().entrySet()) {
 				UoThresholdEnum key = entry.getKey();
@@ -190,8 +194,13 @@ public class GoalsStatsDao {
 
 			
 			for (Entry<UoThresholdEnum, UoThresholdStats> entryH : homeStats.getThresholdMap().entrySet()) {
-				if (totalStats.getTeamName() == null)
-					mapper.map(entryH, totalStats);
+				if (totalStats.getTeamName() == null) {
+					totalStats.setTeamName(homeStats.getTeamName());
+					totalStats.setTotalMatches(homeStats.getTotalMatches());
+					totalStats.setTotalGoals(homeStats.getTotalGoals() +  awayStats.getTotalGoals());
+					totalStats.setTakenGoalsTotal(homeStats.getTakenGoalsTotal() + awayStats.getTakenGoalsTotal());
+					totalStats.setStrikedGoalsTotal(homeStats.getStrikedGoalsTotal() + awayStats.getStrikedGoalsTotal());;
+				}
 				UoThresholdEnum keyH = entryH.getKey();
 				for (Entry<UoThresholdEnum, UoThresholdStats> entryA : awayStats.getThresholdMap().entrySet()) {
 					UoThresholdEnum keyA = entryA.getKey();
@@ -201,9 +210,14 @@ public class GoalsStatsDao {
 						Integer totalMatches = homeStats.getTotalMatches() + awayStats.getTotalMatches();
 						
 						Double underHit = valueH.getUnderHit() + valueA.getUnderHit();
-						Double underPerc = underHit / totalMatches.doubleValue();
 						Double overHit = valueH.getOverHit() + valueA.getOverHit();
-						Double overPerc = overHit / totalMatches.doubleValue();
+						
+						Double underPerc = 0.0;
+						Double overPerc = 0.0;
+						if (totalMatches != 0) {
+							underPerc = underHit / totalMatches.doubleValue();
+							overPerc = overHit / totalMatches.doubleValue();
+						}
 						UoThresholdStats valueF = new UoThresholdStats(underHit, underPerc, overHit, overPerc); 
 						totalStats.getThresholdMap().put(keyA, valueF);
 					}
@@ -212,6 +226,20 @@ public class GoalsStatsDao {
 			saveGoalsStats(totalStats, teamName, champEnum, timeTypeEnum, "T");
 		}	
 
+	}
+
+
+	public int getLastSeasonDayOddsAndPlayingField(String teamName, ChampEnum champEnum, String playingField) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		
+		Team teamEnt = teamDao.findByNameAndChamp(teamName, champ);
+
+		GoalsStats goalsStats = goalsStatsRepo.findFirstByTeamAndPlayingField(teamEnt, playingField);
+		Integer totalMatches = 0;
+		if (goalsStats!= null)
+			totalMatches = goalsStats.getTotalMatches();
+		
+		return totalMatches;
 	}
 	
 	

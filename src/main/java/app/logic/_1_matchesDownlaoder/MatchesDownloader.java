@@ -73,7 +73,7 @@ public class MatchesDownloader {
 		Element matchesTable;
 		if (size < 50){
 			matchesTable = doc.getElementById("tournamentTable");
-			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ);
+			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size);
 			size = savedMatchesNum;
 		}
 		
@@ -87,8 +87,9 @@ public class MatchesDownloader {
 				champSubsetUrl = champSuffixUrl + "/#/page/" + i + "/";
 				doc = HttpUtils.getHtmlPage(champSubsetUrl);
 				matchesTable = doc.getElementById("tournamentTable");
-				int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ);
+				int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size % 50);
 				size += savedMatchesNum;
+				
 			}
 		}
 		
@@ -97,26 +98,26 @@ public class MatchesDownloader {
 	
 	
 	
-	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ) {
+	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ, Integer alreadySavedMatcheOnThisPage) {
 		Elements tableRows = matchesTable.getElementsByTag("tr");
 		Date matchDate = null;
 		MatchResult matchResult = null;
 		int matchNum = 1;
 		
 		// VIA
-		Element obj = tableRows.get(0); // remember first item
-		Element obj2 = tableRows.get(1); // remember first item
-		Element obj3 = tableRows.get(2); // remember first item
-		Element obj4 = tableRows.get(3); // remember first item
-		Element obj5 = tableRows.get(4); // remember first item
-		Element obj6 = tableRows.get(5); // remember first item
-		Element obj7 = tableRows.get(6); // remember first item
-		Element obj8 = tableRows.get(7); // remember first item
-		tableRows.clear(); // clear complete list
-		tableRows.add(obj); // add first item
-		tableRows.add(obj2); // add first item
-		tableRows.add(obj3); // add first item
-		tableRows.add(obj4); // add first item
+//		Element obj = tableRows.get(0); // remember first item
+//		Element obj2 = tableRows.get(1); // remember first item
+//		Element obj3 = tableRows.get(2); // remember first item
+//		Element obj4 = tableRows.get(3); // remember first item
+//		Element obj5 = tableRows.get(4); // remember first item
+//		Element obj6 = tableRows.get(5); // remember first item
+//		Element obj7 = tableRows.get(6); // remember first item
+//		Element obj8 = tableRows.get(7); // remember first item
+//		tableRows.clear(); // clear complete list
+//		tableRows.add(obj); // add first item
+//		tableRows.add(obj2); // add first item
+//		tableRows.add(obj3); // add first item
+//		tableRows.add(obj4); // add first item
 //		tableRows.add(obj5); // add first item
 //		tableRows.add(obj6); // add first item
 //		tableRows.add(obj7); // add first item
@@ -132,9 +133,10 @@ public class MatchesDownloader {
 //		 <td class="odds-nowrp" xodd="4.19" xoid="E-2odiqxv464x0x6d3k3"><a href="" onclick="globals.ch.togle(this , 'E-2odiqxv464x0x6d3k3');return false;" xparam="odds_text">4.19</a></td>
 //		 <td class="center info-value">6</td>
 //		</tr>
-		
+		int matchSkipped = 0;
 		int savedMatches = 0;
-		for (Element row : tableRows){
+		for (int i = 0; i < tableRows.size(); i++) {
+			Element row = tableRows.get(i);
 //			if (row.hasClass("dark")){
 //				//ricerca della nazione, ma gia ce l'ho.
 //			}
@@ -154,17 +156,23 @@ public class MatchesDownloader {
 			else if (row.hasClass("deactivate") || row.hasClass("odd") || row.hasAttr("heid")){ //results
 					long startTime = System.nanoTime();
 					System.out.println("Match " + matchNum++);
-				matchResult = createMatchResult(row, matchDate, champSubsetUrl); 
-				matchResult.setChamp(champ);
-				matchDao.save(matchResult);
-				savedMatches++;
+					
+				if (matchSkipped >= alreadySavedMatcheOnThisPage) {
+					matchResult = createMatchResult(row, matchDate, champSubsetUrl); 
+					matchResult.setChamp(champ);
+					matchDao.save(matchResult);
+					savedMatches++;
+				}
+				else {
+					matchSkipped++;
+				}
+				long currentTime = System.nanoTime();
+				long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
+				System.out.print("DONE\t" + duration / 1000000);
+				System.out.println();				
 				
-					long currentTime = System.nanoTime();
-					long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
-					System.out.print("DONE\t" + duration / 1000000);
-					System.out.println();
+				
 			}
-			
 		}
 		
 		
@@ -237,10 +245,10 @@ public class MatchesDownloader {
 //		populateMatchAH(m, matchUrl);
 //
 //		// 		UNDER OVER
-//		populateMatchUO(m, matchUrl);
+		populateMatchUO(m, matchUrl);
 //		
 //		// 		EUROPEAN HANDICAP
-//		populateMatchEH(m, matchUrl);
+		populateMatchEH(m, matchUrl);
 //		
 //		// 		DOUBLE CHANCE
 //		populateMatchDC(m, matchUrl);

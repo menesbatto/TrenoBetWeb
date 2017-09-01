@@ -49,6 +49,8 @@ public class Matcho {
 	
 	@OneToMany(cascade = {CascadeType.ALL})
 	private List<UoOdds> uo;
+	
+	private int seasonDay;
 
 	public Matcho() {
 	}
@@ -172,6 +174,16 @@ public class Matcho {
 
 	public void setHalfTimeResult(String halfTimeResult) {
 		this.halfTimeResult = halfTimeResult;
+	}
+
+
+	public int getSeasonDay() {
+		return seasonDay;
+	}
+
+
+	public void setSeasonDay(int seasonDay) {
+		this.seasonDay = seasonDay;
 	}
 
 	

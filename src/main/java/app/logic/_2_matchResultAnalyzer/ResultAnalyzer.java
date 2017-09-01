@@ -85,19 +85,29 @@ public class ResultAnalyzer {
 		
 		ArrayList<String> teams = teamDao.findByChamp(champ);
 		for (String teamName : teams) {
-			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeam(champ, teamName);
-			analyzeTeamResultUo(teamName, teamHomeMatches, champ, "H");
-		}
 
-		
-		for (String teamName : teams) {
-			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeam(champ, teamName);
-			analyzeTeamResultUo(teamName, teamHomeMatches, champ, "A");
-		}
-		
-		for (String teamName : teams) {
+			// HOME
+			int lastSeasonDayOddsH = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "H");
+			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsH);
+			analyzeTeamResultUo(teamName, teamHomeMatches, champ, "H");
+			
+			
+			// AWAY
+			int lastSeasonDayOddsA = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "A");
+			ArrayList<MatchResult> teamAwayMatches = matchDao.getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsA);
+			analyzeTeamResultUo(teamName, teamAwayMatches, champ, "A");
+			
+			// TOTAL
 			goalsStatsDao.calculateWinStatsNoPlayingField(teamName, champ);
 		}
+		
+//		for (String teamName : teams) {
+//			int lastSeasonDayOdds = goalsStatsDao.getLastSeasonDayOdds(teamName, champ);
+//		}
+		
+//		for (String teamName : teams) {
+//			
+//		}
 		
 		
 //		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesHome.get(champ).entrySet()) {
@@ -186,11 +196,15 @@ public class ResultAnalyzer {
 			//CALCOLA LE PERCENTUALI
 			for (Entry<UoThresholdEnum, UoThresholdStats> entry : goalsStatsBean.getThresholdMap().entrySet()){
 				UoThresholdStats value = entry.getValue();
-				value.setUnderPerc( value.getUnderHit().doubleValue() / goalsStatsBean.getTotalMatches().doubleValue() );
-				value.setOverPerc( value.getOverHit().doubleValue() / goalsStatsBean.getTotalMatches().doubleValue() );
+				double totalMatches = goalsStatsBean.getTotalMatches().doubleValue();
+				if (totalMatches != 0) {
+					value.setUnderPerc( value.getUnderHit().doubleValue() / totalMatches );
+					value.setOverPerc( value.getOverHit().doubleValue() / totalMatches );
+				}
 			}
 	
 		
+			goalsStatsDao.saveGoalsStats(goalsStatsBean, teamName, champ, timeType, playingField);
 		}
 		
 	}
@@ -221,18 +235,30 @@ public class ResultAnalyzer {
 		
 		ArrayList<String> teams = teamDao.findByChamp(champ);
 		for (String teamName : teams) {
-			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeam(champ, teamName);
+			
+			// HOME
+			int lastSeasonDayOddsH = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "H"); //USO GOALS PERCHE VANNO DI PARI PASSO
+			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsH);
 			analyzeTeamResultWin(teamName, teamHomeMatches, champ, "H");
-		}
-		
-		for (String teamName : teams) {
-			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndAwayTeam(champ, teamName);
-			analyzeTeamResultWin(teamName, teamHomeMatches, champ, "A");
-		}
-
-		for (String teamName : teams) {
+			
+			
+			// AWAY
+			int lastSeasonDayOddsA = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "A"); //USO GOALS PERCHE VANNO DI PARI PASSO
+			ArrayList<MatchResult> teamAwayMatches = matchDao.getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsA);
+			analyzeTeamResultWin(teamName, teamAwayMatches, champ, "A");
+			
+			
+			// TOTAL
 			winRangeStatsDao.calculateWinStatsNoPlayingField(teamName, champ);
 		}
+//		
+//		for (String teamName : teams) {
+//			
+//		}
+//
+//		for (String teamName : teams) {
+//			
+//		}
 		
 	}
 	

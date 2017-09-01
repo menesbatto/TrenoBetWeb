@@ -101,6 +101,10 @@ public class WinRangeStatsDao {
 		
 		List<WinRangeStats> existingWinRangeStats = winRangeStatsRepo.findByTeamAndTimeTypeAndPlayingField(teamEnt,timeType, playingField);
 		
+		if (existingWinRangeStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
+			existingWinRangeStats = initWinRangeStatsForTeam(teamEnt, timeType, playingField);
+		}
+		
 		for (WinRangeStatsBean bean : listBean) {
 			for (WinRangeStats ent : existingWinRangeStats) {
 				if (bean.getEdgeUp().equals(ent.getRange().getValueUp())) {
@@ -134,16 +138,19 @@ public class WinRangeStatsDao {
 						
 						t.setAwayHits(h.getAwayHits() + a.getAwayHits());
 						t.setHomeHits(h.getHomeHits() + a.getHomeHits());
+						
 						t.setAwayMisses(h.getAwayMisses() + a.getAwayMisses());
 						t.setHomeMisses(h.getHomeMisses() + a.getHomeMisses());
-						t.setDrawMisses(h.getDrawMisses() + a.getDrawMisses());
+						
+						t.setDrawHits(h.getDrawHits() + a.getDrawHits());
 						t.setDrawMisses(h.getDrawMisses() + a.getDrawMisses());
 						
 						double total = h.getTotal().doubleValue() + a.getTotal().doubleValue();
-						t.setWinPerc((h.getHomeHits() + a.getAwayHits()) / total);
-						t.setDrawPerc((h.getDrawHits() + a.getDrawHits()) / total);
-						t.setLosePerc((h.getAwayHits() + a.getHomeHits()) / total);
-						
+						if (total!=0) {
+							t.setWinPerc((h.getHomeHits() + a.getAwayHits()) / total);
+							t.setDrawPerc((h.getDrawHits() + a.getDrawHits()) / total);
+							t.setLosePerc((h.getAwayHits() + a.getHomeHits()) / total);
+						}
 						totalStats.add(t);
 						
 					}

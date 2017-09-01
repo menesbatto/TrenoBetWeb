@@ -161,7 +161,7 @@ public class WinRangeStats {
 	}
 	@Override
 	public String toString() {
-		return "WinRangeStats [id=" + id + ", team=" + team + ", range=" + range + ", timeType=" + timeType
+		return "WinRangeStats [id=" + id + ", team=" + team.getName() + ", range=" + range.getValueUp() + ", timeType=" + timeType.getValue()
 				+ ", playingField=" + playingField + ", homeHits=" + homeHits + ", homeMisses=" + homeMisses
 				+ ", winPerc=" + winPerc + ", drawHits=" + drawHits + ", drawMisses=" + drawMisses + ", drawPerc="
 				+ drawPerc + ", awayHits=" + awayHits + ", awayMisses=" + awayMisses + ", losePerc=" + losePerc

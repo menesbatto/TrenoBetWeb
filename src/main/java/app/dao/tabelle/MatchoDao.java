@@ -274,19 +274,21 @@ public class MatchoDao {
 		return listBean;
 	}
 
-	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndAwayTeam(ChampEnum champEnum, String homeTeam) {
+	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(ChampEnum champEnum, String homeTeam, int lastSeasonDayOdds) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
-		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeamAndFullTimeHomeGoalsIsNotNull(champ, team);
-		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
+		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeamAndFullTimeResultIsNotNullOrderByMatchDate(champ, team);
+		List<Matcho> missingMatchesEnt = listEnt.subList(lastSeasonDayOdds, listEnt.size());
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, missingMatchesEnt);
 		return listBean;
 	}
 	
-	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndHomeTeam(ChampEnum champEnum, String homeTeam) {
+	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(ChampEnum champEnum, String homeTeam, int lastSeasonDayOdds) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
-		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeamAndFullTimeHomeGoalsIsNotNull(champ, team);
-		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
+		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeamAndFullTimeResultIsNotNullOrderByMatchDate(champ, team);
+		List<Matcho> missingMatchesEnt = listEnt.subList(lastSeasonDayOdds, listEnt.size());
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, missingMatchesEnt);
 		
 		return listBean;
 	}
