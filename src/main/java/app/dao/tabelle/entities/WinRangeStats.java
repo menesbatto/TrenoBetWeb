@@ -165,7 +165,7 @@ public class WinRangeStats {
 				+ ", playingField=" + playingField + ", homeHits=" + homeHits + ", homeMisses=" + homeMisses
 				+ ", winPerc=" + winPerc + ", drawHits=" + drawHits + ", drawMisses=" + drawMisses + ", drawPerc="
 				+ drawPerc + ", awayHits=" + awayHits + ", awayMisses=" + awayMisses + ", losePerc=" + losePerc
-				+ ", total=" + total + "]";
+				+ ", total=" + total + "]\n";
 	}
 
 

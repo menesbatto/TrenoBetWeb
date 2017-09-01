@@ -47,8 +47,8 @@ public class UoOddsDao {
 		TimeType timeTypeEnt =  timeTypeDao.findByValue(betBean.getTimeTypeString());
 		betEnt.setTimeType(timeTypeEnt);
 
-		UoThresholdType UoThresholdTypeEnt =  uoThresholdTTypeDao.findByValue(betBean.getTimeTypeString());
-		betEnt.setThresholdType(UoThresholdTypeEnt);
+		UoThresholdType uoThresholdTypeEnt =  uoThresholdTTypeDao.findByValue(betBean.getTimeTypeString());
+		betEnt.setThresholdType(uoThresholdTypeEnt);
 		
 		
 		mapper.map(betBean, betEnt);

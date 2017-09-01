@@ -43,7 +43,7 @@ public class WinRangeStatsDao {
 	@Autowired
 	private MapperFacade mapper;
 	
-	public ArrayList<WinRangeStatsBean> findByTeamNameAndChampAndTimeType(String teamName, ChampEnum champEnum, TimeTypeEnum timeTypeEnum, String playingField) {
+	public ArrayList<WinRangeStatsBean> findByTeamNameAndChampAndTimeTypeAndPlayingField(String teamName, ChampEnum champEnum, TimeTypeEnum timeTypeEnum, String playingField) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Team team = teamDao.findByNameAndChamp(teamName, champ);
 		TimeType timeType = timeTypeDao.findByValue(timeTypeEnum.name());
@@ -86,6 +86,7 @@ public class WinRangeStatsDao {
 			WinRangeStats winRange = new WinRangeStats(range, team);
 			winRange.setTimeType(timeType);
 			winRange.setPlayingField(playingField);
+			
 			winRangeStatsList.add(winRange);			
 		}
 	}
@@ -115,10 +116,11 @@ public class WinRangeStatsDao {
 
 
 
-	public void calculateWinStatsNoPlayingField(String teamName, ChampEnum champ) {
-		for (TimeTypeEnum timeType : timeTypeDao.findAllTimeTypeEnum()) {
-			ArrayList<WinRangeStatsBean> homeStats = findByTeamNameAndChampAndTimeType(teamName, champ, timeType, "A");
-			ArrayList<WinRangeStatsBean> awayStats = findByTeamNameAndChampAndTimeType(teamName, champ, timeType, "H");
+	public void calculateWinStatsNoPlayingField(String teamName, ChampEnum champEnum) {
+		ArrayList<WinRangeStatsBean> totalStats = new ArrayList<WinRangeStatsBean>(); 
+		for (TimeTypeEnum timeTypeEnum : timeTypeDao.findAllTimeTypeEnum()) {
+			ArrayList<WinRangeStatsBean> homeStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "A");
+			ArrayList<WinRangeStatsBean> awayStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "H");
 			for (WinRangeStatsBean h : homeStats) {
 				for (WinRangeStatsBean a : awayStats) {
 					if (h.getRange().equals(a.getRange())) {
@@ -142,15 +144,13 @@ public class WinRangeStatsDao {
 						t.setDrawPerc((h.getDrawHits() + a.getDrawHits()) / total);
 						t.setLosePerc((h.getAwayHits() + a.getHomeHits()) / total);
 						
+						totalStats.add(t);
+						
 					}
-					
-//				WinRangeStatsBean awayStat = awayStats.get(i);
-				
 				}
-				
 			}
+			saveWinRangeStats(totalStats, teamName, champEnum, timeTypeEnum, "T");
 		}
-		
 	}
 
 	

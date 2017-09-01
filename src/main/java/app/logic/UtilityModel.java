@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.ChampDao;
+import app.dao.tabelle.GoalsStatsRepo;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.MatchoRepo;
 import app.dao.tabelle.TeamDao;
@@ -50,6 +51,8 @@ public class UtilityModel {
 
 	@Autowired
 	private WinRangeStatsRepo winRangeStatsRepo;
+	@Autowired
+	private GoalsStatsRepo goalsStatsRepo;
 
 	@Autowired
 	private MatchoRepo matchoRepo;
@@ -63,6 +66,9 @@ public class UtilityModel {
 	
 	public void deleteAllWinRangeStats() {
 		winRangeStatsRepo.deleteAll();
+	}		
+	public void deleteAllGoalsStats() {
+		goalsStatsRepo.deleteAll();
 	}		
 	
 
