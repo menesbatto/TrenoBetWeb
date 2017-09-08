@@ -2,6 +2,8 @@ package app.logic._2_matchResultAnalyzer.model;
 
 import java.io.Serializable;
 
+import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
+
 public class WinRangeStatsBean implements Serializable{
 
 	private static final long serialVersionUID = 1267168643269362884L;
@@ -33,6 +35,8 @@ public class WinRangeStatsBean implements Serializable{
 	private Double losePerc;
 
 	private Integer total;
+	
+	private TimeTypeEnum timeTypeBean;
 	
 	
 	public WinRangeStatsBean() {
@@ -209,6 +213,16 @@ public class WinRangeStatsBean implements Serializable{
 
 	public void setLosePerc(Double losePerc) {
 		this.losePerc = losePerc;
+	}
+
+
+	public TimeTypeEnum getTimeTypeBean() {
+		return timeTypeBean;
+	}
+
+
+	public void setTimeTypeBean(TimeTypeEnum timeTypeBean) {
+		this.timeTypeBean = timeTypeBean;
 	}
 	
 

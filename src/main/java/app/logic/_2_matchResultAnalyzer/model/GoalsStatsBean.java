@@ -3,6 +3,7 @@ package app.logic._2_matchResultAnalyzer.model;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 
 
@@ -18,7 +19,7 @@ public class GoalsStatsBean implements Serializable {
 
 	private String teamName;
 	
-	
+	private TimeTypeEnum timeTypeBean;
 	private HashMap<UoThresholdEnum, UoThresholdStats> thresholdMap;
 	
 	
@@ -99,6 +100,16 @@ public class GoalsStatsBean implements Serializable {
 
 	public void setThresholdMap(HashMap<UoThresholdEnum, UoThresholdStats> thresholdMap) {
 		this.thresholdMap = thresholdMap;
+	}
+
+
+	public TimeTypeEnum getTimeTypeBean() {
+		return timeTypeBean;
+	}
+
+
+	public void setTimeTypeBean(TimeTypeEnum timeTypeBean) {
+		this.timeTypeBean = timeTypeBean;
 	}
 	
 	

@@ -50,37 +50,37 @@ public class GoalsStatsDao {
 	@Autowired
 	private MapperFacade mapper;
 	
-	public GoalsStatsBean findByTeamNameAndChampAndTimeTypeAndPlayingField(String teamName, ChampEnum champEnum,	TimeTypeEnum timeTypeEnum, String playingField) {
-	
-		Champ champ = champDao.findByChampEnum(champEnum);
-		Team team = teamDao.findByNameAndChamp(teamName, champ);
-		TimeType timeType = timeTypeDao.findByValue(timeTypeEnum.name());
-		List<GoalsStats> listEnt = goalsStatsRepo.findByTeamAndTimeTypeAndPlayingField(team, timeType, playingField);
-		if (listEnt.isEmpty()){
-			listEnt = initGoalsStatsForTeam(team, timeType, playingField);
-		}
-		
-		
-		GoalsStatsBean bean = new GoalsStatsBean();
-		for (GoalsStats ent : listEnt) {
-			if (bean.getTeamName() == null) {	//Lo mappo solo la prima volta
-				mapper.map(ent, bean);
-				bean.setTeamName(ent.getTeam().getName());
-			}
-			else {
-				UoThresholdEnum findBeanByEnt = uoThresholdTypeDao.findBeanByEnt(ent.getThreshold());
-				UoThresholdStats uoThresholdStats = bean.getThresholdMap().get(findBeanByEnt);
-				uoThresholdStats.setOverHit(ent.getOverHit());
-				uoThresholdStats.setOverPerc(ent.getOverPerc());
-				uoThresholdStats.setUnderHit(ent.getUnderHit());
-				uoThresholdStats.setUnderPerc(ent.getUnderPerc());
-			}
-			
-			
-		}
-
-		return bean;
-	}
+//	public GoalsStatsBean findByTeamNameAndChampAndTimeTypeAndPlayingField(String teamName, ChampEnum champEnum,	TimeTypeEnum timeTypeEnum, String playingField) {
+//	
+//		Champ champ = champDao.findByChampEnum(champEnum);
+//		Team team = teamDao.findByNameAndChamp(teamName, champ);
+//		TimeType timeType = timeTypeDao.findByValue(timeTypeEnum.name());
+//		List<GoalsStats> listEnt = goalsStatsRepo.findByTeamAndTimeTypeAndPlayingField(team, timeType, playingField);
+//		if (listEnt.isEmpty()){
+//			listEnt = initGoalsStatsForTeam(team, timeType, playingField);
+//		}
+//		
+//		
+//		GoalsStatsBean bean = new GoalsStatsBean();
+//		for (GoalsStats ent : listEnt) {
+//			if (bean.getTeamName() == null) {	//Lo mappo solo la prima volta
+//				mapper.map(ent, bean);
+//				bean.setTeamName(ent.getTeam().getName());
+//			}
+//			else {
+//				UoThresholdEnum findBeanByEnt = uoThresholdTypeDao.findBeanByEnt(ent.getThreshold());
+//				UoThresholdStats uoThresholdStats = bean.getThresholdMap().get(findBeanByEnt);
+//				uoThresholdStats.setOverHit(ent.getOverHit());
+//				uoThresholdStats.setOverPerc(ent.getOverPerc());
+//				uoThresholdStats.setUnderHit(ent.getUnderHit());
+//				uoThresholdStats.setUnderPerc(ent.getUnderPerc());
+//			}
+//			
+//			
+//		}
+//
+//		return bean;
+//	}
 //	public ArrayList<GoalsStatsBean> findByTeamNameAndChampAndTimeTypeAndPlayingField(String teamName, ChampEnum champEnum,	TimeTypeEnum timeTypeEnum, String playingField) {
 //		
 //		Champ champ = champDao.findByChampEnum(champEnum);
@@ -113,7 +113,7 @@ public class GoalsStatsDao {
 		List<GoalsStats> goalsStatsList = new ArrayList<GoalsStats>();
 		List<UoThresholdType> thresholdList = uoThresholdTypeDao.findAll();
 		initSingleGoalsStatsForTeam(team, goalsStatsList, thresholdList, playingField,  timeType);
-		goalsStatsRepo.save(goalsStatsList);
+//		goalsStatsRepo.save(goalsStatsList);
 		return goalsStatsList;
 	}
 
@@ -130,36 +130,42 @@ public class GoalsStatsDao {
 	}
 
 	
-	public List<GoalsStats> saveGoalsStats(GoalsStatsBean bean, String teamName, ChampEnum champEnum, TimeTypeEnum timeTypeEnum, String playingField) {
+	public List<GoalsStatsBean> saveGoalsStats(ArrayList<GoalsStatsBean> beans, String teamName, ChampEnum champEnum, String playingField) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		
 		Team teamEnt = teamDao.findByNameAndChamp(teamName, champ);
 
-		TimeType timeType = timeTypeDao.findByValue(timeTypeEnum.name());
 		
-		List<GoalsStats> existingGoalsStats = goalsStatsRepo.findByTeamAndTimeTypeAndPlayingField(teamEnt,timeType, playingField);
+		List<GoalsStats> existingGoalsStats = goalsStatsRepo.findByTeamAndPlayingField(teamEnt, playingField);
 
-		if (existingGoalsStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
-			existingGoalsStats = initGoalsStatsForTeam(teamEnt, timeType, playingField);
-		}
-		
-		for (GoalsStats ent : existingGoalsStats) {
-			for ( Entry<UoThresholdEnum, UoThresholdStats> entry : bean.getThresholdMap().entrySet()) {
-				UoThresholdEnum key = entry.getKey();
-				if (key.getValueNum().equals(ent.getThreshold().getValueNum())) {
-					UoThresholdStats value = entry.getValue();
-					mapper.map(bean, ent);
-					ent.setOverHit(value.getOverHit());
-					ent.setOverPerc(value.getOverPerc());
-					ent.setUnderHit(value.getUnderHit());
-					ent.setUnderPerc(value.getUnderPerc());
+		for (GoalsStatsBean bean : beans) {
+			
+			TimeType timeType = timeTypeDao.findByValue(bean.getTimeTypeBean().name());
+			
+			if (existingGoalsStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
+				existingGoalsStats = initGoalsStatsForTeam(teamEnt, timeType, playingField);
+			}
+			
+			for (GoalsStats ent : existingGoalsStats) {
+				for ( Entry<UoThresholdEnum, UoThresholdStats> entry : bean.getThresholdMap().entrySet()) {
+					UoThresholdEnum key = entry.getKey();
+					if (key.getValueNum().equals(ent.getThreshold().getValueNum())) {
+						UoThresholdStats value = entry.getValue();
+						mapper.map(bean, ent);
+						ent.setTimeType(timeType);
+						ent.setOverHit(value.getOverHit());
+						ent.setOverPerc(value.getOverPerc());
+						ent.setUnderHit(value.getUnderHit());
+						ent.setUnderPerc(value.getUnderPerc());
+					}
 				}
 			}
+			
 		}
-		
+
 		goalsStatsRepo.save(existingGoalsStats);
 		
-		return existingGoalsStats;
+		return beans;
 	}
 //	public List<GoalsStats> saveWinRangeStats(List<GoalsStatsBean> listBean, String teamName, ChampEnum champEnum, TimeTypeEnum timeTypeEnum, String playingField) {
 //		Champ champ = champDao.findByChampEnum(champEnum);
@@ -185,26 +191,37 @@ public class GoalsStatsDao {
 
 
 
-	public void calculateWinStatsNoPlayingField(String teamName, ChampEnum champEnum) {
-		for (TimeTypeEnum timeTypeEnum : timeTypeDao.findAllTimeTypeEnum()) {
-			GoalsStatsBean homeStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "A");
-			GoalsStatsBean awayStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "H");
+	public void calculateGoalsStatsNoPlayingField(String teamName, ChampEnum champEnum, List<GoalsStatsBean> homeStatses, List<GoalsStatsBean> awayStatses) {
+		
+		ArrayList<GoalsStatsBean> totalStatses = new ArrayList<GoalsStatsBean>();
+//		if (homeStatses == null)
+//			homeStatses = initGoalsStatsForTeam(team, timeType, playingField)
+//		else if (awayStatses == null)
+//			awayStatses = new ArrayList<GoalsStatsBean>();
+			
+//		for (TimeTypeEnum timeTypeEnum : timeTypeDao.findAllTimeTypeEnum()) {
+		for (int i = 0; i < 3; i++) {
+
+//			GoalsStatsBean homeStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "A");
+//			GoalsStatsBean awayStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "H");
+			GoalsStatsBean homeStats = !homeStatses.isEmpty() ? homeStatses.get(i) : createEmptyOne(awayStatses.get(i));
+			GoalsStatsBean awayStats = !awayStatses.isEmpty() ? awayStatses.get(i) : createEmptyOne(homeStatses.get(i));
 
 			GoalsStatsBean totalStats = new GoalsStatsBean();
-
 			
 			for (Entry<UoThresholdEnum, UoThresholdStats> entryH : homeStats.getThresholdMap().entrySet()) {
 				if (totalStats.getTeamName() == null) {
 					totalStats.setTeamName(homeStats.getTeamName());
-					totalStats.setTotalMatches(homeStats.getTotalMatches());
+					totalStats.setTimeTypeBean(homeStats.getTimeTypeBean());
+					totalStats.setTotalMatches(homeStats.getTotalMatches() + awayStats.getTotalMatches());
 					totalStats.setTotalGoals(homeStats.getTotalGoals() +  awayStats.getTotalGoals());
 					totalStats.setTakenGoalsTotal(homeStats.getTakenGoalsTotal() + awayStats.getTakenGoalsTotal());
-					totalStats.setStrikedGoalsTotal(homeStats.getStrikedGoalsTotal() + awayStats.getStrikedGoalsTotal());;
+					totalStats.setStrikedGoalsTotal(homeStats.getStrikedGoalsTotal() + awayStats.getStrikedGoalsTotal());
 				}
 				UoThresholdEnum keyH = entryH.getKey();
 				for (Entry<UoThresholdEnum, UoThresholdStats> entryA : awayStats.getThresholdMap().entrySet()) {
 					UoThresholdEnum keyA = entryA.getKey();
-					if (keyH.equals(keyH)) {
+					if (keyH.equals(keyA)) {
 						UoThresholdStats valueH = entryH.getValue();
 						UoThresholdStats valueA = entryA.getValue();
 						Integer totalMatches = homeStats.getTotalMatches() + awayStats.getTotalMatches();
@@ -223,10 +240,22 @@ public class GoalsStatsDao {
 					}
 				}
 			}
-			saveGoalsStats(totalStats, teamName, champEnum, timeTypeEnum, "T");
-		}	
+			totalStatses.add(totalStats);
+		}
+		
+		saveGoalsStats(totalStatses, teamName, champEnum, "T");
 
 	}
+
+
+	private GoalsStatsBean createEmptyOne(GoalsStatsBean goalsStatsBean) {
+		GoalsStatsBean newOne = new GoalsStatsBean();
+		
+		newOne.setTimeTypeBean(goalsStatsBean.getTimeTypeBean());
+		newOne.setTeamName(goalsStatsBean.getTeamName());
+		return newOne;
+	}
+
 
 
 	public int getLastSeasonDayOddsAndPlayingField(String teamName, ChampEnum champEnum, String playingField) {

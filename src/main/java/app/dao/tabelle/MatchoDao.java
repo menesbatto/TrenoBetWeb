@@ -269,7 +269,7 @@ public class MatchoDao {
 	
 	public ArrayList<MatchResult> getDownloadedPastMatchByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
-		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeHomeGoalsIsNotNull(champ);
+		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNotNull(champ);
 		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
 		return listBean;
 	}

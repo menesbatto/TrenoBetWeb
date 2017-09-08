@@ -75,7 +75,7 @@ public class WinRangeStatsDao {
 		List<WinRangeStats> winRangeStatsList = new ArrayList<WinRangeStats>();
 		List<OddsRange> oddsRangeList = oddsRangeDao.findAll();
 		initSingleWinRangeStatsForTeam(team, winRangeStatsList, oddsRangeList, playingField,  timeType);
-		winRangeStatsRepo.save(winRangeStatsList);
+		//winRangeStatsRepo.save(winRangeStatsList);
 		return winRangeStatsList;
 	}
 
@@ -92,36 +92,43 @@ public class WinRangeStatsDao {
 	}
 
 	
-	public List<WinRangeStats> saveWinRangeStats(List<WinRangeStatsBean> listBean, String teamName, ChampEnum champEnum, TimeTypeEnum timeTypeEnum, String playingField) {
+	public List<WinRangeStats> saveWinRangeStats(List<WinRangeStatsBean> listBean, String teamName, ChampEnum champEnum, String playingField) {
+		List<TimeType> timeTypes = timeTypeDao.findAll();
 		Champ champ = champDao.findByChampEnum(champEnum);
-		
 		Team teamEnt = teamDao.findByNameAndChamp(teamName, champ);
 
-		TimeType timeType = timeTypeDao.findByValue(timeTypeEnum.name());
-		
-		List<WinRangeStats> existingWinRangeStats = winRangeStatsRepo.findByTeamAndTimeTypeAndPlayingField(teamEnt,timeType, playingField);
-		
-		if (existingWinRangeStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
-			existingWinRangeStats = initWinRangeStatsForTeam(teamEnt, timeType, playingField);
-		}
-		
-		for (WinRangeStatsBean bean : listBean) {
-			for (WinRangeStats ent : existingWinRangeStats) {
-				if (bean.getEdgeUp().equals(ent.getRange().getValueUp())) {
-					mapper.map(bean, ent);
+		List<WinRangeStats> allWinRangeStats = new ArrayList<WinRangeStats>();
+		for (TimeType timeType : timeTypes) {
+			TimeTypeEnum timeTypeBean = timeTypeDao.findBeanByEnt(timeType);
+//			
+//			List<WinRangeStats> existingWinRangeStats = winRangeStatsRepo.findByTeamAndTimeTypeAndPlayingField(teamEnt,timeType, playingField);
+			
+//			if (existingWinRangeStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
+			List<WinRangeStats> winRangeStatsByTime = initWinRangeStatsForTeam(teamEnt, timeType, playingField);
+//			}
+			
+			for (WinRangeStatsBean bean : listBean) {
+				for (WinRangeStats ent : winRangeStatsByTime) {
+					if (bean.getTimeTypeBean().equals(timeTypeBean)) {
+						if (bean.getEdgeUp().equals(ent.getRange().getValueUp())) {
+							mapper.map(bean, ent);
+						}
+					}
 				}
 			}
+			allWinRangeStats.addAll(winRangeStatsByTime);
+			
 		}
+		winRangeStatsRepo.save(allWinRangeStats);
 		
-		winRangeStatsRepo.save(existingWinRangeStats);
-		
-		return existingWinRangeStats;
+		return allWinRangeStats;
 	}
 
 
 
 	public void calculateWinStatsNoPlayingField(String teamName, ChampEnum champEnum) {
 		ArrayList<WinRangeStatsBean> totalStats = new ArrayList<WinRangeStatsBean>(); 
+		
 		for (TimeTypeEnum timeTypeEnum : timeTypeDao.findAllTimeTypeEnum()) {
 			ArrayList<WinRangeStatsBean> homeStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "A");
 			ArrayList<WinRangeStatsBean> awayStats = findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champEnum, timeTypeEnum, "H");
@@ -151,13 +158,15 @@ public class WinRangeStatsDao {
 							t.setDrawPerc((h.getDrawHits() + a.getDrawHits()) / total);
 							t.setLosePerc((h.getAwayHits() + a.getHomeHits()) / total);
 						}
+						
+						t.setTimeTypeBean(timeTypeEnum);
 						totalStats.add(t);
 						
 					}
 				}
 			}
-			saveWinRangeStats(totalStats, teamName, champEnum, timeTypeEnum, "T");
 		}
+		saveWinRangeStats(totalStats, teamName, champEnum, "T");
 	}
 
 	

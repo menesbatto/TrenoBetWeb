@@ -22,7 +22,7 @@ public interface GoalsStatsRepo extends JpaRepository<GoalsStats, Long> {
 //
 //	List<BetHouse> findByValue(@Param("value") String string);
 
-	List<GoalsStats> findByTeamAndTimeTypeAndPlayingField(Team team, TimeType timeType, String playingField);
+	List<GoalsStats> findByTeamAndPlayingField(Team team, String playingField);
 
 	int countByTeam(Team team);
 

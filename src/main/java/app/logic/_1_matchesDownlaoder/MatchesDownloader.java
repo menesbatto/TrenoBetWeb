@@ -44,7 +44,6 @@ public class MatchesDownloader {
 		
 		//Ciclo su tutti i campionati per i risultati dei match giocati e le quote
 		for (ChampEnum champ : ChampEnum.values()){
-			
 			int savedMatchesNum = downloadChampionshipResults(champ, type);
 		}
 		
@@ -52,7 +51,8 @@ public class MatchesDownloader {
 
 	
 	private int downloadChampionshipResults(ChampEnum champ, String type) {
-		
+		ArrayList<MatchResult> downloadedMatches = matchDao.getDownloadedPastMatchByChamp(champ);
+
 		String champSuffixUrl; 
 		if (type == "Next")
 			champSuffixUrl = champ.getNextMatchesUrl();
@@ -73,7 +73,7 @@ public class MatchesDownloader {
 		Element matchesTable;
 		if (size < 50){
 			matchesTable = doc.getElementById("tournamentTable");
-			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size);
+			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size, downloadedMatches);
 			size = savedMatchesNum;
 		}
 		
@@ -87,7 +87,7 @@ public class MatchesDownloader {
 				champSubsetUrl = champSuffixUrl + "/#/page/" + i + "/";
 				doc = HttpUtils.getHtmlPage(champSubsetUrl);
 				matchesTable = doc.getElementById("tournamentTable");
-				int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size % 50);
+				int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size % 50, downloadedMatches);
 				size += savedMatchesNum;
 				
 			}
@@ -98,7 +98,7 @@ public class MatchesDownloader {
 	
 	
 	
-	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ, Integer alreadySavedMatcheOnThisPage) {
+	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ, Integer alreadySavedMatcheOnThisPage, ArrayList<MatchResult> downloadedMatches) {
 		Elements tableRows = matchesTable.getElementsByTag("tr");
 		Date matchDate = null;
 		MatchResult matchResult = null;
@@ -133,7 +133,7 @@ public class MatchesDownloader {
 //		 <td class="odds-nowrp" xodd="4.19" xoid="E-2odiqxv464x0x6d3k3"><a href="" onclick="globals.ch.togle(this , 'E-2odiqxv464x0x6d3k3');return false;" xparam="odds_text">4.19</a></td>
 //		 <td class="center info-value">6</td>
 //		</tr>
-		int matchSkipped = 0;
+//		int matchSkipped = 0;
 		int savedMatches = 0;
 		for (int i = 0; i < tableRows.size(); i++) {
 			Element row = tableRows.get(i);
@@ -157,15 +157,17 @@ public class MatchesDownloader {
 					long startTime = System.nanoTime();
 					System.out.println("Match " + matchNum++);
 					
-				if (matchSkipped >= alreadySavedMatcheOnThisPage) {
-					matchResult = createMatchResult(row, matchDate, champSubsetUrl); 
-					matchResult.setChamp(champ);
-					matchDao.save(matchResult);
+//				if (matchSkipped >= alreadySavedMatcheOnThisPage) {
+					matchResult = createMatchResult(row, matchDate, champSubsetUrl, downloadedMatches); 
+					if (matchResult != null) {
+						matchResult.setChamp(champ);
+					 	matchDao.save(matchResult);
+					}
 					savedMatches++;
-				}
-				else {
-					matchSkipped++;
-				}
+//				}
+//				else {
+//					matchSkipped++;
+//				}
 				long currentTime = System.nanoTime();
 				long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
 				System.out.print("DONE\t" + duration / 1000000);
@@ -180,7 +182,7 @@ public class MatchesDownloader {
 	}
 
 
-	private static MatchResult createMatchResult(Element row, Date matchDate, String champSubsetUrl) {
+	private static MatchResult createMatchResult(Element row, Date matchDate, String champSubsetUrl, ArrayList<MatchResult> downloadedMatches) {
 		
 		MatchResult m = new MatchResult();
 		
@@ -201,74 +203,95 @@ public class MatchesDownloader {
 		
 		String teams = teamsElement.text();
 		String homeTeam = teams.split(" - ")[0];
-		m.setHomeTeam(homeTeam);
+		m.setHomeTeam(homeTeam.trim());
 		String awayTeam = teams.split(" - ")[1];;
-		m.setAwayTeam(awayTeam);
+		m.setAwayTeam(awayTeam.trim());
 		
-		Elements tableScoreElems = row.getElementsByClass("table-score");
-		if (tableScoreElems != null && !tableScoreElems.isEmpty()) {
-			String result = tableScoreElems.get(0).text();
-			Integer homeScoreScoredGoals = Integer.valueOf(result.split(":")[0]);
-			m.setFTHG(homeScoreScoredGoals);
-			Integer awayScoredGoals = Integer.valueOf(result.split(":")[1]);
-			m.setFTAG(awayScoredGoals);
-			
-			String finalResult;
-			if (homeScoreScoredGoals > awayScoredGoals)
-				finalResult = "H";
-			else if (homeScoreScoredGoals == awayScoredGoals)
-				finalResult = "D";
-			else
-				finalResult = "A";
+		boolean isAlreadySaved = checkAlreadySavedMatch(m, downloadedMatches);
+		
+		if (!isAlreadySaved) {
+			Elements tableScoreElems = row.getElementsByClass("table-score");
+		
+			if (tableScoreElems != null && !tableScoreElems.isEmpty()) {
+				String result = tableScoreElems.get(0).text();
+				Integer homeScoreScoredGoals = Integer.valueOf(result.split(":")[0]);
+				m.setFTHG(homeScoreScoredGoals);
+				Integer awayScoredGoals = Integer.valueOf(result.split(":")[1]);
+				m.setFTAG(awayScoredGoals);
 				
-			m.setFTR(finalResult);
+				String finalResult;
+				if (homeScoreScoredGoals > awayScoredGoals)
+					finalResult = "H";
+				else if (homeScoreScoredGoals == awayScoredGoals)
+					finalResult = "D";
+				else
+					finalResult = "A";
+					
+				m.setFTR(finalResult);
+			}
+		
+			Double H = Double.valueOf(row.getElementsByClass("odds-nowrp").get(0).text());
+			Double D = Double.valueOf(row.getElementsByClass("odds-nowrp").get(1).text());
+			Double A = Double.valueOf(row.getElementsByClass("odds-nowrp").get(2).text());
+			m.setPSCH(H);
+			m.setPSCD(D);
+			m.setPSCA(A);
+			_1x2Leaf avg1x2Odds = new _1x2Leaf(H, D, A);
+			m.get_1x2().get(TimeTypeEnum._final).setAvg1x2Odds(avg1x2Odds);
+			
+			// ADDITIONAL MATCH INFO
+			Elements elementsByTag = teamsElement.getElementsByTag("a");
+			String matchSuffixUrl = elementsByTag.last().attr("href");
+			
+			// 		1x2
+			String matchUrl = AppConstants.SITE_URL + matchSuffixUrl;
+			populateMatch1X2(m, matchUrl);
+			
+	//		//		ASIAN HANDICAP
+	//		populateMatchAH(m, matchUrl);
+	//
+	//		// 		UNDER OVER
+			populateMatchUO(m, matchUrl);
+	//		
+	//		// 		EUROPEAN HANDICAP
+			populateMatchEH(m, matchUrl);
+	//		
+	//		// 		DOUBLE CHANCE
+	//		populateMatchDC(m, matchUrl);
+	//		
+	//		// 		CORRECT SCORE
+	//		populateMatchCS(m, matchUrl);
+	//		
+	//		// 		DRAW NO BET
+	//		populateMatchDNB(m, matchUrl);
+			
+	//		System.out.println(m);
+			System.out.print(".");
+	
+			return m;
 		}
-		
-		Double H = Double.valueOf(row.getElementsByClass("odds-nowrp").get(0).text());
-		Double D = Double.valueOf(row.getElementsByClass("odds-nowrp").get(1).text());
-		Double A = Double.valueOf(row.getElementsByClass("odds-nowrp").get(2).text());
-		m.setPSCH(H);
-		m.setPSCD(D);
-		m.setPSCA(A);
-		_1x2Leaf avg1x2Odds = new _1x2Leaf(H, D, A);
-		m.get_1x2().get(TimeTypeEnum._final).setAvg1x2Odds(avg1x2Odds);
-		
-		// ADDITIONAL MATCH INFO
-		Elements elementsByTag = teamsElement.getElementsByTag("a");
-		String matchSuffixUrl = elementsByTag.last().attr("href");
-		
-		// 		1x2
-		String matchUrl = AppConstants.SITE_URL + matchSuffixUrl;
-		populateMatch1X2(m, matchUrl);
-		
-//		//		ASIAN HANDICAP
-//		populateMatchAH(m, matchUrl);
-//
-//		// 		UNDER OVER
-		populateMatchUO(m, matchUrl);
-//		
-//		// 		EUROPEAN HANDICAP
-		populateMatchEH(m, matchUrl);
-//		
-//		// 		DOUBLE CHANCE
-//		populateMatchDC(m, matchUrl);
-//		
-//		// 		CORRECT SCORE
-//		populateMatchCS(m, matchUrl);
-//		
-//		// 		DRAW NO BET
-//		populateMatchDNB(m, matchUrl);
-		
-//		System.out.println(m);
-		System.out.print(".");
-
-		return m;
+		return null;
 	}
 
 	
 
 
 	
+
+	private static boolean checkAlreadySavedMatch(MatchResult m, ArrayList<MatchResult> downloadedMatches) {
+		for (MatchResult dbMatch : downloadedMatches) {
+			if  (	dbMatch.getHomeTeam().equals(m.getHomeTeam()) && 
+					dbMatch.getAwayTeam().equals(m.getAwayTeam()) &&
+					dbMatch.getMatchDate().getYear() == m.getMatchDate().getYear() &&
+					dbMatch.getMatchDate().getMonth() == m.getMatchDate().getMonth() &&
+					dbMatch.getMatchDate().getDay() == m.getMatchDate().getDay()
+				) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	private static void populateMatchAH(MatchResult m, String matchUrl) {
 		String asianHandicapSuffix = "/#ah;2";
