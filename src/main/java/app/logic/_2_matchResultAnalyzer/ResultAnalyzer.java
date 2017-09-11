@@ -75,9 +75,11 @@ public class ResultAnalyzer {
 		for (ChampEnum champ : ChampEnum.values()){
 			System.out.println(champ);
 			
-			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChamp(champ);
-			HashMap<String, ArrayList<MatchResult>> matchesMapHome = createMatchMap(teamHomeMatches, "H");
-			HashMap<String, ArrayList<MatchResult>> matchesMapAway = createMatchMap(teamHomeMatches, "A");
+			ArrayList<MatchResult> teamMatchesAway = matchDao.getDownloadedPastMatchByChamp(champ);
+			Map<String, ArrayList<MatchResult>> homeMatchesMap = new HashMap<String, ArrayList<MatchResult>>();
+			createMatchMap(homeMatchesMap, teamMatchesAway, "H");
+			Map<String, ArrayList<MatchResult>> matchesMapAway = new HashMap<String, ArrayList<MatchResult>>();
+			createMatchMap(matchesMapAway, teamMatchesAway, "A");
 			
 			ArrayList<String> teams = teamDao.findByChamp(champ);
 			ArrayList<String> teamsCorrect = new ArrayList<String>();
@@ -86,15 +88,15 @@ public class ResultAnalyzer {
 				teamsCorrect.add(team);
 			}
 			
-			analyzeWinOdds(champ, matchesMapHome, matchesMapAway, teamsCorrect);
-//			analyzeUnderOverOdds(champ, matchesMapHome, matchesMapAway, teamsCorrect);
+			analyzeWinOdds(champ, homeMatchesMap, matchesMapAway, teamsCorrect);
+			analyzeUnderOverOdds(champ, homeMatchesMap, matchesMapAway, teamsCorrect);
 		}
 		
 		return null;
 	
 	}
 
-	private void analyzeUnderOverOdds(ChampEnum champ, HashMap<String, ArrayList<MatchResult>> matchesMapHome, HashMap<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams ) {
+	private void analyzeUnderOverOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams ) {
 		
 //		HashMap<String, GoalsStatsBean> teamToUOStatsHome = new HashMap<String, GoalsStatsBean>();
 //		HashMap<String, GoalsStatsBean> teamToUOStatsAway = new HashMap<String, GoalsStatsBean>();
@@ -155,8 +157,7 @@ public class ResultAnalyzer {
 		
 	}
 
-	private HashMap<String, ArrayList<MatchResult>> createMatchMap(ArrayList<MatchResult> teamHomeMatches, String playingField) {
-		HashMap<String, ArrayList<MatchResult>> matchesMap = new HashMap<String, ArrayList<MatchResult>>();
+	public void createMatchMap(Map<String, ArrayList<MatchResult>> matchesMap, ArrayList<MatchResult> teamHomeMatches, String playingField) {
 		for (MatchResult match : teamHomeMatches) {
 			String team = "";
 			if (playingField.equals("H")) {
@@ -175,7 +176,6 @@ public class ResultAnalyzer {
 
 						
 		}
-		return matchesMap;
 	}
 
 	private List<GoalsStatsBean> analyzeTeamResultUo(String teamName, ArrayList<MatchResult> matches, ChampEnum champ, String playingField) {
@@ -279,7 +279,8 @@ public class ResultAnalyzer {
 		
 	}
 
-	private void analyzeWinOdds(ChampEnum champ, HashMap<String, ArrayList<MatchResult>> matchesMapHome, HashMap<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams) {
+	private void analyzeWinOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, 
+			Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams) {
 		
 		for (String teamName : teams) {
 			

@@ -17,6 +17,7 @@ import app.logic._1_matchesDownlaoder.PastMatchesDownlaoder;
 import app.logic._1_matchesDownlaoder.ResultParserOLD;
 import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import app.logic._2_matchResultAnalyzer.ResultAnalyzer;
+import app.logic._3_rankingCalculator.RankingCalculator;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
@@ -93,6 +94,13 @@ public class FacadeController {
     @RequestMapping(value = "/avviaVecchio3", method = RequestMethod.GET)
     public void avviaVecchio3() {
     	resultAnalyzer.execute();
+    }
+
+    @Autowired
+    private RankingCalculator rankingCalculator;
+    @RequestMapping(value = "/avviaVecchio4", method = RequestMethod.GET)
+    public void avviaVecchio4() {
+    	rankingCalculator.execute();
     }
     
     
