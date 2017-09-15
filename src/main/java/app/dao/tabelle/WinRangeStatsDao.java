@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,29 @@ public class WinRangeStatsDao {
 
 	@Autowired
 	private MapperFacade mapper;
+	
+	public List<WinRangeStatsBean> findByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		List<WinRangeStats> ents = winRangeStatsRepo.findByTeamChampOrderByTeam(champ);
+		List<WinRangeStatsBean> beans = new ArrayList<WinRangeStatsBean>();
+		WinRangeStatsBean bean;
+		for (WinRangeStats ent : ents) {
+			bean = new WinRangeStatsBean();
+			mapper.map(ent, bean);
+			bean.setRange(ent.getRange().getValueDown() + "-" + ent.getRange().getValueUp());
+			bean.setEdgeDown(ent.getRange().getValueDown());
+			bean.setEdgeUp(ent.getRange().getValueUp());
+			bean.setTeamName(ent.getTeam().getName());
+			TimeTypeEnum timeTypeBean = timeTypeDao.findBeanByEnt(ent.getTimeType());
+			bean.setTimeTypeBean(timeTypeBean);
+			bean.setPlayingField(ent.getPlayingField());
+			beans.add(bean);
+		}
+		
+		return beans;
+		
+	}
+
 	
 	public ArrayList<WinRangeStatsBean> findByTeamNameAndChampAndTimeTypeAndPlayingField(String teamName, ChampEnum champEnum, TimeTypeEnum timeTypeEnum, String playingField) {
 		Champ champ = champDao.findByChampEnum(champEnum);
@@ -112,6 +136,7 @@ public class WinRangeStatsDao {
 					if (bean.getTimeTypeBean().equals(timeTypeBean)) {
 						if (bean.getEdgeUp().equals(ent.getRange().getValueUp())) {
 							mapper.map(bean, ent);
+							ent.setPlayingField(playingField);
 						}
 					}
 				}
@@ -169,6 +194,8 @@ public class WinRangeStatsDao {
 		saveWinRangeStats(totalStats, teamName, champEnum, "T");
 	}
 
+
+	
 	
 	
 	

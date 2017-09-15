@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import app.dao.tabelle.MatchoRepo;
+import app.dao.tabelle.TeamDao;
 import app.dao.tabelle.entities.Matcho;
 import app.logic.UtilityModel;
 import app.logic._1_matchesDownlaoder.MatchesDownloader;
@@ -18,6 +20,8 @@ import app.logic._1_matchesDownlaoder.ResultParserOLD;
 import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import app.logic._2_matchResultAnalyzer.ResultAnalyzer;
 import app.logic._3_rankingCalculator.RankingCalculator;
+import app.logic._4_trendCalculator.TrendCalculator;
+import app.logic._5_goodnessCalculator.GoodnessCalculator;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
@@ -91,18 +95,38 @@ public class FacadeController {
 
     @Autowired
     private ResultAnalyzer resultAnalyzer;
-    @RequestMapping(value = "/avviaVecchio3", method = RequestMethod.GET)
-    public void avviaVecchio3() {
+    @RequestMapping(value = "/avviaVecchio2", method = RequestMethod.GET)
+    public void avviaVecchio2() {
     	resultAnalyzer.execute();
     }
 
     @Autowired
     private RankingCalculator rankingCalculator;
-    @RequestMapping(value = "/avviaVecchio4", method = RequestMethod.GET)
-    public void avviaVecchio4() {
+    @RequestMapping(value = "/avviaVecchio3", method = RequestMethod.GET)
+    public void avviaVecchio3() {
     	rankingCalculator.execute();
     }
     
+    @Autowired
+    private TrendCalculator trendCalculator;
+    @RequestMapping(value = "/avviaVecchio4", method = RequestMethod.GET)
+    public void avviaVecchio4() {
+    	trendCalculator.execute();
+    }
+    
+    @Autowired
+    private GoodnessCalculator goodnessCalculator;
+    @RequestMapping(value = "/avviaVecchio5", method = RequestMethod.GET)
+    public void avviaVecchio5() {
+    	goodnessCalculator.execute();
+    }  
+    
+    @Autowired
+    private TeamDao teamDao;
+    @RequestMapping(value = "/removeTeamById", method = RequestMethod.POST)
+    public void removeTeamById(@RequestBody Long id) {
+    	teamDao.removeTeamById(id);
+    }  
     
     
     

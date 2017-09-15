@@ -38,6 +38,8 @@ public class WinRangeStatsBean implements Serializable{
 	
 	private TimeTypeEnum timeTypeBean;
 	
+	private String playingField;
+	
 	
 	public WinRangeStatsBean() {
 		homeHits = 0;
@@ -223,6 +225,16 @@ public class WinRangeStatsBean implements Serializable{
 
 	public void setTimeTypeBean(TimeTypeEnum timeTypeBean) {
 		this.timeTypeBean = timeTypeBean;
+	}
+
+
+	public String getPlayingField() {
+		return playingField;
+	}
+
+
+	public void setPlayingField(String playingField) {
+		this.playingField = playingField;
 	}
 	
 

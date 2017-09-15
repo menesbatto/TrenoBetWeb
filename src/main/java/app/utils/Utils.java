@@ -51,6 +51,9 @@ public class Utils {
 
 
 	public static String redimString(String string, Integer length) {
+		if (string == null) {
+			return "";
+		}
 		String returnString =  string;
 		for (int i = string.length(); i< length; i++){
 			returnString += " ";
@@ -101,5 +104,11 @@ public class Utils {
 	}
 	public static String redimString(Double goodnessW, int i) {
 		return redimString(goodnessW+"", i);
+	}
+	
+	
+	public static String cleanString(String input) {
+		String output = input.replaceAll("[^A-Za-z0-9]", "");
+		return output;
 	}
 }

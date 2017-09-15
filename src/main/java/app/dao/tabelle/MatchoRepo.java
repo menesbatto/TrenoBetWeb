@@ -15,8 +15,10 @@ public interface MatchoRepo extends JpaRepository<Matcho, Long> {
 
 	List<Matcho> findAll();
 
-	Long countByChamp(Champ champ);
+//	Long countByChampAndHomeTeamAndFullTimeResultIsNull(Champ champ);
+//	Long countByChampAndHomeTeamAndFullTimeResultIsNotNull(Champ champ);
 
+	List<Matcho> findByChampAndFullTimeResultIsNull(Champ champ);
 	List<Matcho> findByChampAndFullTimeResultIsNotNull(Champ champ);
 
 	List<Matcho> findByChampAndHomeTeamAndFullTimeResultIsNotNullOrderByMatchDate(Champ champ, Team team);

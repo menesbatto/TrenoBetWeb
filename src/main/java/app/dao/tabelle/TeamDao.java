@@ -101,7 +101,10 @@ public class TeamDao {
 
 	}
 
-	
+	public void removeTeamById(Long id) {
+		teamRepo.delete(id);
+		return;
+	}
 	
 	
 }

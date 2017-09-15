@@ -32,6 +32,7 @@ import app.logic._2_matchResultAnalyzer.model.WinRangeStatsBean;
 import app.utils.AppConstants;
 import app.utils.ChampEnum;
 import app.utils.IOUtils;
+import app.utils.Utils;
 
 @Service
 public class ResultAnalyzer {
@@ -84,7 +85,7 @@ public class ResultAnalyzer {
 			ArrayList<String> teams = teamDao.findByChamp(champ);
 			ArrayList<String> teamsCorrect = new ArrayList<String>();
 			for (String team : teams) {
-				team = team.replace(" ", " ").trim();
+				team = Utils.cleanString(team);
 				teamsCorrect.add(team);
 			}
 			
@@ -167,7 +168,8 @@ public class ResultAnalyzer {
 				team = match.getAwayTeam();
 			}
 			
-			team = team.replace(" ", " ").trim();
+			//team = team.replace(" ", " ").trim(); sono due caratteri simili ma diversi
+			team = Utils.cleanString(team);
 
 			if ( !matchesMap.keySet().contains( team ) )
 				matchesMap.put(team, new ArrayList<MatchResult>()) ;

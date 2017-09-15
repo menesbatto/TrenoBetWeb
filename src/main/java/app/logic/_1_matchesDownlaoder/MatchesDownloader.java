@@ -3,6 +3,7 @@ package app.logic._1_matchesDownlaoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,31 +52,35 @@ public class MatchesDownloader {
 
 	
 	private int downloadChampionshipResults(ChampEnum champ, String type) {
-		ArrayList<MatchResult> downloadedMatches = matchDao.getDownloadedPastMatchByChamp(champ);
 
 		String champSuffixUrl; 
-		if (type == "Next")
+		ArrayList<MatchResult> downloadedMatches;
+		if (type == "Next") {
+			downloadedMatches = matchDao.getDownloadedNextMatchByChamp(champ);
 			champSuffixUrl = champ.getNextMatchesUrl();
-		else //if (type == "Past")
+		}
+		else {//if (type == "Past"){
+			downloadedMatches = matchDao.getDownloadedPastMatchByChamp(champ);
 			champSuffixUrl = champ.getResultsUrl();
-		
+		}
 		Document doc = null;
 		
 		String champSubsetUrl = champSuffixUrl; 
 		doc = HttpUtils.getHtmlPage(champSubsetUrl);
 
-		int size;
-		if (type == "Next")
-			size = 0;
-		else //if (type == "Past")
-			size = matchDao.countDownloadedMatchByChamp(champ); 
+		int size = 0;
+//		if (type == "Next")
+//			size = matchDao.countDownloadedNextMatchByChamp(champ); 
+//		else //if (type == "Past")
+//			size = matchDao.countDownloadedPastMatchByChamp(champ); 
 		
 		Element matchesTable;
-		if (size < 50){
+//		if (size < 50){
 			matchesTable = doc.getElementById("tournamentTable");
-			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size, downloadedMatches);
-			size = savedMatchesNum;
-		}
+			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, downloadedMatches);
+			size = 50;
+//			size = savedMatchesNum;
+//		}
 		
 		// Calcolo numero di pagine in cui sono divisi i risultati
 		Element paginationElement = doc.getElementById("pagination");
@@ -87,8 +92,9 @@ public class MatchesDownloader {
 				champSubsetUrl = champSuffixUrl + "/#/page/" + i + "/";
 				doc = HttpUtils.getHtmlPage(champSubsetUrl);
 				matchesTable = doc.getElementById("tournamentTable");
-				int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, size % 50, downloadedMatches);
-				size += savedMatchesNum;
+				savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, downloadedMatches);
+//				size += savedMatchesNum; 
+				size += 50; 
 				
 			}
 		}
@@ -98,7 +104,7 @@ public class MatchesDownloader {
 	
 	
 	
-	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ, Integer alreadySavedMatcheOnThisPage, ArrayList<MatchResult> downloadedMatches) {
+	private int createMatches(Element matchesTable, String champSubsetUrl, ChampEnum champ, ArrayList<MatchResult> downloadedMatches) {
 		Elements tableRows = matchesTable.getElementsByTag("tr");
 		Date matchDate = null;
 		MatchResult matchResult = null;
@@ -150,10 +156,18 @@ public class MatchesDownloader {
 					dateString = dateString.substring(10) + " 2017";
 				
 				matchDate = Utils.convertDateString(dateString); 
+				
+				//Scarico solo i matches che stanno a meno di 7 giorni di distanza da oggi
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.DATE, +7);
+				Date expiringDate = cal.getTime();
+				if (matchDate.after(expiringDate)) {
+					return savedMatches;
+				}
 			}
 //			else if (row.hasClass("deactivate")){ 
 //			else if (row.hasClass("odd") || row.hasAttr("heid")){ //next xxx
-			else if (row.hasClass("deactivate") || row.hasClass("odd") || row.hasAttr("heid")){ //results
+			else if (row.hasClass("deactivate") || row.hasClass("odd") || row.hasAttr("xeid")){ //results
 					long startTime = System.nanoTime();
 					System.out.println("Match " + matchNum++);
 					
@@ -203,9 +217,11 @@ public class MatchesDownloader {
 		
 		String teams = teamsElement.text();
 		String homeTeam = teams.split(" - ")[0];
-		m.setHomeTeam(homeTeam.trim());
-		String awayTeam = teams.split(" - ")[1];;
-		m.setAwayTeam(awayTeam.trim());
+		String cleanHome = Utils.cleanString(homeTeam);
+		m.setHomeTeam(cleanHome);
+		String awayTeam = teams.split(" - ")[1];
+		String cleanAway = Utils.cleanString(awayTeam);
+		m.setAwayTeam(cleanAway);
 		
 		boolean isAlreadySaved = checkAlreadySavedMatch(m, downloadedMatches);
 		
@@ -348,8 +364,11 @@ public class MatchesDownloader {
 				Elements elementsMatchingText = tr.getElementsByAttributeValueStarting("title", "Go to");
 				if (elementsMatchingText.size() > 0){
 					String betHouseName = getBetHouseName(tr);
-					Double underBetRoom = Double.valueOf(tr.getElementsByTag("div").get(2).text());
-					Double overBetRoom = Double.valueOf(tr.getElementsByTag("div").get(1).text());
+					String underString = tr.getElementsByTag("div").get(2).text();
+					Double underBetRoom = !underString.equals("") ? Double.valueOf(underString) : 1.0;
+					
+					String overSring = tr.getElementsByTag("div").get(1).text();
+					Double overBetRoom = !overSring.equals("") ? Double.valueOf(overSring) : 1.0;
 
 					BetHouseEnum betHouse = BetHouseEnum.valueOf(betHouseName);
 					
@@ -385,6 +404,7 @@ public class MatchesDownloader {
 	}
 	
 	private static void populateMatchEHSpecificType(MatchResult m, String matchUrl, TimeTypeEnum timeType) {
+
 		String infoUrl = matchUrl + timeType.getEhUrlSuffix();
 		Document matchPage = HttpUtils.getHtmlPageEH(infoUrl);
 		Elements handicaps = matchPage.getElementById("odds-data-table").getElementsByClass("table-container");
@@ -415,9 +435,14 @@ public class MatchesDownloader {
 			EhTimeType ehTimeType = m.getEh().get(timeType);
 			_1x2Full ehThreshold = getEhThreshold(ehThresholdEnum, ehTimeType);
 			
-			Double odds1Avg = Double.valueOf(odds1AvgString);
-			Double oddsXAvg = Double.valueOf(uoAvgElem.getElementsByTag("span").get(2).text());
-			Double odds2Avg = Double.valueOf(uoAvgElem.getElementsByTag("span").get(3).text());
+			Double odds1Avg = !odds1AvgString.equals("") ? Double.valueOf(odds1AvgString) : 1.0;
+			
+			String oddsXavgString = uoAvgElem.getElementsByTag("span").get(2).text();
+			Double oddsXAvg = !oddsXavgString.equals("") ? Double.valueOf(oddsXavgString) : 1.0;
+			
+			String odds2avgString = uoAvgElem.getElementsByTag("span").get(3).text();
+			Double odds2Avg = !odds2avgString.equals("") ? Double.valueOf(odds2avgString) : 1.0;
+			
 			_1x2Leaf _1x2AvgMatch = new _1x2Leaf(odds1Avg , oddsXAvg, odds2Avg);
 			
 			ehThreshold.setAvg1x2Odds(_1x2AvgMatch);
@@ -428,9 +453,15 @@ public class MatchesDownloader {
 				Elements elementsMatchingText = tr.getElementsByAttributeValueStarting("title", "Go to");
 				if (elementsMatchingText.size() > 0){
 					String betHouseName = getBetHouseName(tr);
-					Double odd1 = Double.valueOf(tr.getElementsByTag("div").get(3).text());
-					Double oddX = Double.valueOf(tr.getElementsByTag("div").get(2).text());
-					Double odd2 = Double.valueOf(tr.getElementsByTag("div").get(1).text());
+					String odds1String = tr.getElementsByTag("div").get(3).text();
+					Double odd1 = !odds1String.equals("") ? Double.valueOf(odds1String) : 1.0;
+					
+					String oddsXString = tr.getElementsByTag("div").get(2).text();
+					Double oddX =  !oddsXString.equals("") ? Double.valueOf(oddsXString) : 1.0;
+										
+					String odds2String = tr.getElementsByTag("div").get(1).text();
+					Double odd2 =  !odds2String.equals("") ? Double.valueOf(odds2String) : 1.0;
+					
 
 					BetHouseEnum betHouse = BetHouseEnum.valueOf(betHouseName);
 					

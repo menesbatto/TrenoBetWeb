@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -971,7 +972,7 @@ public class RankingCalculator {
 	}
 	
 	
-	public static void printRanking(ArrayList<RankingRow> ranking, ChampEnum champ) {
+	public void printRanking(List<RankingRow> ranking, ChampEnum champ) {
 		 String header = 
 				 "\n" + champ.getRankCriteria().get(1) +
 

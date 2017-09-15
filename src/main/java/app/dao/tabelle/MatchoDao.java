@@ -261,12 +261,25 @@ public class MatchoDao {
 		return ent;
 	}
 	
-	public int countDownloadedMatchByChamp(ChampEnum champEnum) {
-		Champ champ = champDao.findByChampEnum(champEnum);
-		Long count = matchRepo.countByChamp(champ);
-		return count.intValue();
-	}
+//	public int countDownloadedNextMatchByChamp(ChampEnum champEnum) {
+//		Champ champ = champDao.findByChampEnum(champEnum);
+//		Long count = matchRepo.countByChampAndHomeTeamAndFullTimeResultIsNull(champ);
+//		return count.intValue();
+//	}
+//
+//	public int countDownloadedPastMatchByChamp(ChampEnum champEnum) {
+//		Champ champ = champDao.findByChampEnum(champEnum);
+//		Long count = matchRepo.countByChampAndHomeTeamAndFullTimeResultIsNotNull(champ);
+//		return count.intValue();
+//	}
 	
+	public ArrayList<MatchResult> getDownloadedNextMatchByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNull(champ);
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
+		return listBean;
+	}
+
 	public ArrayList<MatchResult> getDownloadedPastMatchByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNotNull(champ);
