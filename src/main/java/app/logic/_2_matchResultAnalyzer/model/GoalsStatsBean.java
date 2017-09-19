@@ -20,6 +20,7 @@ public class GoalsStatsBean implements Serializable {
 	private String teamName;
 	
 	private TimeTypeEnum timeTypeBean;
+	private String playingField;
 	private HashMap<UoThresholdEnum, UoThresholdStats> thresholdMap;
 	
 	
@@ -110,6 +111,16 @@ public class GoalsStatsBean implements Serializable {
 
 	public void setTimeTypeBean(TimeTypeEnum timeTypeBean) {
 		this.timeTypeBean = timeTypeBean;
+	}
+
+
+	public String getPlayingField() {
+		return playingField;
+	}
+
+
+	public void setPlayingField(String playingField) {
+		this.playingField = playingField;
 	}
 	
 	

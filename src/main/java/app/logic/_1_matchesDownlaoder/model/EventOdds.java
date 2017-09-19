@@ -3,6 +3,10 @@ package app.logic._1_matchesDownlaoder.model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import app.utils.Utils;
 
@@ -56,6 +60,9 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 				"\n\tUO\t" + oddsU + "\t" + oddsO + "\n";
 		}
 		else {
+			String uoH = getUoString(homeResultGoodness.getUoMap());
+			String uoA = getUoString(awayResultGoodness.getUoMap());
+			
 			String s =  
 	
 				Utils.redimString(homeTeam,16) + " " + Utils.redimString(awayTeam,16) + "\t\t" + betType + "\t" + matchResult + "\t" + getFormattedDate() + "\t" + winOdds + "\n" + 
@@ -72,14 +79,23 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 	//			
 	//			"\n\tGOOD\t | " + awayResultGoodness.getGoodnessL() + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithTrends()) + "\t | " + awayResultGoodness.getGoodnessD() + "\t | " + awayResultGoodness.getGoodnessW() + "\t" + Utils.redimString(awayResultGoodness.getGoodnessWwithTrends()) + "\t\t | " +awayResultGoodness.getGoodnessU() + "\t" + awayResultGoodness.getGoodnessO() + "\n"; 
 				
-				"\n\tH GOOD\t | " + Utils.redimString(homeResultGoodness.getGoodnessW()) + "\t" + Utils.redimString(homeMotivation) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithMotivation()) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithTrends()) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWfinal()) + "\t | " + homeResultGoodness.getGoodnessD() + "\t\t | " +  Utils.redimString(homeResultGoodness.getGoodnessL()) + "\t" + Utils.redimString(homeMotivation) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLwithMotivation()) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLwithTrends()) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLfinal()) + "\t | " +  Utils.redimString(homeResultGoodness.getGoodnessU()+"",5) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessO()+"",5) + "\n\n"; // +  
+				"\n\tH GOOD\t | " + Utils.redimString(homeResultGoodness.getGoodnessW()) + "\t" + Utils.redimString(homeMotivation) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithMotivation()) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithTrends()) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWfinal()) + "\t | " + homeResultGoodness.getGoodnessD() + "\t\t | " +  Utils.redimString(homeResultGoodness.getGoodnessL()) + "\t" + Utils.redimString(homeMotivation) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLwithMotivation()) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLwithTrends()) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLfinal()) + "\t | " +  uoH  +  
 				
-//		rimetti		"\n\tA GOOD\t | " + Utils.redimString(awayResultGoodness.getGoodnessL()) + "\t" + Utils.redimString(awayMotivation) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithMotivation()) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithTrends()) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLfinal()) + "\t | " + awayResultGoodness.getGoodnessD() + "\t\t | " +  Utils.redimString(awayResultGoodness.getGoodnessW()) + "\t" + Utils.redimString(awayMotivation) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWwithMotivation()) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWwithTrends()) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWfinal()) + "\t | " +  Utils.redimString(awayResultGoodness.getGoodnessU()+"",5) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessO()+"",5) + "\n\n";
+				"\n\tA GOOD\t | " + Utils.redimString(awayResultGoodness.getGoodnessL()) + "\t" + Utils.redimString(awayMotivation) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithMotivation()) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithTrends()) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLfinal()) + "\t | " + awayResultGoodness.getGoodnessD() + "\t\t | " +  Utils.redimString(awayResultGoodness.getGoodnessW()) + "\t" + Utils.redimString(awayMotivation) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWwithMotivation()) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWwithTrends()) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWfinal()) + "\t | " +  uoA + "\n\n";
 				
 //				"\n\tA GOOD\t | " + awayResultGoodness.getGoodnessL() + "\t" + Utils.redimString(awayMotivation) + "\t | " + awayResultGoodness.getGoodnessD() + "\t | " + awayResultGoodness.getGoodnessW() + "\t" + Utils.redimString(awayMotivation) + "\t\t | " + awayResultGoodness.getGoodnessU() + "\t" + awayResultGoodness.getGoodnessO() + "\n\n"; 
 	
 			return s;
 		}
+	}
+
+
+	private String getUoString(Map<UoThresholdEnum, ResultGoodnessUo> uoMap) {
+		String result = "";
+		for (UoThresholdEnum thr : UoThresholdEnum.values()) {
+			result += thr + ": " + uoMap.get(thr).getGoodnessU() + " " + uoMap.get(thr).getGoodnessO() + "|\t";
+		}
+		return result;
 	}
 
 

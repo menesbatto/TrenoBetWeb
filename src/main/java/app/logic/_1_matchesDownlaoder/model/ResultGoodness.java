@@ -1,6 +1,8 @@
 package app.logic._1_matchesDownlaoder.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResultGoodness implements Serializable{
 	
@@ -25,7 +27,12 @@ public class ResultGoodness implements Serializable{
 	private Double goodnessU;
 	private Double goodnessO;
 	
+	private Map<UoThresholdEnum, ResultGoodnessUo> uoMap;
 	
+	
+	public ResultGoodness() {
+		uoMap = new HashMap<UoThresholdEnum, ResultGoodnessUo>();
+	}
 	public Double getGoodnessW() {
 		return goodnessW;
 	}
@@ -44,6 +51,11 @@ public class ResultGoodness implements Serializable{
 	public void setGoodnessL(Double goodnessL) {
 		this.goodnessL = goodnessL;
 	}
+//	@Override
+//	public String toString() {
+//		return  "\t" + goodnessW + "\t" + goodnessD + "\t" + goodnessL + "\n" +
+//				"\t" + goodnessU + "\t" + goodnessO;
+//	}
 	@Override
 	public String toString() {
 		return  "\t" + goodnessW + "\t" + goodnessD + "\t" + goodnessL + "\n" +
@@ -114,6 +126,12 @@ public class ResultGoodness implements Serializable{
 	}
 	public void setGoodnessLfinal(Double goodnessLfinal) {
 		this.goodnessLfinal = goodnessLfinal;
+	}
+	public Map<UoThresholdEnum, ResultGoodnessUo> getUoMap() {
+		return uoMap;
+	}
+	public void setUoMap(Map<UoThresholdEnum, ResultGoodnessUo> uoMap) {
+		this.uoMap = uoMap;
 	}
 	
 	

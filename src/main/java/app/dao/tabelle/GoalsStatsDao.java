@@ -50,6 +50,36 @@ public class GoalsStatsDao {
 	@Autowired
 	private MapperFacade mapper;
 	
+	public List<GoalsStatsBean> findByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		List<GoalsStats> ents = goalsStatsRepo.findByTeamChampOrderByTeam(champ);
+		List<GoalsStatsBean> beans = new ArrayList<GoalsStatsBean>();
+		GoalsStatsBean bean;
+		for (GoalsStats ent : ents) {
+			bean = getBeanFromList(ent.getTeamName(), ent.getPlayingField(), ent.getTimeType(), beans);
+			if (bean == null) {
+				bean = new GoalsStatsBean();
+				mapper.map(ent, bean);
+				bean.setTeamName(ent.getTeam().getName());
+				TimeTypeEnum timeTypeBean = timeTypeDao.findBeanByEnt(ent.getTimeType());
+				bean.setTimeTypeBean(timeTypeBean);
+				bean.setPlayingField(ent.getPlayingField());
+				beans.add(bean);
+			}
+			
+			UoThresholdEnum thrBean = uoThresholdTypeDao.findBeanByEnt(ent.getThreshold());
+			UoThresholdStats thrStatsBean = new UoThresholdStats();
+			thrStatsBean.setOverHit(ent.getOverHit());
+			thrStatsBean.setOverPerc(ent.getOverPerc());
+			thrStatsBean.setUnderHit(ent.getUnderHit());
+			thrStatsBean.setUnderPerc(ent.getUnderPerc());
+			bean.getThresholdMap().put(thrBean, thrStatsBean);
+			
+		}
+		return beans;
+		
+	}
+	
 //	public GoalsStatsBean findByTeamNameAndChampAndTimeTypeAndPlayingField(String teamName, ChampEnum champEnum,	TimeTypeEnum timeTypeEnum, String playingField) {
 //	
 //		Champ champ = champDao.findByChampEnum(champEnum);
@@ -109,10 +139,27 @@ public class GoalsStatsDao {
 //	}
 	
 
-	public List<GoalsStats> initGoalsStatsForTeam(Team team, TimeType timeType, String playingField) {
+	private GoalsStatsBean getBeanFromList(String teamName, String playingField, TimeType timeType, List<GoalsStatsBean> beans) {
+		for (GoalsStatsBean bean : beans) {
+			if (bean.getTeamName().equals(teamName)) {
+				if (bean.getPlayingField().equals(playingField)) {
+					TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(timeType);
+					if (bean.getTimeTypeBean().equals(timeTypeEnum)) {
+						return bean;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<GoalsStats> initGoalsStatsForTeam(Team team, String playingField) {
 		List<GoalsStats> goalsStatsList = new ArrayList<GoalsStats>();
 		List<UoThresholdType> thresholdList = uoThresholdTypeDao.findAll();
-		initSingleGoalsStatsForTeam(team, goalsStatsList, thresholdList, playingField,  timeType);
+		List<TimeType> timeTypes = timeTypeDao.findAll();
+		for (TimeType timeType : timeTypes) {
+			initSingleGoalsStatsForTeam(team, goalsStatsList, thresholdList, playingField,  timeType);
+		}
 //		goalsStatsRepo.save(goalsStatsList);
 		return goalsStatsList;
 	}
@@ -140,23 +187,26 @@ public class GoalsStatsDao {
 
 		for (GoalsStatsBean bean : beans) {
 			
-			TimeType timeType = timeTypeDao.findByValue(bean.getTimeTypeBean().name());
+			TimeType beanTimeType = timeTypeDao.findByValue(bean.getTimeTypeBean().name());
 			
 			if (existingGoalsStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
-				existingGoalsStats = initGoalsStatsForTeam(teamEnt, timeType, playingField);
+				existingGoalsStats = initGoalsStatsForTeam(teamEnt, playingField);
 			}
 			
 			for (GoalsStats ent : existingGoalsStats) {
 				for ( Entry<UoThresholdEnum, UoThresholdStats> entry : bean.getThresholdMap().entrySet()) {
 					UoThresholdEnum key = entry.getKey();
 					if (key.getValueNum().equals(ent.getThreshold().getValueNum())) {
-						UoThresholdStats value = entry.getValue();
-						mapper.map(bean, ent);
-						ent.setTimeType(timeType);
-						ent.setOverHit(value.getOverHit());
-						ent.setOverPerc(value.getOverPerc());
-						ent.setUnderHit(value.getUnderHit());
-						ent.setUnderPerc(value.getUnderPerc());
+						if (beanTimeType.equals(ent.getTimeType())) {
+							UoThresholdStats value = entry.getValue();
+							mapper.map(bean, ent);
+							ent.setPlayingField(playingField);	//playingField perche se lo perde col map...cci sua
+							ent.setTimeType(beanTimeType);
+							ent.setOverHit(value.getOverHit());
+							ent.setOverPerc(value.getOverPerc());
+							ent.setUnderHit(value.getUnderHit());
+							ent.setUnderPerc(value.getUnderPerc());
+						}
 					}
 				}
 			}

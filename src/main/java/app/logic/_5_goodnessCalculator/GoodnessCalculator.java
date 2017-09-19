@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import app.dao.tabelle.GoalsStatsDao;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.RankingRowDao;
 import app.dao.tabelle.WinRangeStatsDao;
@@ -18,10 +19,13 @@ import app.logic._1_matchesDownlaoder.model.EventOdds;
 import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.MatchResultEnum;
 import app.logic._1_matchesDownlaoder.model.ResultGoodness;
+import app.logic._1_matchesDownlaoder.model.ResultGoodnessUo;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
+import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 import app.logic._1_matchesDownlaoder.model._1x2Leaf;
 import app.logic._2_matchResultAnalyzer.model.GoalsStatsBean;
 import app.logic._2_matchResultAnalyzer.model.TeamResultEnum;
+import app.logic._2_matchResultAnalyzer.model.UoThresholdStats;
 import app.logic._2_matchResultAnalyzer.model.WinRangeStatsBean;
 import app.logic._3_rankingCalculator.RankingCalculator;
 import app.logic._3_rankingCalculator.model.RankingRow;
@@ -63,6 +67,9 @@ public class GoodnessCalculator {
 	@Autowired
 	private WinRangeStatsDao winRangeStatsDao;
 	
+	@Autowired
+	private GoalsStatsDao goalsStatsDao;
+	
 	
 	public void execute(){
 //	public void execute(HashMap<ChampEnum, ArrayList<EventOdds>> allMatchesOddsInput){
@@ -71,7 +78,7 @@ public class GoodnessCalculator {
 		
 		List<RankingRow> ranking;
 		for (ChampEnum champ : ChampEnum.values()){
-			calculateWinGoodnessOfChamp(champ);
+			calculateMatchGoodnessOfChamp(champ);
 			
 			ranking = rankingRowDao.findByChamp(champ);
 			rankingCalculator.printRanking(ranking, champ);
@@ -82,29 +89,40 @@ public class GoodnessCalculator {
 	
 	
 	
-	private void calculateWinGoodnessOfChamp(ChampEnum champ) {
+	private void calculateMatchGoodnessOfChamp(ChampEnum champ) {
 		ArrayList<MatchResult> nextMatches = matchDao.getDownloadedNextMatchByChamp(champ);
 //		ArrayList<EventOdds> nextMatchesOdds = createNextEventsOdds(nextMatches);
 		Map<TimeTypeEnum, ArrayList<EventOdds>> mapNextMatchOdds = createNextEventsOdds(nextMatches);
 		
 		
 		List<WinRangeStatsBean> teamWinRangeStats = winRangeStatsDao.findByChamp(champ); //ordinate per team
-		//team, 	field,		time,				range 
+		List<GoalsStatsBean> teamGoalsStats = goalsStatsDao.findByChamp(champ); //ordinate per team
+		//	team, 			field,			time,					range 
 		Map<String, HashMap<String, HashMap<TimeTypeEnum, ArrayList<WinRangeStatsBean>>>> mapTeamWinRangStats = createWinRangeStatsMap(teamWinRangeStats);
+		Map<String, HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>>> mapTeamGoalsStats = createGoalsStatsMap(teamGoalsStats);
 		
 		List<TimeTypeEnum> timeTypes = timeTypeDao.findAllTimeTypeEnum();	
 		
 		
 		for (TimeTypeEnum timeType : timeTypes) {		
 			for (EventOdds eo : mapNextMatchOdds.get(timeType)){
-//				ResultGoodness resultGoodness = calculateAllWinResultsGoodness(allAnalyzedChampsWinHome.get(champ).get(eo.getHomeTeam()), eo.getOddsH());
+				
 				ArrayList<WinRangeStatsBean> rangesStatsByTeamFieldTime = mapTeamWinRangStats.get(eo.getHomeTeam()).get("H").get(timeType);
+				ResultGoodness resultGoodnessHome = calculateAllWinResultsGoodness(rangesStatsByTeamFieldTime, eo.getOddsH());
 				
-				ResultGoodness resultGoodness = calculateAllWinResultsGoodness(rangesStatsByTeamFieldTime, eo.getOddsH());
+				GoalsStatsBean goalsStatsByTeamFieldTimeHome = mapTeamGoalsStats.get(eo.getHomeTeam()).get("H").get(timeType);
+				calculateAllUoResultsGoodness(goalsStatsByTeamFieldTimeHome, resultGoodnessHome);
+				eo.setHomeResultGoodness(resultGoodnessHome);
+								
 				
+				
+				ArrayList<WinRangeStatsBean> rangesStatsByTeamFieldTimeAway = mapTeamWinRangStats.get(eo.getAwayTeam()).get("A").get(timeType);
+				ResultGoodness resultGoodnessAway = calculateAllWinResultsGoodness(rangesStatsByTeamFieldTimeAway, eo.getOddsA());
+				
+				GoalsStatsBean goalsStatsByTeamFieldTimeAway = mapTeamGoalsStats.get(eo.getAwayTeam()).get("A").get(timeType);
+				calculateAllUoResultsGoodness(goalsStatsByTeamFieldTimeAway, resultGoodnessAway);
 //				calculateAllUoResultsGoodness(allAnalyzedChampsUoHome.get(champ).get(eo.getHomeTeam()), resultGoodness);
-//				calculateAllUoResultsGoodness(rangesStatsByTeamFieldTime, resultGoodness);
-				eo.setHomeResultGoodness(resultGoodness);
+				eo.setAwayResultGoodness(resultGoodnessAway);
 				
 			}
 			System.out.println("###############################");
@@ -112,12 +130,7 @@ public class GoodnessCalculator {
 			System.out.println("###############################");
 			System.out.println(mapNextMatchOdds.get(timeType));
 		}
-//		for (EventOdds eo : allMatchesOdds.get(champ)){
-//			ResultGoodness resultGoodness = calculateAllWinResultsGoodness(allAnalyzedChampsWinAway.get(champ).get(eo.getAwayTeam()), eo.getOddsA());
-//			calculateAllUoResultsGoodness(allAnalyzedChampsUoAway.get(champ).get(eo.getAwayTeam()), resultGoodness);
-//			
-//			eo.setAwayResultGoodness(resultGoodness);
-//		}	
+		
 		
 //		updateGoodnessWithMotivationalIndex(allMatchesOdds.get(champ), rankings.get(champ));
 //
@@ -126,6 +139,27 @@ public class GoodnessCalculator {
 		
 		//salva e stampa le odds
 		System.out.println();
+	}
+
+
+
+	private Map<String, HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>>> createGoalsStatsMap( List<GoalsStatsBean> teamGoalsStats) {
+		Map<String, HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>>> map = new HashMap<String, HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>>>();
+		
+		for (GoalsStatsBean goalsStats : teamGoalsStats) {
+			String teamNameClean = Utils.cleanString(goalsStats.getTeamName());
+			if (!map.keySet().contains(goalsStats.getTeamName())) {
+				HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>> teamMap = new HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>>();
+				
+				teamMap.put("H", new HashMap<TimeTypeEnum, GoalsStatsBean>());
+				teamMap.put("A", new HashMap<TimeTypeEnum, GoalsStatsBean>());
+				teamMap.put("T", new HashMap<TimeTypeEnum, GoalsStatsBean>());
+				map.put(teamNameClean, teamMap);
+			}
+			map.get(teamNameClean).get(goalsStats.getPlayingField()).put(goalsStats.getTimeTypeBean(), goalsStats);
+		}
+		
+		return map;
 	}
 
 
@@ -371,9 +405,26 @@ public class GoodnessCalculator {
 
 
 
-	private static void calculateAllUoResultsGoodness(GoalsStatsBean GoalsStatsBean, ResultGoodness resultGoodness) {
-//		resultGoodness.setGoodnessO(new Double(Utils.redimString(GoalsStatsBean.getOver2_5Perc()))); 
-//		resultGoodness.setGoodnessU(new Double(Utils.redimString(GoalsStatsBean.getUnder2_5Perc()))); 
+	private static void calculateAllUoResultsGoodness(GoalsStatsBean goalsStatsBean, ResultGoodness resultGoodness) {
+		
+		UoThresholdEnum key;
+		for (Entry<UoThresholdEnum, UoThresholdStats> entry : goalsStatsBean.getThresholdMap().entrySet()) {
+			key = entry.getKey();
+			UoThresholdStats value = entry.getValue();
+			ResultGoodnessUo rguo = new ResultGoodnessUo();
+			Double total = value.getOverHit() + value.getUnderHit();
+			Double overPerc = value.getOverPerc();
+			Double underPerc = value.getUnderPerc();
+//			if (total <= 3) {
+//				underPerc = overPerc / (4 - total);
+//				overPerc = overPerc / (4 - total);
+//			}
+			rguo.setGoodnessO(overPerc);
+			rguo.setGoodnessU(underPerc);
+				
+			resultGoodness.getUoMap().put(key, rguo);
+		}
+
 		
 	}
 

@@ -39,7 +39,11 @@ public class TimeType {
 	} 
 	
 	
-	
+	@Override
+	public boolean equals(Object obj) {
+		TimeType tt = (TimeType)obj;
+		return this.id == tt.getId();
+	}
 	
 	
 	//bet365, Betclic,  bwin, PaddyPower, Tipico, Unibet, WilliamHill
