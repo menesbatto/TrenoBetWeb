@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.MatchoDao;
 import app.logic._1_matchesDownlaoder.model.BetHouseEnum;
-import app.logic._1_matchesDownlaoder.model.EhEnum;
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.EhTimeType;
 import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
@@ -429,7 +429,7 @@ public class MatchesDownloader {
 			// Recupera l'enum della soglia
 			String ehThresholdRaw = handicap.getElementsByTag("strong").get(0).text();
 			String ehThresholdString = ehThresholdRaw.substring(ehThresholdRaw.lastIndexOf(" ")+1).replace("-", "m").replace("+", "p");
-			EhEnum ehThresholdEnum = EhEnum.valueOf(ehThresholdString);
+			HomeVariationEnum ehThresholdEnum = HomeVariationEnum.valueOf(ehThresholdString);
 
 			// Setta l'avg
 			EhTimeType ehTimeType = m.getEh().get(timeType);
@@ -475,7 +475,7 @@ public class MatchesDownloader {
 	}
 
 
-	private static _1x2Full getEhThreshold(EhEnum ehThresholdEnum, EhTimeType ehTimeType) {
+	private static _1x2Full getEhThreshold(HomeVariationEnum ehThresholdEnum, EhTimeType ehTimeType) {
 		_1x2Full handicap = null;
 		handicap = ehTimeType.getMap().get(ehThresholdEnum);
 		return handicap;

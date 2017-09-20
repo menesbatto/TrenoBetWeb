@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResultGoodness implements Serializable{
+import org.springframework.hateoas.TemplateVariable.VariableType;
+
+public class ResultGoodnessBean implements Serializable{
 	
 	private static final long serialVersionUID = -8220296671620254113L;
 
@@ -16,22 +18,22 @@ public class ResultGoodness implements Serializable{
 	private Double goodnessD;
 	private Double goodnessL;
 	
-	private Double goodnessHwithTrends;
+	private Double goodnessWwithTrends;
 	private Double goodnessDwithTrends;
-	private Double goodnessAwithTrends;
+	private Double goodnessLwithTrends;
 
-	private Double goodnessHwithMotivation;
+	private Double goodnessWwithMotivation;
 	private Double goodnessDwithMotivation;
-	private Double goodnessAwithMotivation;
+	private Double goodnessLwithMotivation;
 	
-	private Double goodnessU;
-	private Double goodnessO;
+	private Map<UoThresholdEnum, ResultGoodnessUoBean> uoGoodness;
+
+	private Map<VariableType, ResultGoodnessUoBean> ehGoodness;
 	
-	private Map<UoThresholdEnum, ResultGoodnessUo> uoMap;
 	
-	
-	public ResultGoodness() {
-		uoMap = new HashMap<UoThresholdEnum, ResultGoodnessUo>();
+	public ResultGoodnessBean() {
+		uoGoodness = new HashMap<UoThresholdEnum, ResultGoodnessUoBean>();
+		ehGoodness = new HashMap<VariableType, ResultGoodnessUoBean>();
 	}
 	public Double getGoodnessW() {
 		return goodnessW;
@@ -58,56 +60,50 @@ public class ResultGoodness implements Serializable{
 //	}
 	@Override
 	public String toString() {
-		return  "\t" + goodnessW + "\t" + goodnessD + "\t" + goodnessL + "\n" +
-				"\t" + goodnessU + "\t" + goodnessO;
+		return  "\t" + goodnessW + "\t" + goodnessD + "\t" + goodnessL + "\n";
+				
 	}
-	public Double getGoodnessU() {
-		return goodnessU;
-	}
-	public void setGoodnessU(Double goodnessU) {
-		this.goodnessU = goodnessU;
-	}
-	public Double getGoodnessO() {
-		return goodnessO;
-	}
-	public void setGoodnessO(Double goodnessO) {
-		this.goodnessO = goodnessO;
-	}
-	public Double getGoodnessWwithMotivation() {
-		return goodnessHwithMotivation;
-	}
-	public void setGoodnessWwithMotivation(Double goodnessWwithMotivation) {
-		this.goodnessHwithMotivation = goodnessWwithMotivation;
-	}
+	
 	public Double getGoodnessDwithMotivation() {
 		return goodnessDwithMotivation;
 	}
 	public void setGoodnessDwithMotivation(Double goodnessDwithMotivation) {
 		this.goodnessDwithMotivation = goodnessDwithMotivation;
 	}
-	public Double getGoodnessLwithMotivation() {
-		return goodnessAwithMotivation;
-	}
-	public void setGoodnessLwithMotivation(Double goodnessLwithMotivation) {
-		this.goodnessAwithMotivation = goodnessLwithMotivation;
-	}
-	public Double getGoodnessWwithTrends() {
-		return goodnessHwithTrends;
-	}
-	public void setGoodnessWwithTrends(Double goodnessWwithTrends) {
-		this.goodnessHwithTrends = goodnessWwithTrends;
-	}
+	
 	public Double getGoodnessDwithTrends() {
 		return goodnessDwithTrends;
 	}
 	public void setGoodnessDwithTrends(Double goodnessDwithTrends) {
 		this.goodnessDwithTrends = goodnessDwithTrends;
 	}
+	
+	public Double getGoodnessWwithTrends() {
+		return goodnessWwithTrends;
+	}
+	public void setGoodnessWwithTrends(Double goodnessWwithTrends) {
+		this.goodnessWwithTrends = goodnessWwithTrends;
+	}
 	public Double getGoodnessLwithTrends() {
-		return goodnessAwithTrends;
+		return goodnessLwithTrends;
 	}
 	public void setGoodnessLwithTrends(Double goodnessLwithTrends) {
-		this.goodnessAwithTrends = goodnessLwithTrends;
+		this.goodnessLwithTrends = goodnessLwithTrends;
+	}
+	public Double getGoodnessWwithMotivation() {
+		return goodnessWwithMotivation;
+	}
+	public void setGoodnessWwithMotivation(Double goodnessWwithMotivation) {
+		this.goodnessWwithMotivation = goodnessWwithMotivation;
+	}
+	public Double getGoodnessLwithMotivation() {
+		return goodnessLwithMotivation;
+	}
+	public void setGoodnessLwithMotivation(Double goodnessLwithMotivation) {
+		this.goodnessLwithMotivation = goodnessLwithMotivation;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	public Double getGoodnessWfinal() {
 		return goodnessWfinal;
@@ -127,13 +123,17 @@ public class ResultGoodness implements Serializable{
 	public void setGoodnessLfinal(Double goodnessLfinal) {
 		this.goodnessLfinal = goodnessLfinal;
 	}
-	public Map<UoThresholdEnum, ResultGoodnessUo> getUoMap() {
-		return uoMap;
+	public Map<UoThresholdEnum, ResultGoodnessUoBean> getUoGoodness() {
+		return uoGoodness;
 	}
-	public void setUoMap(Map<UoThresholdEnum, ResultGoodnessUo> uoMap) {
-		this.uoMap = uoMap;
+	public void setUoGoodness(Map<UoThresholdEnum, ResultGoodnessUoBean> uoGoodness) {
+		this.uoGoodness = uoGoodness;
 	}
-	
-	
+	public Map<VariableType, ResultGoodnessUoBean> getEhGoodness() {
+		return ehGoodness;
+	}
+	public void setEhGoodness(Map<VariableType, ResultGoodnessUoBean> ehGoodness) {
+		this.ehGoodness = ehGoodness;
+	}
 	
 }

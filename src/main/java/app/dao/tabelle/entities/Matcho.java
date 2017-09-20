@@ -2,8 +2,10 @@ package app.dao.tabelle.entities;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import app.dao.tipologiche.entities.TimeType;
 
 @Entity
 public class Matcho {
@@ -51,6 +56,9 @@ public class Matcho {
 	private List<UoOdds> uo;
 	
 	private int seasonDay;
+	
+	@OneToMany(cascade = {CascadeType.ALL})
+	private List<EventOdds> eventsOdds;
 
 	public Matcho() {
 	}
@@ -186,7 +194,17 @@ public class Matcho {
 		this.seasonDay = seasonDay;
 	}
 
-	
+
+	public List<EventOdds> getEventsOdds() {
+		return eventsOdds;
+	}
+
+
+	public void setEventsOdds(List<EventOdds> eventOdds) {
+		this.eventsOdds = eventOdds;
+	}
+
+
 	
 	
 }

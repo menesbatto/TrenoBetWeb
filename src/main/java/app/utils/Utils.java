@@ -106,6 +106,11 @@ public class Utils {
 		return redimString(goodnessW+"", i);
 	}
 	
+	public static String forceLength(Double goodnessW, int i) {
+		String result = goodnessW + "   ";
+		result = result.substring(0,i);		
+		return result;
+	}
 	
 	public static String cleanString(String input) {
 		String output = input.replaceAll("[^A-Za-z0-9]", "");

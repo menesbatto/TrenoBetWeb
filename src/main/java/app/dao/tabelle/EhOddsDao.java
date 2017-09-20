@@ -43,7 +43,7 @@ public class EhOddsDao {
 		TimeType timeTypeEnt =  timeTypeDao.findByValue(betBean.getTimeTypeString());
 		betEnt.setTimeType(timeTypeEnt);
 
-		HomeVariationType homeVariationTypeEnt =  homeVariationTypeDao.findByValue(betBean.getTimeTypeString());
+		HomeVariationType homeVariationTypeEnt =  homeVariationTypeDao.findByValue(betBean.getHomeVariationTypeString());
 		betEnt.setHomeVariationType(homeVariationTypeEnt);
 		
 		

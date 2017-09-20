@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.EhOdds;
+import app.dao.tabelle.entities.EventOdds;
 import app.dao.tabelle.entities.IBet;
 import app.dao.tabelle.entities.Matcho;
 import app.dao.tabelle.entities.Team;
@@ -27,7 +28,7 @@ import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
 import app.logic._1_matchesDownlaoder.model.BetHouseEnum;
-import app.logic._1_matchesDownlaoder.model.EhEnum;
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.EhTimeType;
 import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
@@ -108,7 +109,15 @@ public class MatchoDao {
 		ent.setHalfTimeAwayGoals(bean.getHTAG());
 		ent.setMatchDate(bean.getMatchDate());
 		
-		
+		List<EventOdds> eventsOdds = new ArrayList<EventOdds>();
+		EventOdds eo;
+		for (TimeType timeType : timeTypeDao.findAll()) {
+			eo = new EventOdds();
+			eo.setTimeType(timeType);
+			eo.setMatch(ent);
+			eventsOdds.add(eo);
+		}
+		ent.setEventsOdds(eventsOdds);
 		
 		// _1X2 Odds
 		List<_1X2Odds> _1x2oddsEnts = new ArrayList<_1X2Odds>();
@@ -145,9 +154,9 @@ public class MatchoDao {
 			TimeTypeEnum timeType = entry.getKey();
 			EhTimeType ehTimeType = entry.getValue();
 			
-			for (Entry<EhEnum, _1x2Full> entry2 : ehTimeType.getMap().entrySet()) {
+			for (Entry<HomeVariationEnum, _1x2Full> entry2 : ehTimeType.getMap().entrySet()) {
 				
-				EhEnum homeVariation = entry2.getKey();
+				HomeVariationEnum homeVariation = entry2.getKey();
 				_1x2Full value = entry2.getValue();
 				_1x2Leaf leaf = value.getAvg1x2Odds();
 
@@ -225,7 +234,7 @@ public class MatchoDao {
 		return ent;
 	}
 
-	private EhOdds createEhOddsEnt(TimeTypeEnum timeType, EhEnum homeVariation, BetHouseEnum betHouse, _1x2Leaf odds) {
+	private EhOdds createEhOddsEnt(TimeTypeEnum timeType, HomeVariationEnum homeVariation, BetHouseEnum betHouse, _1x2Leaf odds) {
 		EhOdds ent = new EhOdds();
 		TimeType timeTypeEnt = timeTypeDao.findByValue(timeType.name());
 		ent.setTimeType(timeTypeEnt);
@@ -353,7 +362,13 @@ public class MatchoDao {
 		return listBean;
 	}
 	
-	
+	public Matcho findByTeamAndChamp(String homeTeam, String awayTeam, ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		List<Matcho> matches = matchRepo.findByHomeTeamAndAwayTeamAndChamp(homeTeam, awayTeam, champ);
+		Matcho m = matches.get(0);
+		return m;
+	}
+
 	
 	// ###################################################################################################
 	
@@ -437,6 +452,8 @@ public class MatchoDao {
 //			timeTypeMap.put(element.getValue(), element);
 //		}	
 	}
+
+
 
 
 	

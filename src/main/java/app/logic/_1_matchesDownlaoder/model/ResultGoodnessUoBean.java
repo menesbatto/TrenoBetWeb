@@ -2,7 +2,7 @@ package app.logic._1_matchesDownlaoder.model;
 
 import java.io.Serializable;
 
-public class ResultGoodnessUo implements Serializable{
+public class ResultGoodnessUoBean implements Serializable{
 	
 	private static final long serialVersionUID = -8220776671620254113L;
 

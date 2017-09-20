@@ -7,7 +7,7 @@ public class EhTimeType implements Serializable{
 
 	private static final long serialVersionUID = -6037988318871290610L;
 
-	private HashMap<EhEnum, _1x2Full> map;
+	private HashMap<HomeVariationEnum, _1x2Full> map;
 	
 //	private _1x2Full m6;
 //	private _1x2Full m5;
@@ -26,8 +26,8 @@ public class EhTimeType implements Serializable{
 	
 	
 	public EhTimeType() {
-		this.map = new HashMap<EhEnum, _1x2Full>();
-		for (EhEnum val:  EhEnum.values()) {
+		this.map = new HashMap<HomeVariationEnum, _1x2Full>();
+		for (HomeVariationEnum val:  HomeVariationEnum.values()) {
 			_1x2Full oddsFull = new _1x2Full();
 			this.map.put(val, oddsFull);
 		}
@@ -123,11 +123,11 @@ public class EhTimeType implements Serializable{
 //				+ ", p1=" + p1 + ", p2=" + p2 + ", p3=" + p3 + ", p4=" + p4 + ", p5=" + p5 + ", p6=" + p6 + "]";
 //	}
 
-	public HashMap<EhEnum, _1x2Full> getMap() {
+	public HashMap<HomeVariationEnum, _1x2Full> getMap() {
 		return map;
 	}
 
-	public void setMap(HashMap<EhEnum, _1x2Full> map) {
+	public void setMap(HashMap<HomeVariationEnum, _1x2Full> map) {
 		this.map = map;
 	}
 

@@ -5,17 +5,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.persistence.ElementCollection;
+
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import app.dao.tabelle.entities.UoOdds;
+import app.dao.tipologiche.entities.HomeVariationType;
 import app.utils.Utils;
 
-public class EventOdds implements Serializable, Comparable<EventOdds>{
+public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	private static final long serialVersionUID = 7778211632531238253L;
-
-	private ResultGoodness homeResultGoodness;
-	private ResultGoodness awayResultGoodness;
-	private ResultGoodness totalResultGoodness;
+	
+	private TimeTypeEnum timeType;
+	
+	private ResultGoodnessBean homeResultGoodness;
+	private ResultGoodnessBean awayResultGoodness;
+	private ResultGoodnessBean totalResultGoodness;
 	
 	private String homeTeam;
 	private String awayTeam;
@@ -24,30 +31,28 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 	private Double oddsD;
 	private Double oddsA;
 	
-	private Double oddsHalfTimeH;
-	private Double oddsHalfTimeD;
-	private Double oddsHalfTimeA;
-	
-	private Double oddsHD;
-	private Double oddsDA;
-	private Double oddsHA;
-	
-	private Double oddsU;
-	private Double oddsO;
+	private Map<UoThresholdEnum, UoLeaf> uoOddsMap;
 	
 	private Date date;
 
 	private String homeTrend;
 	private String awayTrend;
 
-	private String homeTrendUo;
-	private String awayTrendUo;
+	private Map<UoThresholdEnum, String> homeTrendUo;
+	private Map<UoThresholdEnum, String> awayTrendUo;
+
+	private Map<HomeVariationEnum, String> homeTrendEh;
+	private Map<HomeVariationEnum, String> awayTrendEh;
 
 	private Double homeMotivation;
 	private Double awayMotivation;
+
 	
+	//Campi per simulare la scommessa su questo evento
 	private BetType betType;
+	
 	private MatchResultEnum matchResult;
+	
 	private Double winOdds;
 
 	@Override
@@ -57,19 +62,19 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 				
 				"\n\tWIN\t" + oddsH + "\t" + oddsD + "\t" + oddsA + 
 				
-				"\n\tUO\t" + oddsU + "\t" + oddsO + "\n";
+				"\n\tUO\t" + "via" + "\t" + "via" + "\n";
 		}
 		else {
-			String uoH = getUoString(homeResultGoodness.getUoMap());
-			String uoA = getUoString(awayResultGoodness.getUoMap());
+			String uoH = getUoString(homeResultGoodness.getUoGoodness());
+			String uoA = getUoString(awayResultGoodness.getUoGoodness());
 			
 			String s =  
 	
 				Utils.redimString(homeTeam,16) + " " + Utils.redimString(awayTeam,16) + "\t\t" + betType + "\t" + matchResult + "\t" + getFormattedDate() + "\t" + winOdds + "\n" + 
 	
-				Utils.redimString(homeTrend,16) + " " + Utils.redimString(homeTrendUo,16) + " - " + Utils.redimString(awayTrend,16) + " - " + Utils.redimString(awayTrendUo,16) +
+				Utils.redimString(homeTrend,16) + " " + "Utils.redimString(homeTrendUo,16)" + " - " + Utils.redimString(awayTrend,16) + " - " + "Utils.redimString(awayTrendUo,16)" +
 				
-				"\n\tQUOTE\t | " + "1 - " + "\t" + oddsH + "\t\t\t\t | " + "X - " + "\t" + oddsD + "\t | " + "2 - " + "\t" + oddsA + "\t\t\t\t | " + "U - " + oddsU + "\t" + "O - " + oddsO +
+				"\n\tQUOTE\t | " + "1 - " + "\t" + oddsH + "\t\t\t\t | " + "X - " + "\t" + oddsD + "\t | " + "2 - " + "\t" + oddsA + "\t\t\t\t | " + "U - " + "VIA" + "\t" + "O - " + "VIA" +
 				
 //				"\n\tWIN\t | " + oddsH + "\t\t\t\t\t | " + oddsD + "\t | " + oddsD +"\t\t\t\t\t | " + oddsU + "\t\t" + oddsO +
 
@@ -90,10 +95,10 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 	}
 
 
-	private String getUoString(Map<UoThresholdEnum, ResultGoodnessUo> uoMap) {
+	private String getUoString(Map<UoThresholdEnum, ResultGoodnessUoBean> uoMap) {
 		String result = "";
 		for (UoThresholdEnum thr : UoThresholdEnum.values()) {
-			result += thr + ": " + uoMap.get(thr).getGoodnessU() + " " + uoMap.get(thr).getGoodnessO() + "|\t";
+			result += thr + ": " + Utils.forceLength(uoMap.get(thr).getGoodnessU(), 4) + " " + Utils.forceLength(uoMap.get(thr).getGoodnessO(), 4) + "|\t";
 		}
 		return result;
 	}
@@ -165,77 +170,6 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 
 
 
-	public Double getOddsHalfTimeH() {
-		return oddsHalfTimeH;
-	}
-
-
-
-	public void setOddsHalfTimeH(Double oddsHalfTimeH) {
-		this.oddsHalfTimeH = oddsHalfTimeH;
-	}
-
-
-
-	public Double getOddsHalfTimeD() {
-		return oddsHalfTimeD;
-	}
-
-
-
-	public void setOddsHalfTimeD(Double oddsHalfTimeD) {
-		this.oddsHalfTimeD = oddsHalfTimeD;
-	}
-
-
-
-	public Double getOddsHalfTimeA() {
-		return oddsHalfTimeA;
-	}
-
-
-
-	public void setOddsHalfTimeA(Double oddsHalfTimeA) {
-		this.oddsHalfTimeA = oddsHalfTimeA;
-	}
-
-
-
-	public Double getOddsHD() {
-		return oddsHD;
-	}
-
-
-
-	public void setOddsHD(Double oddsHD) {
-		this.oddsHD = oddsHD;
-	}
-
-
-
-	public Double getOddsDA() {
-		return oddsDA;
-	}
-
-
-
-	public void setOddsDA(Double oddsDA) {
-		this.oddsDA = oddsDA;
-	}
-
-
-
-	public Double getOddsHA() {
-		return oddsHA;
-	}
-
-
-
-	public void setOddsHA(Double oddsHA) {
-		this.oddsHA = oddsHA;
-	}
-
-
 
 	public Date getDate() {
 		return date;
@@ -247,125 +181,95 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 		this.date = date;
 	}
 
-
-
-	public Double getOddsU() {
-		return oddsU;
-	}
-
-
-
-	public void setOddsU(Double oddsU) {
-		this.oddsU = oddsU;
-	}
-
-
-
-	public Double getOddsO() {
-		return oddsO;
-	}
-
-
-
-	public void setOddsO(Double oddsO) {
-		this.oddsO = oddsO;
-	}
-
-
-	public ResultGoodness getHomeResultGoodness() {
+	public ResultGoodnessBean getHomeResultGoodness() {
 		return homeResultGoodness;
 	}
 
-
-	public void setHomeResultGoodness(ResultGoodness homeResultGoodness) {
+	public void setHomeResultGoodness(ResultGoodnessBean homeResultGoodness) {
 		this.homeResultGoodness = homeResultGoodness;
 	}
 
-
-	public ResultGoodness getAwayResultGoodness() {
+	public ResultGoodnessBean getAwayResultGoodness() {
 		return awayResultGoodness;
 	}
 
-
-	public void setAwayResultGoodness(ResultGoodness awayResultGoodness) {
+	public void setAwayResultGoodness(ResultGoodnessBean awayResultGoodness) {
 		this.awayResultGoodness = awayResultGoodness;
 	}
 
-
-	public ResultGoodness getTotalResultGoodness() {
+	public ResultGoodnessBean getTotalResultGoodness() {
 		return totalResultGoodness;
 	}
 
-
-	public void setTotalResultGoodness(ResultGoodness totalResultGoodness) {
+	public void setTotalResultGoodness(ResultGoodnessBean totalResultGoodness) {
 		this.totalResultGoodness = totalResultGoodness;
 	}
-
 
 	public String getHomeTrend() {
 		return homeTrend;
 	}
 
-
 	public void setHomeTrend(String homeTrend) {
 		this.homeTrend = homeTrend;
 	}
-
 
 	public String getAwayTrend() {
 		return awayTrend;
 	}
 
-
 	public void setAwayTrend(String awayTrend) {
 		this.awayTrend = awayTrend;
 	}
-
 
 	public Double getHomeMotivation() {
 		return homeMotivation;
 	}
 
-
 	public void setHomeMotivation(Double homeMotivation) {
 		this.homeMotivation = homeMotivation;
 	}
-
 
 	public Double getAwayMotivation() {
 		return awayMotivation;
 	}
 
-
 	public void setAwayMotivation(Double awayMotivation) {
 		this.awayMotivation = awayMotivation;
 	}
-
 
 	public BetType getBetType() {
 		return betType;
 	}
 
-
 	public void setBetType(BetType betType) {
 		this.betType = betType;
 	}
-
 
 	public MatchResultEnum getMatchResult() {
 		return matchResult;
 	}
 
-
 	public void setMatchResult(MatchResultEnum matchResult) {
 		this.matchResult = matchResult;
 	}
-
-
-
 	
-	
-	public int compareTo(EventOdds eo) {
+	public Double getWinOdds() {
+		return winOdds;
+	}
+
+	public void setWinOdds(Double winOdds) {
+		this.winOdds = winOdds;
+	}
+
+	public TimeTypeEnum getTimeType() {
+		return timeType;
+	}
+
+	public void setTimeType(TimeTypeEnum timeTipe) {
+		this.timeType = timeTipe;
+	}
+
+	public int compareTo(EventOddsBean eo) {
 		if(date.before(eo.getDate()))
 			return -1;
 		return 1;
@@ -373,34 +277,54 @@ public class EventOdds implements Serializable, Comparable<EventOdds>{
 	}
 
 
-	public Double getWinOdds() {
-		return winOdds;
-	}
-
-
-	public void setWinOdds(Double winOdds) {
-		this.winOdds = winOdds;
-	}
-
-
-	public String getHomeTrendUo() {
+	public Map<UoThresholdEnum, String> getHomeTrendUo() {
 		return homeTrendUo;
 	}
 
 
-	public void setHomeTrendUo(String homeTrendUo) {
+	public void setHomeTrendUo(Map<UoThresholdEnum, String> homeTrendUo) {
 		this.homeTrendUo = homeTrendUo;
 	}
 
 
-	public String getAwayTrendUo() {
+	public Map<UoThresholdEnum, String> getAwayTrendUo() {
 		return awayTrendUo;
 	}
 
 
-	public void setAwayTrendUo(String awayTrendUo) {
+	public void setAwayTrendUo(Map<UoThresholdEnum, String> awayTrendUo) {
 		this.awayTrendUo = awayTrendUo;
 	}
-	
+
+
+	public Map<HomeVariationEnum, String> getHomeTrendEh() {
+		return homeTrendEh;
+	}
+
+
+	public void setHomeTrendEh(Map<HomeVariationEnum, String> homeTrendEh) {
+		this.homeTrendEh = homeTrendEh;
+	}
+
+
+	public Map<HomeVariationEnum, String> getAwayTrendEh() {
+		return awayTrendEh;
+	}
+
+
+	public void setAwayTrendEh(Map<HomeVariationEnum, String> awayTrendEh) {
+		this.awayTrendEh = awayTrendEh;
+	}
+
+
+	public Map<UoThresholdEnum, UoLeaf> getUoOddsMap() {
+		return uoOddsMap;
+	}
+
+
+	public void setUoOddsMap(Map<UoThresholdEnum, UoLeaf> uoOddsMap) {
+		this.uoOddsMap = uoOddsMap;
+	}
+
 	
 }
