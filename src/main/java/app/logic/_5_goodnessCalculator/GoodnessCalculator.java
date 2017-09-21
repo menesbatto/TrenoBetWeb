@@ -21,6 +21,7 @@ import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.MatchResultEnum;
 import app.logic._1_matchesDownlaoder.model.ResultGoodnessBean;
 import app.logic._1_matchesDownlaoder.model.ResultGoodnessUoBean;
+import app.logic._1_matchesDownlaoder.model.ResultGoodnessWDLBean;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 import app.logic._1_matchesDownlaoder.model._1x2Leaf;
@@ -240,41 +241,65 @@ public class GoodnessCalculator {
 				else if (eo.getAwayTeam().equals(rr.getTeamName()))
 					awayMotInd = rr.getMotivationalIndex();
 			}
-			Double actualGoodnessHomeWin = eo.getHomeResultGoodness().getGoodnessW();
-			Double actualGoodnessHomeLose = eo.getHomeResultGoodness().getGoodnessL();
-			Double actualGoodnessAwayWin =  eo.getAwayResultGoodness().getGoodnessL();
-			Double actualGoodnessAwayLose = eo.getAwayResultGoodness().getGoodnessW();
+			Double actualGoodnessHomeWin = eo.getHomeResultGoodness().getWinClean().getGoodnessW();
+			Double actualGoodnessHomeLose = eo.getHomeResultGoodness().getWinClean().getGoodnessL();
+			Double actualGoodnessAwayWin =  eo.getAwayResultGoodness().getWinClean().getGoodnessL();
+			Double actualGoodnessAwayLose = eo.getAwayResultGoodness().getWinClean().getGoodnessW();
 			eo.setHomeMotivation(homeMotInd);
 			eo.setAwayMotivation(awayMotInd);
 			
 			//Squadra fuori casa senza motivazione
 			if (awayMotInd < 0.1 && homeMotInd > 0.4){
 				if (actualGoodnessHomeWin != null){
-					eo.getHomeResultGoodness().setGoodnessWwithMotivation(actualGoodnessHomeWin * 1.2);
-					eo.getHomeResultGoodness().setGoodnessLwithMotivation(actualGoodnessHomeLose / 1.2);
+					ResultGoodnessWDLBean homeWinMotivation = new ResultGoodnessWDLBean();
+					homeWinMotivation.setGoodnessW(actualGoodnessHomeWin * 1.2);
+					homeWinMotivation.setGoodnessL(actualGoodnessHomeLose * 1.2);
+					eo.getHomeResultGoodness().setWinMotivation(homeWinMotivation);
+//					eo.getHomeResultGoodness().setGoodnessWwithMotivation(actualGoodnessHomeWin * 1.2);
+//					eo.getHomeResultGoodness().setGoodnessLwithMotivation(actualGoodnessHomeLose / 1.2);
 				}
 				if (actualGoodnessAwayLose != null){
-					eo.getAwayResultGoodness().setGoodnessWwithMotivation(actualGoodnessAwayLose / 1.2);
-					eo.getAwayResultGoodness().setGoodnessLwithMotivation(actualGoodnessAwayWin * 1.2);
+					ResultGoodnessWDLBean awayWinMotivation = new ResultGoodnessWDLBean();
+					awayWinMotivation.setGoodnessW(actualGoodnessAwayLose / 1.2);
+					awayWinMotivation.setGoodnessL(actualGoodnessAwayWin * 1.2);
+					eo.getAwayResultGoodness().setWinMotivation(awayWinMotivation);
+//					eo.getAwayResultGoodness().setGoodnessWwithMotivation(actualGoodnessAwayLose / 1.2);
+//					eo.getAwayResultGoodness().setGoodnessLwithMotivation(actualGoodnessAwayWin * 1.2);
 				}
 				
 			}
 			// squadra in casa senza motivazione
 			else if (homeMotInd < 0.1 && awayMotInd > 0.4){
 				if (actualGoodnessHomeLose != null){
-					eo.getHomeResultGoodness().setGoodnessWwithMotivation(actualGoodnessHomeWin / 1.2);
-					eo.getHomeResultGoodness().setGoodnessLwithMotivation(actualGoodnessHomeLose * 1.2);
+					ResultGoodnessWDLBean homeWinMotivation = new ResultGoodnessWDLBean();
+					homeWinMotivation.setGoodnessW(actualGoodnessHomeWin / 1.2);
+					homeWinMotivation.setGoodnessL(actualGoodnessHomeLose * 1.2);
+					eo.getHomeResultGoodness().setWinMotivation(homeWinMotivation);
+//					eo.getHomeResultGoodness().setGoodnessWwithMotivation(actualGoodnessHomeWin / 1.2);
+//					eo.getHomeResultGoodness().setGoodnessLwithMotivation(actualGoodnessHomeLose * 1.2);
 				}
 				if (actualGoodnessAwayWin != null){
-					eo.getAwayResultGoodness().setGoodnessWwithMotivation(actualGoodnessAwayLose * 1.2);
-					eo.getAwayResultGoodness().setGoodnessLwithMotivation(actualGoodnessAwayWin / 1.2);
+					ResultGoodnessWDLBean awayWinMotivation = new ResultGoodnessWDLBean();
+					awayWinMotivation.setGoodnessW(actualGoodnessAwayLose * 1.2);
+					awayWinMotivation.setGoodnessL(actualGoodnessAwayWin / 1.2);
+					eo.getAwayResultGoodness().setWinMotivation(awayWinMotivation);
+//					eo.getAwayResultGoodness().setGoodnessWwithMotivation(actualGoodnessAwayLose * 1.2);
+//					eo.getAwayResultGoodness().setGoodnessLwithMotivation(actualGoodnessAwayWin / 1.2);
 				}
 			}
 			else {
-				eo.getHomeResultGoodness().setGoodnessWwithMotivation(eo.getHomeResultGoodness().getGoodnessW());
-				eo.getHomeResultGoodness().setGoodnessLwithMotivation(eo.getHomeResultGoodness().getGoodnessL());
-				eo.getAwayResultGoodness().setGoodnessWwithMotivation(eo.getAwayResultGoodness().getGoodnessW());
-				eo.getAwayResultGoodness().setGoodnessLwithMotivation(eo.getAwayResultGoodness().getGoodnessL());
+				
+		
+				
+				eo.getHomeResultGoodness().getWinMotivation().setGoodnessW(eo.getHomeResultGoodness().getWinClean().getGoodnessW());
+				eo.getHomeResultGoodness().getWinMotivation().setGoodnessL(eo.getHomeResultGoodness().getWinClean().getGoodnessL());
+				eo.getAwayResultGoodness().getWinMotivation().setGoodnessW(eo.getAwayResultGoodness().getWinClean().getGoodnessW());
+				eo.getAwayResultGoodness().getWinMotivation().setGoodnessL(eo.getAwayResultGoodness().getWinClean().getGoodnessL());
+				
+//				eo.getHomeResultGoodness().setGoodnessWwithMotivation(eo.getHomeResultGoodness().getGoodnessW());
+//				eo.getHomeResultGoodness().setGoodnessLwithMotivation(eo.getHomeResultGoodness().getGoodnessL());
+//				eo.getAwayResultGoodness().setGoodnessWwithMotivation(eo.getAwayResultGoodness().getGoodnessW());
+//				eo.getAwayResultGoodness().setGoodnessLwithMotivation(eo.getAwayResultGoodness().getGoodnessL());
 			}
 			
 		}
@@ -304,26 +329,26 @@ public class GoodnessCalculator {
 			Double awayTrendIndexMolt = 1.00  - (maxVariation - 1 ) + ((maxVariation - 1) * 2 / 15 * awayTrendsIndex);
 			// 0 -> /1.3
 			
-			if (homeResultGoodness.getGoodnessW() != null)
-				homeResultGoodness.setGoodnessWwithTrends(homeResultGoodness.getGoodnessW() * homeTrendIndexMolt);
-			if (homeResultGoodness.getGoodnessL() != null)
-				homeResultGoodness.setGoodnessLwithTrends(homeResultGoodness.getGoodnessL() * awayTrendIndexMolt);
+			if (homeResultGoodness.getWinClean().getGoodnessW() != null)
+				homeResultGoodness.getWinTrend().setGoodnessW(homeResultGoodness.getWinClean().getGoodnessW() * homeTrendIndexMolt);
+			if (homeResultGoodness.getWinClean().getGoodnessL() != null)
+				homeResultGoodness.getWinTrend().setGoodnessL(homeResultGoodness.getWinClean().getGoodnessL() * awayTrendIndexMolt);
 			
-			if (awayResultGoodness.getGoodnessW() != null)
-				awayResultGoodness.setGoodnessWwithTrends(awayResultGoodness.getGoodnessW() * awayTrendIndexMolt);
-			if (awayResultGoodness.getGoodnessL() != null)
-				awayResultGoodness.setGoodnessLwithTrends(awayResultGoodness.getGoodnessL() * homeTrendIndexMolt);
+			if (awayResultGoodness.getWinClean().getGoodnessW() != null)
+				awayResultGoodness.getWinTrend().setGoodnessW(awayResultGoodness.getWinClean().getGoodnessW() * awayTrendIndexMolt);
+			if (awayResultGoodness.getWinClean().getGoodnessL() != null)
+				awayResultGoodness.getWinTrend().setGoodnessL(awayResultGoodness.getWinClean().getGoodnessL() * homeTrendIndexMolt);
 			
 
-			if (homeResultGoodness.getGoodnessW() != null)
-				homeResultGoodness.setGoodnessWfinal(homeResultGoodness.getGoodnessWwithMotivation() * homeTrendIndexMolt);
-			if (homeResultGoodness.getGoodnessL() != null)
-				homeResultGoodness.setGoodnessLfinal(homeResultGoodness.getGoodnessLwithMotivation() * awayTrendIndexMolt);
+			if (homeResultGoodness.getWinClean().getGoodnessW() != null)
+				homeResultGoodness.getWinFinal().setGoodnessW(homeResultGoodness.getWinMotivation().getGoodnessW() * homeTrendIndexMolt);
+			if (homeResultGoodness.getWinClean().getGoodnessL() != null)
+				homeResultGoodness.getWinFinal().setGoodnessL(homeResultGoodness.getWinMotivation().getGoodnessL() * awayTrendIndexMolt);
 			
-			if (awayResultGoodness.getGoodnessW() != null)
-				awayResultGoodness.setGoodnessWfinal(awayResultGoodness.getGoodnessWwithMotivation() * awayTrendIndexMolt);
-			if (awayResultGoodness.getGoodnessL() != null)
-				awayResultGoodness.setGoodnessLfinal(awayResultGoodness.getGoodnessLwithMotivation() * homeTrendIndexMolt);
+			if (awayResultGoodness.getWinClean().getGoodnessW() != null)
+				awayResultGoodness.getWinFinal().setGoodnessW(awayResultGoodness.getWinMotivation().getGoodnessW() * awayTrendIndexMolt);
+			if (awayResultGoodness.getWinClean().getGoodnessL() != null)
+				awayResultGoodness.getWinFinal().setGoodnessL(awayResultGoodness.getWinMotivation().getGoodnessL() * homeTrendIndexMolt);
 			
 			
 			
@@ -450,9 +475,13 @@ public class GoodnessCalculator {
 		goodnessD = goodnessD != null && goodnessD.toString().length() > 4 ? new Double(goodnessD.toString().substring(0,4)) : goodnessD;
 		goodnessL = goodnessL != null && goodnessL.toString().length() > 4 ? new Double(goodnessL.toString().substring(0,4)) : goodnessL;
 		
-		rg.setGoodnessW(goodnessW);
-		rg.setGoodnessD(goodnessD);
-		rg.setGoodnessL(goodnessL);
+		ResultGoodnessWDLBean winClean = new ResultGoodnessWDLBean();
+		winClean.setGoodnessW(goodnessW);
+		winClean.setGoodnessD(goodnessD);
+		winClean.setGoodnessL(goodnessL);
+		
+		rg.setWinClean(winClean);
+		
 
 		return rg;
 		

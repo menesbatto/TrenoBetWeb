@@ -84,9 +84,27 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	//			
 	//			"\n\tGOOD\t | " + awayResultGoodness.getGoodnessL() + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithTrends()) + "\t | " + awayResultGoodness.getGoodnessD() + "\t | " + awayResultGoodness.getGoodnessW() + "\t" + Utils.redimString(awayResultGoodness.getGoodnessWwithTrends()) + "\t\t | " +awayResultGoodness.getGoodnessU() + "\t" + awayResultGoodness.getGoodnessO() + "\n"; 
 				
-				"\n\tH GOOD\t | " + Utils.redimString(homeResultGoodness.getGoodnessW()) + "\t" + Utils.redimString(homeMotivation) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithMotivation()) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithTrends()) + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWfinal()) + "\t | " + homeResultGoodness.getGoodnessD() + "\t\t | " +  Utils.redimString(homeResultGoodness.getGoodnessL()) + "\t" + Utils.redimString(homeMotivation) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLwithMotivation()) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLwithTrends()) + "\t" +  Utils.redimString(homeResultGoodness.getGoodnessLfinal()) + "\t | " +  uoH  +  
+				"\n\tH GOOD\t | " + Utils.redimString(homeResultGoodness.getWinClean().getGoodnessW()) + 
+//				"\t" + Utils.redimString(homeMotivation) + "\t" + Utils.redimString(homeResultGoodness.getWinMotivation().getGoodnessW()) + 
+//				"\t" + Utils.redimString(homeResultGoodness.getWinTrend().getGoodnessW()) + 
+//				"\t" + Utils.redimString(homeResultGoodness.getWinFinal().getGoodnessW()) + 
+				"\t | " + homeResultGoodness.getWinClean().getGoodnessD() + "\t\t | " +  
+				Utils.redimString(homeResultGoodness.getWinClean().getGoodnessL()) + 
+//				"\t" + Utils.redimString(homeMotivation) + "\t" +  Utils.redimString(homeResultGoodness.getWinMotivation().getGoodnessL()) + 
+//				"\t" +  Utils.redimString(homeResultGoodness.getWinTrend().getGoodnessL()) + 
+//				"\t" +  Utils.redimString(homeResultGoodness.getWinFinal().getGoodnessL()) + 
+				"\t | " +  uoH  +  
 				
-				"\n\tA GOOD\t | " + Utils.redimString(awayResultGoodness.getGoodnessL()) + "\t" + Utils.redimString(awayMotivation) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithMotivation()) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLwithTrends()) + "\t" + Utils.redimString(awayResultGoodness.getGoodnessLfinal()) + "\t | " + awayResultGoodness.getGoodnessD() + "\t\t | " +  Utils.redimString(awayResultGoodness.getGoodnessW()) + "\t" + Utils.redimString(awayMotivation) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWwithMotivation()) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWwithTrends()) + "\t" +  Utils.redimString(awayResultGoodness.getGoodnessWfinal()) + "\t | " +  uoA + "\n\n";
+				"\n\tA GOOD\t | " + Utils.redimString(awayResultGoodness.getWinClean().getGoodnessL()) + 
+//				"\t" + Utils.redimString(awayMotivation) + "\t" + Utils.redimString(awayResultGoodness.getWinMotivation().getGoodnessL()) + 
+//				"\t" + Utils.redimString(awayResultGoodness.getWinTrend().getGoodnessL()) + 
+//				"\t" + Utils.redimString(awayResultGoodness.getWinFinal().getGoodnessL()) + 
+				"\t | " + awayResultGoodness.getWinClean().getGoodnessD() + "\t\t | " +  
+				Utils.redimString(awayResultGoodness.getWinClean().getGoodnessW()) + 
+//				"\t" + Utils.redimString(awayMotivation) + "\t" +  Utils.redimString(awayResultGoodness.getWinMotivation().getGoodnessW()) +
+//				"\t" +  Utils.redimString(awayResultGoodness.getWinTrend().getGoodnessW()) + 
+//				"\t" +  Utils.redimString(awayResultGoodness.getWinFinal().getGoodnessW()) + 
+				"\t | " +  uoA + "\n\n";
 				
 //				"\n\tA GOOD\t | " + awayResultGoodness.getGoodnessL() + "\t" + Utils.redimString(awayMotivation) + "\t | " + awayResultGoodness.getGoodnessD() + "\t | " + awayResultGoodness.getGoodnessW() + "\t" + Utils.redimString(awayMotivation) + "\t\t | " + awayResultGoodness.getGoodnessU() + "\t" + awayResultGoodness.getGoodnessO() + "\n\n"; 
 	

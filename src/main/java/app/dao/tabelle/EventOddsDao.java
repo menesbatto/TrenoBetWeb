@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.TemplateVariable.VariableType;
 import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
@@ -15,6 +16,8 @@ import app.dao.tabelle.entities.EventOdds;
 import app.dao.tabelle.entities.GoalsStats;
 import app.dao.tabelle.entities.Matcho;
 import app.dao.tabelle.entities.ResultGoodness;
+import app.dao.tabelle.entities.ResultGoodnessUo;
+import app.dao.tabelle.entities.ResultGoodnessWdl;
 import app.dao.tabelle.entities.Team;
 import app.dao.tabelle.entities.WinRangeStats;
 import app.dao.tipologiche.HomeVariationTypeDao;
@@ -29,6 +32,8 @@ import app.dao.tipologiche.entities.UoThresholdType;
 import app.logic._1_matchesDownlaoder.model.EventOddsBean;
 import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.ResultGoodnessBean;
+import app.logic._1_matchesDownlaoder.model.ResultGoodnessUoBean;
+import app.logic._1_matchesDownlaoder.model.ResultGoodnessWDLBean;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
@@ -142,7 +147,12 @@ public class EventOddsDao {
 			ArrayList<EventOddsBean> eventsOddsBean = entry.getValue();
 			for (EventOddsBean bean : eventsOddsBean) {
 				ent = new EventOdds();
-				mapper.map(bean, ent);
+				
+				ent.setHomeMotivation(bean.getHomeMotivation());
+				ent.setAwayMotivation(bean.getAwayMotivation());
+				ent.setHomeTrend(bean.getHomeTrend());
+				ent.setAwayTrend(bean.getAwayTrend());
+				
 				TimeType timeType = timeTypeDao.findByValue(timeTypeBean.name());
 				ent.setTimeType(timeType);
 				
@@ -173,9 +183,15 @@ public class EventOddsDao {
 				// se faccio un for con tutti gli id all'inizio e faccio una find per id accedo 1 volta
 				Matcho match =  matchDao.findByTeamAndChamp(bean.getHomeTeam(), bean.getAwayTeam(), champEnum);
 				ent.setMatch(match);
+				
+				eventsOddsEnt.add(ent);
+					
 			
 			}
 		}
+		
+		List<EventOdds> save = eventOddsRepo.save(eventsOddsEnt);
+		
 		
 	}
 	
@@ -184,18 +200,96 @@ public class EventOddsDao {
 	
 	private ResultGoodness createResultGoodness(ResultGoodnessBean bean) {
 		ResultGoodness ent = new ResultGoodness();
+		List<ResultGoodnessWdl> eh = createResultGoodnessEh(bean.getEhGoodness());
+		ent.setEh(eh);
 		
-		riprendi da qua
+		List<ResultGoodnessUo> uo = createResultGoodnessUo(bean.getUoGoodness());
+		ent.setUo(uo);
+		
+//		EventOdds eventOdds = 
+//		ent.setEventOdds(eventOdds);
+		
+		ResultGoodnessWdl winClean = createResultGoodnessWdlEnt(bean.getWinClean());
+		ent.setWinClean(winClean);
+
+		ResultGoodnessWdl winFinal = createResultGoodnessWdlEnt(bean.getWinFinal());
+		ent.setWinFinal(winFinal);
+		
+		ResultGoodnessWdl winTrend = createResultGoodnessWdlEnt(bean.getWinTrend());
+		ent.setWinTrend(winTrend);
+		
+		ResultGoodnessWdl winMotivation = createResultGoodnessWdlEnt(bean.getWinMotivation());
+		ent.setWinMotivation(winMotivation);
+		
+//		mapper.map(bean, ent);
+
+		return ent;
+	}
+
+	private List<ResultGoodnessWdl> createResultGoodnessEh(Map<HomeVariationEnum, ResultGoodnessWDLBean> mapBean) {
+		List<ResultGoodnessWdl> listEnt = new ArrayList<ResultGoodnessWdl>();
+		if (mapBean!= null) {
+			ResultGoodnessWdl ent;
+			for (Entry<HomeVariationEnum, ResultGoodnessWDLBean> entry : mapBean.entrySet()) {
+				ResultGoodnessWDLBean bean = entry.getValue();
+				
+				ent = createResultGoodnessWdlEnt(bean);
+				
+				listEnt.add(ent);
+			}
+		}
+			
+		return listEnt;
+	}
+
+	private List<ResultGoodnessUo> createResultGoodnessUo(Map<UoThresholdEnum, ResultGoodnessUoBean> mapBean) {
+		List<ResultGoodnessUo> listEnt = new ArrayList<ResultGoodnessUo>();
+		if (mapBean!= null) {
+			ResultGoodnessUo ent;
+			for (Entry<UoThresholdEnum, ResultGoodnessUoBean> entry : mapBean.entrySet()) {
+				ResultGoodnessUoBean bean = entry.getValue();
+				
+				ent = new ResultGoodnessUo();
+				ent.setGoodnessU(bean.getGoodnessU());
+				ent.setGoodnessO(bean.getGoodnessO());
+				UoThresholdEnum key = entry.getKey();
+				UoThresholdType thresholdEnt = uoThresholdTypeDao.findByValue(key.name());
+				ent.setThreshold(thresholdEnt);
+				
+				listEnt.add(ent);
+			}
+		}
+			
+		return listEnt;
+	}
+
+	private ResultGoodnessWdl createResultGoodnessWdlEnt(ResultGoodnessWDLBean bean) {
+		ResultGoodnessWdl ent = new ResultGoodnessWdl();
+		if (bean != null) {
+			ent.setGoodnessW(bean.getGoodnessW());
+			ent.setGoodnessD(bean.getGoodnessD());
+			ent.setGoodnessL(bean.getGoodnessL());
+			
+			if (bean.getHomeVariationType() != null) {
+				HomeVariationEnum homeVariationEnum = bean.getHomeVariationType();
+				HomeVariationType homeVariationType = homeVariationTypeDao.findByValue(homeVariationEnum.name());
+				ent.setHomeVariationType(homeVariationType);
+		
+			}
+		}
+		
 		return ent;
 	}
 
 	private Map<UoThresholdType, String> createTrendUoMap(Map<UoThresholdEnum, String> beanMap) {
 		Map<UoThresholdType, String> entMap = new HashMap<UoThresholdType, String>();
-		for (Entry<UoThresholdEnum, String> entry : beanMap.entrySet()) {
-			UoThresholdEnum key = entry.getKey();
-			UoThresholdType homVarEnt = uoThresholdTypeDao.findByValue(key.name());
-			String value = entry.getValue();
-			entMap.put(homVarEnt,value);
+		if (beanMap != null) {
+			for (Entry<UoThresholdEnum, String> entry : beanMap.entrySet()) {
+				UoThresholdEnum key = entry.getKey();
+				UoThresholdType homVarEnt = uoThresholdTypeDao.findByValue(key.name());
+				String value = entry.getValue();
+				entMap.put(homVarEnt,value);
+			}
 		}
 		
 		
@@ -208,11 +302,13 @@ public class EventOddsDao {
 
 	private Map<HomeVariationType, String> createTrendEhMap(Map<HomeVariationEnum, String> beanMap) {
 		Map<HomeVariationType, String> entMap = new HashMap<HomeVariationType, String>();
-		for (Entry<HomeVariationEnum, String> entry : beanMap.entrySet()) {
-			HomeVariationEnum key = entry.getKey();
-			HomeVariationType homVarEnt = homeVariationTypeDao.findByValue(key.name());
-			String value = entry.getValue();
-			entMap.put(homVarEnt,value);
+		if (beanMap!= null) {
+			for (Entry<HomeVariationEnum, String> entry : beanMap.entrySet()) {
+				HomeVariationEnum key = entry.getKey();
+				HomeVariationType homVarEnt = homeVariationTypeDao.findByValue(key.name());
+				String value = entry.getValue();
+				entMap.put(homVarEnt,value);
+			}
 		}
 		
 		return entMap;

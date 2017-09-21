@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import app.dao.tipologiche.entities.HomeVariationType;
 
 @Entity
-public class ResultGoodnessWDL {
+public class ResultGoodnessWdl {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +24,7 @@ public class ResultGoodnessWDL {
 	@ManyToOne
 	private HomeVariationType homeVariationType;
 	
-	public ResultGoodnessWDL() {
+	public ResultGoodnessWdl() {
 	}
 
 	public int getId() {

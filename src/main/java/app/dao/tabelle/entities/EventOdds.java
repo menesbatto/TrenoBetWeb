@@ -3,6 +3,7 @@ package app.dao.tabelle.entities;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,13 +31,13 @@ public class EventOdds {
 	@ManyToOne
 	private TimeType timeType;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private ResultGoodness homeResultGoodness;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private ResultGoodness awayResultGoodness;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private ResultGoodness totalResultGoodness;
 
 	private Double homeMotivation;
@@ -60,7 +61,7 @@ public class EventOdds {
 	
 
 	//Campi per simulare la scommessa
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<BetResult> betResults;		
 	
 	

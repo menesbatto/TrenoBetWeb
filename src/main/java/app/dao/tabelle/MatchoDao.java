@@ -364,7 +364,7 @@ public class MatchoDao {
 	
 	public Matcho findByTeamAndChamp(String homeTeam, String awayTeam, ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
-		List<Matcho> matches = matchRepo.findByHomeTeamAndAwayTeamAndChamp(homeTeam, awayTeam, champ);
+		List<Matcho> matches = matchRepo.findByHomeTeamNameAndAwayTeamNameAndChamp(homeTeam, awayTeam, champ);
 		Matcho m = matches.get(0);
 		return m;
 	}
