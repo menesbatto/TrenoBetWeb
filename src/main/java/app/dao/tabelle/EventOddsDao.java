@@ -139,8 +139,9 @@ public class EventOddsDao {
 	}
 
 	public void save(Map<TimeTypeEnum, ArrayList<EventOddsBean>> eventsOddsBeanMap, ChampEnum champEnum) {
-		List<EventOdds> eventsOddsEnt = new ArrayList<EventOdds>();
 		EventOdds ent;
+		
+		List<Matcho> matches = new ArrayList<Matcho>();
 		
 		for (Entry<TimeTypeEnum, ArrayList<EventOddsBean>> entry : eventsOddsBeanMap.entrySet()) {
 			TimeTypeEnum timeTypeBean = entry.getKey();
@@ -177,27 +178,34 @@ public class EventOddsDao {
 				ResultGoodness totalResultGoodness = createResultGoodness(bean.getHomeResultGoodness());
 				ent.setTotalResultGoodness(totalResultGoodness);
 				
-				//https://stackoverflow.com/questions/29061451/store-jpa-entity-with-given-field-object-id-instead-of-object-itself
-				//Qui posso evitare di scaricarne uno per volta: cosi accedo 30  volte
-				// se me li salvo ogni volta in una map accedo 10 volte
-				// se faccio un for con tutti gli id all'inizio e faccio una find per id accedo 1 volta
-				Matcho match =  matchDao.findByTeamAndChamp(bean.getHomeTeam(), bean.getAwayTeam(), champEnum);
+				Matcho match =  findMatch(bean.getHomeTeam(), bean.getAwayTeam(), champEnum, matches);
 				ent.setMatch(match);
 				
-				eventsOddsEnt.add(ent);
+				match.getEventsOdds().add(ent);
 					
 			
 			}
 		}
 		
-		List<EventOdds> save = eventOddsRepo.save(eventsOddsEnt);
+		matchDao.saveAll(matches);
 		
 		
 	}
-	
 
 	
+	private Matcho findMatch( String homeTeam, String awayTeam, ChampEnum champEnum, List<Matcho> matches) {
+		for (Matcho m : matches)
+			if (m.getHomeTeam().getName().equals(homeTeam))
+				if (m.getAwayTeam().getName().equals(awayTeam))
+					return m;
+			
+		Matcho match = matchDao.findByTeamAndChamp(homeTeam, awayTeam, champEnum);
+		match.setEventsOdds(new ArrayList<EventOdds>());
+		matches.add(match);
+		return match;
+	}
 	
+
 	private ResultGoodness createResultGoodness(ResultGoodnessBean bean) {
 		ResultGoodness ent = new ResultGoodness();
 		List<ResultGoodnessWdl> eh = createResultGoodnessEh(bean.getEhGoodness());
@@ -221,8 +229,6 @@ public class EventOddsDao {
 		ResultGoodnessWdl winMotivation = createResultGoodnessWdlEnt(bean.getWinMotivation());
 		ent.setWinMotivation(winMotivation);
 		
-//		mapper.map(bean, ent);
-
 		return ent;
 	}
 
@@ -296,9 +302,6 @@ public class EventOddsDao {
 		
 		return entMap;
 	}
-	
-	
-	//torreinpietra 8 sabato
 
 	private Map<HomeVariationType, String> createTrendEhMap(Map<HomeVariationEnum, String> beanMap) {
 		Map<HomeVariationType, String> entMap = new HashMap<HomeVariationType, String>();
@@ -313,51 +316,5 @@ public class EventOddsDao {
 		
 		return entMap;
 	}
-
-	public List<GoalsStatsBean> saveGoalsStats(ArrayList<GoalsStatsBean> beans, String teamName, ChampEnum champEnum, String playingField) {
-//		Champ champ = champDao.findByChampEnum(champEnum);
-//		
-//		Team teamEnt = teamDao.findByNameAndChamp(teamName, champ);
-//
-//		
-//		List<GoalsStats> existingGoalsStats = goalsStatsRepo.findByTeamAndPlayingField(teamEnt, playingField);
-//
-//		for (GoalsStatsBean bean : beans) {
-//			
-//			TimeType beanTimeType = timeTypeDao.findByValue(bean.getTimeTypeBean().name());
-//			
-//			if (existingGoalsStats.isEmpty()){ // ci entra soltanto quando viene creata la statTotal (indipendente dal tempo) 
-//				existingGoalsStats = initGoalsStatsForTeam(teamEnt, playingField);
-//			}
-//			
-//			for (GoalsStats ent : existingGoalsStats) {
-//				for ( Entry<UoThresholdEnum, UoThresholdStats> entry : bean.getThresholdMap().entrySet()) {
-//					UoThresholdEnum key = entry.getKey();
-//					if (key.getValueNum().equals(ent.getThreshold().getValueNum())) {
-//						if (beanTimeType.equals(ent.getTimeType())) {
-//							UoThresholdStats value = entry.getValue();
-//							mapper.map(bean, ent);
-//							ent.setPlayingField(playingField);	//playingField perche se lo perde col map...cci sua
-//							ent.setTimeType(beanTimeType);
-//							ent.setOverHit(value.getOverHit());
-//							ent.setOverPerc(value.getOverPerc());
-//							ent.setUnderHit(value.getUnderHit());
-//							ent.setUnderPerc(value.getUnderPerc());
-//						}
-//					}
-//				}
-//			}
-//			
-//		}
-//
-//		goalsStatsRepo.save(existingGoalsStats);
-//		
-		return beans;
-	}
-
-
-	
-	
-	
 
 }

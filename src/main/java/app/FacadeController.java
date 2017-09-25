@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import app.dao.tabelle.EventOddsDao;
+import app.dao.tabelle.EventOddsRepo;
+import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.MatchoRepo;
 import app.dao.tabelle.TeamDao;
 import app.dao.tabelle.entities.Matcho;
@@ -121,16 +124,22 @@ public class FacadeController {
     	goodnessCalculator.execute();
     }  
     
+//    @Autowired
+//    private TeamDao teamDao;
+//    @RequestMapping(value = "/removeTeamById", method = RequestMethod.POST)
+//    public void removeTeamById(@RequestBody Long id) {
+//    	teamDao.removeTeamById(id);
+//    }  
+    
     @Autowired
-    private TeamDao teamDao;
-    @RequestMapping(value = "/removeTeamById", method = RequestMethod.POST)
-    public void removeTeamById(@RequestBody Long id) {
-    	teamDao.removeTeamById(id);
+    private MatchoDao matchDao;
+    @Autowired
+    private EventOddsRepo eventOddsRepo;
+    @RequestMapping(value = "/removeAllEventOdds", method = RequestMethod.GET)
+    public void removeAllEventOdds() {
+    	matchDao.removeAllEventOdds();
     }  
     
-    
-    
-
 //	@GetMapping(path="/all")
 //	public @ResponseBody Iterable<User> getAllUsers() {
 //		// This returns a JSON or XML with the users

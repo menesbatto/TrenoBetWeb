@@ -470,7 +470,7 @@ public class GoodnessCalculator {
 		Double goodnessW = getSingleFinalGoodness(rangesStats, oddWin, TeamResultEnum.W);
 		Double goodnessD = getSingleFinalGoodness(rangesStats, oddWin, TeamResultEnum.D);
 		Double goodnessL = getSingleFinalGoodness(rangesStats, oddWin, TeamResultEnum.L);
-		
+//		capisci perche rangeStats ce ne stanno 20
 		goodnessW = goodnessW != null && goodnessW.toString().length() > 4 ? new Double(goodnessW.toString().substring(0,4)) : goodnessW;
 		goodnessD = goodnessD != null && goodnessD.toString().length() > 4 ? new Double(goodnessD.toString().substring(0,4)) : goodnessD;
 		goodnessL = goodnessL != null && goodnessL.toString().length() > 4 ? new Double(goodnessL.toString().substring(0,4)) : goodnessL;

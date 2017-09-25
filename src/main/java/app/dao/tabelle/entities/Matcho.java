@@ -57,7 +57,7 @@ public class Matcho {
 	
 	private int seasonDay;
 	
-	@OneToMany(cascade = {CascadeType.ALL})
+	@OneToMany(cascade = {CascadeType.ALL,  CascadeType.REMOVE})
 	private List<EventOdds> eventsOdds;
 
 	public Matcho() {

@@ -454,6 +454,20 @@ public class MatchoDao {
 	}
 
 
+	public void removeAllEventOdds() {
+		List<Matcho> findAll = matchRepo.findAll();
+		for (Matcho m : findAll)
+			m.setEventsOdds(null);
+		matchRepo.save(findAll);
+	}
+
+
+	public void saveAll(List<Matcho> matches) {
+		matchRepo.save(matches);
+		
+	}
+
+
 
 
 	

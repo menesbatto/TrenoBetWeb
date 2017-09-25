@@ -20,6 +20,7 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	
 	private TimeTypeEnum timeType;
 	
+	// Info sulla bonta dei due team relativamente a tutto.
 	private ResultGoodnessBean homeResultGoodness;
 	private ResultGoodnessBean awayResultGoodness;
 	private ResultGoodnessBean totalResultGoodness;
@@ -27,14 +28,23 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	private String homeTeam;
 	private String awayTeam;
 	
+	// Informazioni sulla motivazione
+	private Double homeMotivation;
+	private Double awayMotivation;
+
+	
+	// Quote del 1x2, uo e eh
 	private Double oddsH;
 	private Double oddsD;
 	private Double oddsA;
+	
+	private Map<HomeVariationEnum, _1x2Leaf> ehOddsMap;
 	
 	private Map<UoThresholdEnum, UoLeaf> uoOddsMap;
 	
 	private Date date;
 
+	// Informazioni sui trend di 1x2, uo e eh
 	private String homeTrend;
 	private String awayTrend;
 
@@ -44,10 +54,7 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	private Map<HomeVariationEnum, String> homeTrendEh;
 	private Map<HomeVariationEnum, String> awayTrendEh;
 
-	private Double homeMotivation;
-	private Double awayMotivation;
 
-	
 	//Campi per simulare la scommessa su questo evento
 	private BetType betType;
 	
@@ -342,6 +349,16 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 
 	public void setUoOddsMap(Map<UoThresholdEnum, UoLeaf> uoOddsMap) {
 		this.uoOddsMap = uoOddsMap;
+	}
+
+
+	public Map<HomeVariationEnum, _1x2Leaf> getEhOddsMap() {
+		return ehOddsMap;
+	}
+
+
+	public void setEhOddsMap(Map<HomeVariationEnum, _1x2Leaf> ehOddsMap) {
+		this.ehOddsMap = ehOddsMap;
 	}
 
 	
