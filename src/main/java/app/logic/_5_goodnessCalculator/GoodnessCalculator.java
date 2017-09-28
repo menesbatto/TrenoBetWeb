@@ -81,11 +81,10 @@ public class GoodnessCalculator {
 //	public void execute(HashMap<ChampEnum, ArrayList<EventOdds>> allMatchesOddsInput){
 //		allMatchesOdds = allMatchesOddsInput;
 //		initStaticFields();
-		
+		matchDao.removeAllEventOdds();
 		List<RankingRow> ranking;
 		for (ChampEnum champ : ChampEnum.values()){
 			calculateMatchGoodnessOfChamp(champ);
-			
 			ranking = rankingRowDao.findByChamp(champ);
 			rankingCalculator.printRanking(ranking, champ);
 		}

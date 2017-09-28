@@ -45,6 +45,13 @@ public class ResultGoodnessUo {
 	public void setThreshold(UoThresholdType threshold) {
 		this.threshold = threshold;
 	}
+
+	@Override
+	public String toString() {
+		return "id=" + id + ", goodnessU=" + goodnessU + ", goodnessO=" + goodnessO + ", threshold="
+				+ threshold + "\n";
+	}
+	
 	
 	
 	

@@ -8,15 +8,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app.dao.tipologiche.entities.BetHouse;
 import app.dao.tipologiche.entities.HomeVariationType;
-import app.dao.tipologiche.entities.TimeType;
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 
 @Service
 public class HomeVariationTypeDao {
 
 	@Autowired
 	private HomeVariationTypeRepo homeVariationTypeRepo;
+	
+	private HashMap<String, HomeVariationEnum> cacheMapBean;
 	
 	private HashMap<String, HomeVariationType> cacheMap;
 	
@@ -27,6 +28,15 @@ public class HomeVariationTypeDao {
 		HomeVariationType entity = cacheMap.get(value);
 		
 		return entity;
+	}
+	
+	public HomeVariationEnum findBeanByEnt(HomeVariationType ent) {
+		if (cacheMapBean == null || cacheMapBean.isEmpty())
+			initCacheMapBean();
+		
+		HomeVariationEnum bean = cacheMapBean.get(ent.getValue());
+		
+		return bean;
 	}
 
 	public void initTable() {
@@ -79,6 +89,16 @@ public class HomeVariationTypeDao {
 			cacheMap.put(element.getValue(), element);
 		}	
 	}
+	
+	private void initCacheMapBean() {
+		cacheMapBean = new HashMap<String, HomeVariationEnum>();
+		Iterable<HomeVariationType> findAll = homeVariationTypeRepo.findAll();
+		for (Iterator<HomeVariationType> iter = findAll.iterator(); iter.hasNext(); ) {
+			HomeVariationType element = iter.next();
+			HomeVariationEnum bean = HomeVariationEnum.valueOf(element.getValue());
+			cacheMapBean.put(element.getValue(), bean);
+		}
+	}
 
 	public List<HomeVariationType> findAll() {
 		if (cacheMap == null || cacheMap.isEmpty())
@@ -87,6 +107,7 @@ public class HomeVariationTypeDao {
 		list.addAll(cacheMap.values());
 		return list; 
 	}
+	
 
 	
 }

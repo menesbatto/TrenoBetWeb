@@ -142,5 +142,13 @@ public class ResultGoodness {
 	}
 
 
+	@Override
+	public String toString() {
+		return "id=" + id + ", eventOdds=" + eventOdds + ", winFinal=" + winFinal + ", winClean="
+				+ winClean + ", winTrend=" + winTrend + ", winMotivation=" + winMotivation + ", uo=" + uo + ", eh=" + eh
+				+ "\n";
+	}
+
+
 	
 }

@@ -193,4 +193,16 @@ public class EventOdds {
 		this.awayTrend = awayTrend;
 	}
 
+	@Override
+	public String toString() {
+		return "id=" + id + ", match=" + match + ", timeType=" + timeType + ", homeResultGoodness="
+				+ homeResultGoodness + ", awayResultGoodness=" + awayResultGoodness + ", totalResultGoodness="
+				+ totalResultGoodness + ", homeMotivation=" + homeMotivation + ", awayMotivation=" + awayMotivation
+				+ ", homeTrend=" + homeTrend + ", awayTrend=" + awayTrend + ", homeTrendUo=" + homeTrendUo
+				+ ", awayTrendUo=" + awayTrendUo + ", homeTrendEh=" + homeTrendEh + ", awayTrendEh=" + awayTrendEh
+				+ ", betResults=" + betResults + "\n\n";
+	}
+	
+	
+
 }

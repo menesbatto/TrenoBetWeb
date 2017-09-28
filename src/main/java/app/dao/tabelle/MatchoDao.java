@@ -1,12 +1,11 @@
 package app.dao.tabelle;
 
-import static org.mockito.Matchers.matches;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,8 @@ import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
 import app.logic._1_matchesDownlaoder.model.BetHouseEnum;
-import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.EhTimeType;
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 import app.logic._1_matchesDownlaoder.model.UoFull;
@@ -38,11 +37,8 @@ import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 import app.logic._1_matchesDownlaoder.model.UoTimeType;
 import app.logic._1_matchesDownlaoder.model._1x2Full;
 import app.logic._1_matchesDownlaoder.model._1x2Leaf;
-import app.logic._1_matchesDownlaoder.modelNew.EhOddsBean;
 import app.logic._1_matchesDownlaoder.modelNew.IBetBean;
 import app.logic._1_matchesDownlaoder.modelNew.MatchBean;
-import app.logic._1_matchesDownlaoder.modelNew.UoOddsBean;
-import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import app.utils.ChampEnum;
 import ma.glasnost.orika.MapperFacade;
 
@@ -72,6 +68,10 @@ public class MatchoDao {
 	
 	@Autowired
 	private UoThresholdTypeDao uoThresholdTypeDao;
+	
+	@Autowired
+	private EventOddsDao eventOddsDao;
+	
 	
 //	private HashMap<String, TimeType> timeTypeMap;
 	
@@ -288,7 +288,7 @@ public class MatchoDao {
 		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
 		return listBean;
 	}
-
+	@Transactional
 	public ArrayList<MatchResult> getDownloadedPastMatchByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNotNull(champ);
@@ -343,7 +343,7 @@ public class MatchoDao {
 				Double _2 = oddsEnt.get_2();
 				Double x = oddsEnt.get_X();
 				_1x2Leaf oddsBean = new _1x2Leaf(_1, x, _2);
-				
+				devo mettere nel bean la parte del uo e eh
 				_1x2Full _1x2Full = bean.get_1x2().get(timeTypeEnum);
 
 				BetHouse betHouseEnt = oddsEnt.getBetHouse();
@@ -458,12 +458,21 @@ public class MatchoDao {
 		List<Matcho> findAll = matchRepo.findAll();
 		for (Matcho m : findAll)
 			m.setEventsOdds(null);
+		
 		matchRepo.save(findAll);
+		
 	}
 
 
 	public void saveAll(List<Matcho> matches) {
 		matchRepo.save(matches);
+		
+	}
+
+	@Transactional
+	public void removeAllNextMatchesByChamp(ChampEnum champEnum) {
+		Champ champ = champDao.findByChampEnum(champEnum);
+		matchRepo.deleteByChampAndFullTimeResultIsNull(champ);
 		
 	}
 

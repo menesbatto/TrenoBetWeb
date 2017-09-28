@@ -25,6 +25,7 @@ import app.logic._2_matchResultAnalyzer.ResultAnalyzer;
 import app.logic._3_rankingCalculator.RankingCalculator;
 import app.logic._4_trendCalculator.TrendCalculator;
 import app.logic._5_goodnessCalculator.GoodnessCalculator;
+import app.logic._6_betCreator.BetCreator;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
@@ -124,6 +125,13 @@ public class FacadeController {
     	goodnessCalculator.execute();
     }  
     
+    @Autowired
+    private BetCreator betCreator;
+    @RequestMapping(value = "/avviaVecchio6", method = RequestMethod.GET)
+    public void avviaVecchio6() {
+    	betCreator.execute();
+    }  
+    
 //    @Autowired
 //    private TeamDao teamDao;
 //    @RequestMapping(value = "/removeTeamById", method = RequestMethod.POST)
@@ -138,6 +146,7 @@ public class FacadeController {
     @RequestMapping(value = "/removeAllEventOdds", method = RequestMethod.GET)
     public void removeAllEventOdds() {
     	matchDao.removeAllEventOdds();
+    	eventOddsRepo.deleteAll();
     }  
     
 //	@GetMapping(path="/all")

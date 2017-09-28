@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -50,7 +52,7 @@ public class MatchesDownloader {
 		
 	}
 
-	
+	@Transactional
 	private int downloadChampionshipResults(ChampEnum champ, String type) {
 
 		String champSuffixUrl; 
@@ -60,6 +62,7 @@ public class MatchesDownloader {
 			champSuffixUrl = champ.getNextMatchesUrl();
 		}
 		else {//if (type == "Past"){
+			matchDao.removeAllNextMatchesByChamp(champ);
 			downloadedMatches = matchDao.getDownloadedPastMatchByChamp(champ);
 			champSuffixUrl = champ.getResultsUrl();
 		}
