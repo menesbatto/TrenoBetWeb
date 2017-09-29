@@ -281,42 +281,59 @@ public class MatchoDao {
 //		Long count = matchRepo.countByChampAndHomeTeamAndFullTimeResultIsNotNull(champ);
 //		return count.intValue();
 //	}
+	public ArrayList<MatchResult> getDownloadedNextMatchByChampFull(ChampEnum champEnum) {
+		return getDownloadedNextMatchByChamp(champEnum, false);
+	}
+
+	public ArrayList<MatchResult> getDownloadedNextMatchByChampLight(ChampEnum champEnum) {
+		return getDownloadedNextMatchByChamp(champEnum, true);
+	}
 	
-	public ArrayList<MatchResult> getDownloadedNextMatchByChamp(ChampEnum champEnum) {
+	public ArrayList<MatchResult> getDownloadedNextMatchByChamp(ChampEnum champEnum, Boolean light) { 
 		Champ champ = champDao.findByChampEnum(champEnum);
 		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNull(champ);
-		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
-		return listBean;
-	}
-	@Transactional
-	public ArrayList<MatchResult> getDownloadedPastMatchByChamp(ChampEnum champEnum) {
-		Champ champ = champDao.findByChampEnum(champEnum);
-		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNotNull(champ);
-		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt);
-		return listBean;
-	}
-
-	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(ChampEnum champEnum, String homeTeam, int lastSeasonDayOdds) {
-		Champ champ = champDao.findByChampEnum(champEnum);
-		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
-		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeamAndFullTimeResultIsNotNullOrderByMatchDate(champ, team);
-		List<Matcho> missingMatchesEnt = listEnt.subList(lastSeasonDayOdds, listEnt.size());
-		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, missingMatchesEnt);
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt, light);
 		return listBean;
 	}
 	
-	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(ChampEnum champEnum, String homeTeam, int lastSeasonDayOdds) {
+	public ArrayList<MatchResult> getDownloadedPastMatchByChampFull(ChampEnum champEnum) {
+		return getDownloadedPastMatchByChamp(champEnum, false);
+	}
+
+	public ArrayList<MatchResult> getDownloadedPastMatchByChampLight(ChampEnum champEnum) {
+		return getDownloadedPastMatchByChamp(champEnum, true);
+	}
+	
+	
+	@Transactional
+	public ArrayList<MatchResult> getDownloadedPastMatchByChamp(ChampEnum champEnum, boolean light) {//light = true non scarica le quote
 		Champ champ = champDao.findByChampEnum(champEnum);
-		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
-		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeamAndFullTimeResultIsNotNullOrderByMatchDate(champ, team);
-		List<Matcho> missingMatchesEnt = listEnt.subList(lastSeasonDayOdds, listEnt.size());
-		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, missingMatchesEnt);
-		
+		List<Matcho> listEnt = matchRepo.findByChampAndFullTimeResultIsNotNull(champ);
+		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, listEnt, light);
 		return listBean;
 	}
 
+//	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(ChampEnum champEnum, String homeTeam, int lastSeasonDayOdds) {
+//		Champ champ = champDao.findByChampEnum(champEnum);
+//		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
+//		List<Matcho> listEnt = matchRepo.findByChampAndAwayTeamAndFullTimeResultIsNotNullOrderByMatchDate(champ, team);
+//		List<Matcho> missingMatchesEnt = listEnt.subList(lastSeasonDayOdds, listEnt.size());
+//		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, missingMatchesEnt, true);
+//		return listBean;
+//	}
+	
+//	public ArrayList<MatchResult> getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(ChampEnum champEnum, String homeTeam, int lastSeasonDayOdds) {
+//		Champ champ = champDao.findByChampEnum(champEnum);
+//		Team team = teamDao.findByNameAndChamp(homeTeam, champ);
+//		List<Matcho> listEnt = matchRepo.findByChampAndHomeTeamAndFullTimeResultIsNotNullOrderByMatchDate(champ, team);
+//		List<Matcho> missingMatchesEnt = listEnt.subList(lastSeasonDayOdds, listEnt.size());
+//		ArrayList<MatchResult> listBean = mapMatchosToMatchesResults(champEnum, missingMatchesEnt, true);
+//		
+//		return listBean;
+//	}
 
-	private ArrayList<MatchResult> mapMatchosToMatchesResults(ChampEnum champEnum, List<Matcho> listEnt) {
+
+	private ArrayList<MatchResult> mapMatchosToMatchesResults(ChampEnum champEnum, List<Matcho> listEnt, boolean light) {
 		ArrayList<MatchResult> listBean = new ArrayList<MatchResult>();
 		for (Matcho ent : listEnt) {
 			MatchResult bean = new MatchResult();
@@ -335,28 +352,62 @@ public class MatchoDao {
 			bean.setFTR(ent.getFullTimeResult());
 			bean.setHTR(ent.getHalfTimeResult());
 			
-			HashMap<TimeTypeEnum, _1x2Full> _1x2 = new HashMap<TimeTypeEnum, _1x2Full>();
-			for (_1X2Odds oddsEnt : ent.get_1X2()) {
-				TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(oddsEnt.getTimeType());
+			if (!light) {
+				//HashMap<TimeTypeEnum, _1x2Full> _1x2 = new HashMap<TimeTypeEnum, _1x2Full>();
+				for (_1X2Odds oddsEnt : ent.get_1X2()) {
+					TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(oddsEnt.getTimeType());
+					
+					Double _1 = oddsEnt.get_1();
+					Double _2 = oddsEnt.get_2();
+					Double x = oddsEnt.get_X();
+					_1x2Leaf oddsBean = new _1x2Leaf(_1, x, _2);
+					
+					_1x2Full _1x2Full = bean.get_1x2().get(timeTypeEnum);
+	
+					BetHouse betHouseEnt = oddsEnt.getBetHouse();
+					if ( betHouseEnt != null) {
+						BetHouseEnum betHouseEnum = betHouseDao.findBeanByEnt(betHouseEnt);
+						_1x2Full.getBetHouseTo1x2Odds().put(betHouseEnum, oddsBean);
+					}
+					else {
+						_1x2Full.setAvg1x2Odds(oddsBean);
+					}
+					//_1x2.put(timeTypeEnum, _1x2Full);
 				
-				Double _1 = oddsEnt.get_1();
-				Double _2 = oddsEnt.get_2();
-				Double x = oddsEnt.get_X();
-				_1x2Leaf oddsBean = new _1x2Leaf(_1, x, _2);
-				devo mettere nel bean la parte del uo e eh
-				_1x2Full _1x2Full = bean.get_1x2().get(timeTypeEnum);
-
-				BetHouse betHouseEnt = oddsEnt.getBetHouse();
-				if ( betHouseEnt != null) {
-					BetHouseEnum betHouseEnum = betHouseDao.findBeanByEnt(betHouseEnt);
-					_1x2Full.getBetHouseTo1x2Odds().put(betHouseEnum, oddsBean);
 				}
-				else {
-					_1x2Full.setAvg1x2Odds(oddsBean);
+				//bean.set_1x2(_1x2);
+			
+				
+				
+				//HashMap<TimeTypeEnum, UoTimeType> uoMapBean = new HashMap<TimeTypeEnum, UoTimeType>();
+				for (UoOdds uoOddsEnt : ent.getUo()) {
+					
+					TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(uoOddsEnt.getTimeType());
+					Double u = uoOddsEnt.getU();
+					Double o = uoOddsEnt.getO();
+					UoLeaf oddsBean = new UoLeaf(u, o);
+					
+					UoTimeType uoTimeType = bean.getUo().get(timeTypeEnum);
+					UoThresholdType uoThresTypeEnt = uoOddsEnt.getThresholdType();
+					UoThresholdEnum uoThresTypeBean = uoThresholdTypeDao.findBeanByEnt(uoThresTypeEnt);
+					
+					UoFull uoFull = uoTimeType.getMap().get(uoThresTypeBean);
+					
+					BetHouse betHouseEnt = uoOddsEnt.getBetHouse();
+					if ( betHouseEnt != null) {
+						BetHouseEnum betHouseEnum = betHouseDao.findBeanByEnt(betHouseEnt);
+						uoFull.getBetHouseToUoOdds().put(betHouseEnum, oddsBean);
+					}
+					else {
+						uoFull.setAvgUoOdds(oddsBean);
+					}
+					
 				}
+					
+				
+				//bean.setUo(uoMapBean);
 			
 			}
-					
 			listBean.add(bean);
 		}
 		return listBean;

@@ -58,12 +58,12 @@ public class MatchesDownloader {
 		String champSuffixUrl; 
 		ArrayList<MatchResult> downloadedMatches;
 		if (type == "Next") {
-			downloadedMatches = matchDao.getDownloadedNextMatchByChamp(champ);
+			downloadedMatches = matchDao.getDownloadedNextMatchByChampLight(champ);
 			champSuffixUrl = champ.getNextMatchesUrl();
 		}
 		else {//if (type == "Past"){
 			matchDao.removeAllNextMatchesByChamp(champ);
-			downloadedMatches = matchDao.getDownloadedPastMatchByChamp(champ);
+			downloadedMatches = matchDao.getDownloadedPastMatchByChampLight(champ);
 			champSuffixUrl = champ.getResultsUrl();
 		}
 		Document doc = null;

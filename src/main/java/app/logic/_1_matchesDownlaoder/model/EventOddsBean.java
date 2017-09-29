@@ -129,10 +129,20 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 
 	private String getUoOdds(Map<UoThresholdEnum, UoLeaf> uoMap) {
 		String result = "";
-		for (Entry<UoThresholdEnum, UoLeaf> entry : uoMap.entrySet()) {
-			UoThresholdEnum key = entry.getKey();
-			UoLeaf value = entry.getValue();
-			result += key + ": " + value.getU() + " " + value.getO() + "/t/t";
+		
+		for (UoThresholdEnum key : UoThresholdEnum.values()) {
+			UoLeaf value = uoMap.get(key);
+			String u;
+			String o;
+			if (value != null) {
+				u = Utils.forceLength(value.getU(), 4);
+				o = Utils.forceLength(value.getO(), 4);
+			}
+			else {
+				u = "n/a ";
+				o = "n/a ";
+			}
+				result += key + ": " + u + " " + o + "\t|";
 		}
 		return result;
 	}

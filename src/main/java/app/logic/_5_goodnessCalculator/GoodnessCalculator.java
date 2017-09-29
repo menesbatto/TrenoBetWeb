@@ -23,6 +23,8 @@ import app.logic._1_matchesDownlaoder.model.ResultGoodnessBean;
 import app.logic._1_matchesDownlaoder.model.ResultGoodnessUoBean;
 import app.logic._1_matchesDownlaoder.model.ResultGoodnessWDLBean;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
+import app.logic._1_matchesDownlaoder.model.UoFull;
+import app.logic._1_matchesDownlaoder.model.UoLeaf;
 import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 import app.logic._1_matchesDownlaoder.model._1x2Leaf;
 import app.logic._2_matchResultAnalyzer.model.GoalsStatsBean;
@@ -95,7 +97,7 @@ public class GoodnessCalculator {
 	
 	
 	private void calculateMatchGoodnessOfChamp(ChampEnum champ) {
-		ArrayList<MatchResult> nextMatches = matchDao.getDownloadedNextMatchByChamp(champ);
+		ArrayList<MatchResult> nextMatches = matchDao.getDownloadedNextMatchByChampFull(champ);
 //		ArrayList<EventOdds> nextMatchesOdds = createNextEventsOdds(nextMatches);
 		Map<TimeTypeEnum, ArrayList<EventOddsBean>> mapNextMatchOdds = createNextEventsOdds(nextMatches);
 		
@@ -208,7 +210,7 @@ public class GoodnessCalculator {
 		mapOdds.put(TimeTypeEnum._final, new ArrayList<EventOddsBean>());
 		for (MatchResult m : nextMatches) {
 			for (TimeTypeEnum timeType : TimeTypeEnum.values()) {
-				_1x2Leaf avgOdds = m.get_1x2().get(timeType).getAvg1x2Odds();
+				_1x2Leaf avg1x2Odds = m.get_1x2().get(timeType).getAvg1x2Odds();
 				EventOddsBean eo = new EventOddsBean();
 				String homeClean = Utils.cleanString(m.getHomeTeam());
 				eo.setHomeTeam(homeClean);
@@ -217,11 +219,27 @@ public class GoodnessCalculator {
 				eo.setAwayTeam(awayClean);
 				eo.setDate(m.getMatchDate());
 				eo.setBetType(BetType.WIN);
-				eo.setOddsH(avgOdds.getOdd1());
-				eo.setOddsD(avgOdds.getOddX());
-				eo.setOddsA(avgOdds.getOdd2());
+				eo.setOddsH(avg1x2Odds.getOdd1());
+				eo.setOddsD(avg1x2Odds.getOddX());
+				eo.setOddsA(avg1x2Odds.getOdd2());
 				
 				mapOdds.get(timeType).add(eo);
+				
+				
+				
+				Map<UoThresholdEnum, UoLeaf> uoOdds = new HashMap<UoThresholdEnum, UoLeaf>();
+				eo.setUoOddsMap(uoOdds);
+
+				for (Entry<UoThresholdEnum, UoFull> entry : m.getUo().get(timeType).getMap().entrySet()) {
+					UoThresholdEnum key = entry.getKey();
+					UoFull value = entry.getValue();
+					UoLeaf uoLeaf = value.getAvgUoOdds();
+					uoOdds.put(key, uoLeaf);
+				}
+				
+				
+				//Rifallo uguale per EH
+				
 						
 			}
 		}

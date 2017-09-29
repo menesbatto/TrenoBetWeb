@@ -55,7 +55,7 @@ public class RankingCalculator {
 	private void calculateChampRanking(ChampEnum champ) {
 		ArrayList<RankingRow> ranking = new ArrayList<RankingRow>();
 		RankingRow rr;
-		ArrayList<MatchResult> teamsMatches = matchDao.getDownloadedPastMatchByChamp(champ);
+		ArrayList<MatchResult> teamsMatches = matchDao.getDownloadedPastMatchByChampFull(champ);
 		Map<String, ArrayList<MatchResult>> matchesMap = new HashMap<String, ArrayList<MatchResult>>();
 		resultAnalyzer.createMatchMap(matchesMap, teamsMatches, "H");
 		resultAnalyzer.createMatchMap(matchesMap, teamsMatches, "A");

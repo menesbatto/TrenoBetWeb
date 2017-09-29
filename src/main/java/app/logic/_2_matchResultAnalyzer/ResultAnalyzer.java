@@ -76,7 +76,7 @@ public class ResultAnalyzer {
 		for (ChampEnum champ : ChampEnum.values()){
 			System.out.println(champ);
 			
-			ArrayList<MatchResult> teamMatchesAway = matchDao.getDownloadedPastMatchByChamp(champ);
+			ArrayList<MatchResult> teamMatchesAway = matchDao.getDownloadedPastMatchByChampFull(champ);
 			Map<String, ArrayList<MatchResult>> homeMatchesMap = new HashMap<String, ArrayList<MatchResult>>();
 			createMatchMap(homeMatchesMap, teamMatchesAway, "H");
 			Map<String, ArrayList<MatchResult>> matchesMapAway = new HashMap<String, ArrayList<MatchResult>>();

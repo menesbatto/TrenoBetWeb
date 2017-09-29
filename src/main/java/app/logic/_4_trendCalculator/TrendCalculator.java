@@ -51,7 +51,7 @@ public class TrendCalculator {
 	}
 	
 	private void calculateChampTrend(ChampEnum champ) {
-		ArrayList<MatchResult> teamsMatches = matchDao.getDownloadedPastMatchByChamp(champ);
+		ArrayList<MatchResult> teamsMatches = matchDao.getDownloadedPastMatchByChampLight(champ);
 		Map<String, ArrayList<MatchResult>> matchesMap = new HashMap<String, ArrayList<MatchResult>>();
 		resultAnalyzer.createMatchMap(matchesMap, teamsMatches, "H");
 		resultAnalyzer.createMatchMap(matchesMap, teamsMatches, "A");
