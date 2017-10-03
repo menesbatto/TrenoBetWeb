@@ -4,20 +4,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.OddsRange;
 import app.dao.tipologiche.entities.TimeType;
 
 @Entity
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public class WinRangeStats {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
+	@ManyToOne
+	private HomeVariationType homeVariation;
+	
 	@ManyToOne
 //	@JoinColumn(name = "champ_id")
 	private Team team;
@@ -68,7 +74,29 @@ public class WinRangeStats {
 		this.range = range;
 		this.team = team;
 	}
+
 	
+//	
+//	public WinRangeStats(Team team, OddsRange range, TimeType timeType, String playingField, Integer homeHits,
+//			Integer homeMisses, Double winPerc, Integer drawHits, Integer drawMisses, Double drawPerc, Integer awayHits,
+//			Integer awayMisses, Double losePerc, Integer total) {
+//		super();
+//		this.team = team;
+//		this.range = range;
+//		this.timeType = timeType;
+//		this.playingField = playingField;
+//		this.homeHits = homeHits;
+//		this.homeMisses = homeMisses;
+//		this.winPerc = winPerc;
+//		
+//		this.drawHits = drawHits;
+//		this.drawMisses = drawMisses;
+//		this.drawPerc = drawPerc;
+//		this.awayHits = awayHits;
+//		this.awayMisses = awayMisses;
+//		this.losePerc = losePerc;
+//		this.total = total;
+//	}
 	public int getId() {
 		return id;
 	}
@@ -166,6 +194,12 @@ public class WinRangeStats {
 				+ ", winPerc=" + winPerc + ", drawHits=" + drawHits + ", drawMisses=" + drawMisses + ", drawPerc="
 				+ drawPerc + ", awayHits=" + awayHits + ", awayMisses=" + awayMisses + ", losePerc=" + losePerc
 				+ ", total=" + total + "]\n";
+	}
+	public HomeVariationType getHomeVariation() {
+		return homeVariation;
+	}
+	public void setHomeVariation(HomeVariationType homeVariation) {
+		this.homeVariation = homeVariation;
 	}
 
 

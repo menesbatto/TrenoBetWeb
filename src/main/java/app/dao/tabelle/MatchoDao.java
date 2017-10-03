@@ -109,15 +109,15 @@ public class MatchoDao {
 		ent.setHalfTimeAwayGoals(bean.getHTAG());
 		ent.setMatchDate(bean.getMatchDate());
 		
-		List<EventOdds> eventsOdds = new ArrayList<EventOdds>();
-		EventOdds eo;
-		for (TimeType timeType : timeTypeDao.findAll()) {
-			eo = new EventOdds();
-			eo.setTimeType(timeType);
-			eo.setMatch(ent);
-			eventsOdds.add(eo);
-		}
-		ent.setEventsOdds(eventsOdds);
+//		List<EventOdds> eventsOdds = new ArrayList<EventOdds>(); HHH
+//		EventOdds eo;
+//		for (TimeType timeType : timeTypeDao.findAll()) {
+//			eo = new EventOdds();
+//			eo.setTimeType(timeType);
+//			//eo.setMatch(ent);
+//			eventsOdds.add(eo);
+//		}
+//		ent.setEventsOdds(eventsOdds);
 		
 		// _1X2 Odds
 		List<_1X2Odds> _1x2oddsEnts = new ArrayList<_1X2Odds>();
@@ -505,14 +505,14 @@ public class MatchoDao {
 	}
 
 
-	public void removeAllEventOdds() {
-		List<Matcho> findAll = matchRepo.findAll();
-		for (Matcho m : findAll)
-			m.setEventsOdds(null);
-		
-		matchRepo.save(findAll);
-		
-	}
+//	public void removeAllEventOdds() {
+//		List<Matcho> findAll = matchRepo.findAll();
+//		for (Matcho m : findAll)
+//			m.setEventsOdds(null);
+//		
+//		matchRepo.save(findAll);
+//		
+//	}
 
 
 	public void saveAll(List<Matcho> matches) {
@@ -523,6 +523,17 @@ public class MatchoDao {
 	@Transactional
 	public void removeAllNextMatchesByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
+//		List<Matcho> list = matchRepo.findByChampAndFullTimeResultIsNull(champ);
+//		for (Matcho ent : list) {
+//			ent.setEventsOdds(null);
+//		}
+//		matchRepo.save(list);
+//		List<Matcho> matches = matchRepo.findByChampAndFullTimeResultIsNull(champ);
+//		List<EventOdds> eventsOdds = new ArrayList<EventOdds>();
+//		for (Matcho m : matches) {
+//			eventsOdds.addAll(m.getEventsOdds());
+//		}
+		eventOddsDao.removeByChamp(champ);
 		matchRepo.deleteByChampAndFullTimeResultIsNull(champ);
 		
 	}

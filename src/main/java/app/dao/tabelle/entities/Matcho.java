@@ -57,8 +57,8 @@ public class Matcho {
 	
 	private int seasonDay;
 	
-	@OneToMany(cascade = {CascadeType.ALL,  CascadeType.REMOVE})
-	private List<EventOdds> eventsOdds;
+//	@OneToMany//(cascade = {CascadeType.ALL})HHH https://vladmihalcea.com/2017/03/29/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
+//	private List<EventOdds> eventsOdds;
 
 	public Matcho() {
 	}
@@ -194,15 +194,15 @@ public class Matcho {
 		this.seasonDay = seasonDay;
 	}
 
-
-	public List<EventOdds> getEventsOdds() {
-		return eventsOdds;
-	}
-
-
-	public void setEventsOdds(List<EventOdds> eventOdds) {
-		this.eventsOdds = eventOdds;
-	}
+//HHH
+//	public List<EventOdds> getEventsOdds() {
+//		return eventsOdds;
+//	}
+//
+//
+//	public void setEventsOdds(List<EventOdds> eventOdds) {
+//		this.eventsOdds = eventOdds;
+//	}
 
 
 	

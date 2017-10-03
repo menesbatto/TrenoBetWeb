@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +68,7 @@ public class EventOddsDao {
 
 	public void save(Map<TimeTypeEnum, ArrayList<EventOddsBean>> eventsOddsBeanMap, ChampEnum champEnum) {
 		EventOdds ent;
-		
+		List<EventOdds> ents = new ArrayList<EventOdds>();
 		List<Matcho> matches = new ArrayList<Matcho>();
 		
 		for (Entry<TimeTypeEnum, ArrayList<EventOddsBean>> entry : eventsOddsBeanMap.entrySet()) {
@@ -107,14 +109,14 @@ public class EventOddsDao {
 				Matcho match =  findMatch(bean.getHomeTeam(), bean.getAwayTeam(), champEnum, matches);
 				ent.setMatch(match);
 				
-				match.getEventsOdds().add(ent);
-					
+//				match.getEventsOdds().add(ent); HHH
+				ents.add(ent);
 			
 			}
 		}
 		
-		matchDao.saveAll(matches);
-		
+//		matchDao.saveAll(matches);
+		eventOddsRepo.save(ents);
 		
 	}
 
@@ -126,7 +128,7 @@ public class EventOddsDao {
 					return m;
 			
 		Matcho match = matchDao.findByTeamAndChamp(homeTeam, awayTeam, champEnum);
-		match.setEventsOdds(new ArrayList<EventOdds>());
+//		match.setEventsOdds(new ArrayList<EventOdds>()); HHH
 		matches.add(match);
 		return match;
 	}
@@ -482,6 +484,13 @@ public class EventOddsDao {
 		}
 		
 		return beans;
+	}
+
+	
+
+	public void removeByChamp(Champ champ) {
+		eventOddsRepo.deleteByMatchChamp(champ);
+		
 	}
 
 }

@@ -12,11 +12,14 @@ import org.springframework.stereotype.Service;
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.Team;
 import app.dao.tabelle.entities.WinRangeStats;
+import app.dao.tipologiche.HomeVariationTypeDao;
 import app.dao.tipologiche.OddsRangeDao;
 import app.dao.tipologiche.OddsRangeRepo;
 import app.dao.tipologiche.TimeTypeDao;
+import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.OddsRange;
 import app.dao.tipologiche.entities.TimeType;
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
 import app.logic._2_matchResultAnalyzer.model.WinRangeStatsBean;
@@ -43,6 +46,9 @@ public class WinRangeStatsDao {
 
 	@Autowired
 	private MapperFacade mapper;
+	
+	@Autowired
+	private HomeVariationTypeDao homeVariationTypeDao;
 	
 	public List<WinRangeStatsBean> findByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
@@ -116,7 +122,19 @@ public class WinRangeStatsDao {
 	}
 
 	
-	public List<WinRangeStats> saveWinRangeStats(List<WinRangeStatsBean> listBean, String teamName, ChampEnum champEnum, String playingField) {
+	public List<WinRangeStats> saveWinRangeStats(List<WinRangeStatsBean> listBean, String teamName, ChampEnum champEnum, String playingField, HomeVariationEnum homeVariationEnum) {
+		List<WinRangeStats> allWinRangeStats = createWinRangesToSave(listBean, teamName, champEnum, playingField, homeVariationEnum);
+		
+		winRangeStatsRepo.save(allWinRangeStats);
+		return allWinRangeStats;
+	}
+
+	public void saveWinRangeStats(List<WinRangeStats> allWinRangeStats) {
+		winRangeStatsRepo.save(allWinRangeStats);
+	}
+
+	public List<WinRangeStats> createWinRangesToSave(List<WinRangeStatsBean> listBean, String teamName, ChampEnum champEnum,
+			String playingField, HomeVariationEnum homeVariationEnum) {
 		List<TimeType> timeTypes = timeTypeDao.findAll();
 		Champ champ = champDao.findByChampEnum(champEnum);
 		Team teamEnt = teamDao.findByNameAndChamp(teamName, champ);
@@ -137,6 +155,10 @@ public class WinRangeStatsDao {
 						if (bean.getEdgeUp().equals(ent.getRange().getValueUp())) {
 							mapper.map(bean, ent);
 							ent.setPlayingField(playingField);
+							if (homeVariationEnum != null) {
+								HomeVariationType homeVariationEnt = homeVariationTypeDao.findByValue(homeVariationEnum.name());
+								ent.setHomeVariation(homeVariationEnt);
+							}
 						}
 					}
 				}
@@ -144,7 +166,6 @@ public class WinRangeStatsDao {
 			allWinRangeStats.addAll(winRangeStatsByTime);
 			
 		}
-		winRangeStatsRepo.save(allWinRangeStats);
 		
 		return allWinRangeStats;
 	}
@@ -191,10 +212,44 @@ public class WinRangeStatsDao {
 				}
 			}
 		}
-		saveWinRangeStats(totalStats, teamName, champEnum, "T");
+		saveWinRangeStats(totalStats, teamName, champEnum, "T", null);
 	}
 
 
+	
+
+
+
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

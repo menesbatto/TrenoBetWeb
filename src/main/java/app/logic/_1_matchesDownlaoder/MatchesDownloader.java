@@ -164,9 +164,9 @@ public class MatchesDownloader {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, +7);
 				Date expiringDate = cal.getTime();
-				if (matchDate.after(expiringDate)) {
-					return savedMatches;
-				}
+//				if (matchDate.after(expiringDate)) {
+//					return savedMatches;
+//				}
 			}
 //			else if (row.hasClass("deactivate")){ 
 //			else if (row.hasClass("odd") || row.hasAttr("heid")){ //next xxx
@@ -200,94 +200,98 @@ public class MatchesDownloader {
 
 
 	private static MatchResult createMatchResult(Element row, Date matchDate, String champSubsetUrl, ArrayList<MatchResult> downloadedMatches) {
-		
-		MatchResult m = new MatchResult();
-		
-		// GENERAL INFO
-		String time = row.getElementsByClass("datet").get(0).text();
-		Integer hours = Integer.valueOf(time.split(":")[0]);
-		Integer minutes = Integer.valueOf(time.split(":")[1]);
-		matchDate.setHours(hours);
-		matchDate.setMinutes(minutes);
-		m.setMatchDate(matchDate);
-		
-		DateFormat df = new SimpleDateFormat("dd MM yyyy");
-		String dateString = df.format(matchDate);
-		
-		m.setDate(dateString);
-		
-		Element teamsElement = row.getElementsByClass("table-participant").get(0);
-		
-		String teams = teamsElement.text();
-		String homeTeam = teams.split(" - ")[0];
-		String cleanHome = Utils.cleanString(homeTeam);
-		m.setHomeTeam(cleanHome);
-		String awayTeam = teams.split(" - ")[1];
-		String cleanAway = Utils.cleanString(awayTeam);
-		m.setAwayTeam(cleanAway);
-		
-		boolean isAlreadySaved = checkAlreadySavedMatch(m, downloadedMatches);
-		
-		if (!isAlreadySaved) {
-			Elements tableScoreElems = row.getElementsByClass("table-score");
-		
-			if (tableScoreElems != null && !tableScoreElems.isEmpty()) {
-				String result = tableScoreElems.get(0).text();
-				Integer homeScoreScoredGoals = Integer.valueOf(result.split(":")[0]);
-				m.setFTHG(homeScoreScoredGoals);
-				Integer awayScoredGoals = Integer.valueOf(result.split(":")[1]);
-				m.setFTAG(awayScoredGoals);
-				
-				String finalResult;
-				if (homeScoreScoredGoals > awayScoredGoals)
-					finalResult = "H";
-				else if (homeScoreScoredGoals == awayScoredGoals)
-					finalResult = "D";
-				else
-					finalResult = "A";
+		try {
+			MatchResult m = new MatchResult();
+			
+			// GENERAL INFO
+			String time = row.getElementsByClass("datet").get(0).text();
+			Integer hours = Integer.valueOf(time.split(":")[0]);
+			Integer minutes = Integer.valueOf(time.split(":")[1]);
+			matchDate.setHours(hours);
+			matchDate.setMinutes(minutes);
+			m.setMatchDate(matchDate);
+			
+			DateFormat df = new SimpleDateFormat("dd MM yyyy");
+			String dateString = df.format(matchDate);
+			
+			m.setDate(dateString);
+			
+			Element teamsElement = row.getElementsByClass("table-participant").get(0);
+			
+			String teams = teamsElement.text();
+			String homeTeam = teams.split(" - ")[0];
+			String cleanHome = Utils.cleanString(homeTeam);
+			m.setHomeTeam(cleanHome);
+			String awayTeam = teams.split(" - ")[1];
+			String cleanAway = Utils.cleanString(awayTeam);
+			m.setAwayTeam(cleanAway);
+			
+			boolean isAlreadySaved = checkAlreadySavedMatch(m, downloadedMatches);
+			
+			if (!isAlreadySaved) {
+				Elements tableScoreElems = row.getElementsByClass("table-score");
+			
+				if (tableScoreElems != null && !tableScoreElems.isEmpty()) {
+					String result = tableScoreElems.get(0).text();
+					Integer homeScoreScoredGoals = Integer.valueOf(result.split(":")[0]);
+					m.setFTHG(homeScoreScoredGoals);
+					Integer awayScoredGoals = Integer.valueOf(result.split(":")[1]);
+					m.setFTAG(awayScoredGoals);
 					
-				m.setFTR(finalResult);
-			}
+					String finalResult;
+					if (homeScoreScoredGoals > awayScoredGoals)
+						finalResult = "H";
+					else if (homeScoreScoredGoals == awayScoredGoals)
+						finalResult = "D";
+					else
+						finalResult = "A";
+						
+					m.setFTR(finalResult);
+				}
+			
+				Double H = Double.valueOf(row.getElementsByClass("odds-nowrp").get(0).text());
+				Double D = Double.valueOf(row.getElementsByClass("odds-nowrp").get(1).text());
+				Double A = Double.valueOf(row.getElementsByClass("odds-nowrp").get(2).text());
+				m.setPSCH(H);
+				m.setPSCD(D);
+				m.setPSCA(A);
+				_1x2Leaf avg1x2Odds = new _1x2Leaf(H, D, A);
+				m.get_1x2().get(TimeTypeEnum._final).setAvg1x2Odds(avg1x2Odds);
+				
+				// ADDITIONAL MATCH INFO
+				Elements elementsByTag = teamsElement.getElementsByTag("a");
+				String matchSuffixUrl = elementsByTag.last().attr("href");
+				
+				// 		1x2
+				String matchUrl = AppConstants.SITE_URL + matchSuffixUrl;
+				populateMatch1X2(m, matchUrl);
+				
+		//		//		ASIAN HANDICAP
+		//		populateMatchAH(m, matchUrl);
+		//
+		//		// 		UNDER OVER
+				populateMatchUO(m, matchUrl);
+		//		
+		//		// 		EUROPEAN HANDICAP
+				populateMatchEH(m, matchUrl);
+		//		
+		//		// 		DOUBLE CHANCE
+		//		populateMatchDC(m, matchUrl);
+		//		
+		//		// 		CORRECT SCORE
+		//		populateMatchCS(m, matchUrl);
+		//		
+		//		// 		DRAW NO BET
+		//		populateMatchDNB(m, matchUrl);
+				
+		//		System.out.println(m);
+				System.out.print(".");
 		
-			Double H = Double.valueOf(row.getElementsByClass("odds-nowrp").get(0).text());
-			Double D = Double.valueOf(row.getElementsByClass("odds-nowrp").get(1).text());
-			Double A = Double.valueOf(row.getElementsByClass("odds-nowrp").get(2).text());
-			m.setPSCH(H);
-			m.setPSCD(D);
-			m.setPSCA(A);
-			_1x2Leaf avg1x2Odds = new _1x2Leaf(H, D, A);
-			m.get_1x2().get(TimeTypeEnum._final).setAvg1x2Odds(avg1x2Odds);
-			
-			// ADDITIONAL MATCH INFO
-			Elements elementsByTag = teamsElement.getElementsByTag("a");
-			String matchSuffixUrl = elementsByTag.last().attr("href");
-			
-			// 		1x2
-			String matchUrl = AppConstants.SITE_URL + matchSuffixUrl;
-			populateMatch1X2(m, matchUrl);
-			
-	//		//		ASIAN HANDICAP
-	//		populateMatchAH(m, matchUrl);
-	//
-	//		// 		UNDER OVER
-			populateMatchUO(m, matchUrl);
-	//		
-	//		// 		EUROPEAN HANDICAP
-			populateMatchEH(m, matchUrl);
-	//		
-	//		// 		DOUBLE CHANCE
-	//		populateMatchDC(m, matchUrl);
-	//		
-	//		// 		CORRECT SCORE
-	//		populateMatchCS(m, matchUrl);
-	//		
-	//		// 		DRAW NO BET
-	//		populateMatchDNB(m, matchUrl);
-			
-	//		System.out.println(m);
-			System.out.print(".");
-	
-			return m;
+				return m;
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Problema nella creazione del match. " + e);
 		}
 		return null;
 	}

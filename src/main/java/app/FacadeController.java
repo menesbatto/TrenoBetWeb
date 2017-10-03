@@ -4,19 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import app.dao.tabelle.EventOddsDao;
 import app.dao.tabelle.EventOddsRepo;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.MatchoRepo;
-import app.dao.tabelle.TeamDao;
 import app.dao.tabelle.entities.Matcho;
 import app.logic.UtilityModel;
-import app.logic._1_matchesDownlaoder.MatchesDownloader;
 import app.logic._1_matchesDownlaoder.NextMatchesDownloader;
 import app.logic._1_matchesDownlaoder.PastMatchesDownlaoder;
 import app.logic._1_matchesDownlaoder.ResultParserOLD;
@@ -26,6 +22,7 @@ import app.logic._3_rankingCalculator.RankingCalculator;
 import app.logic._4_trendCalculator.TrendCalculator;
 import app.logic._5_goodnessCalculator.GoodnessCalculator;
 import app.logic._6_betCreator.BetCreator;
+import app.utils.ChampEnum;
 
 @Controller    					// This means that this class is a Controller
 @RequestMapping(path="/api2") 	// This means URL's start with /demo (after Application path)
@@ -52,11 +49,7 @@ public class FacadeController {
     }
     
     
-    @RequestMapping(value = "/resetStats", method = RequestMethod.GET)
-    public @ResponseBody void resetStats () {
-    	utilityModel.deleteAllWinRangeStats();
-    	utilityModel.deleteAllGoalsStats();
-    }
+   
     
     @RequestMapping(value = "/resetMatches", method = RequestMethod.GET)
     public @ResponseBody void resetMatches () {
@@ -101,7 +94,15 @@ public class FacadeController {
     private ResultAnalyzer resultAnalyzer;
     @RequestMapping(value = "/avviaVecchio2", method = RequestMethod.GET)
     public void avviaVecchio2() {
+    	resetStats();
     	resultAnalyzer.execute();
+    }
+    
+    @RequestMapping(value = "/resetStats", method = RequestMethod.GET)
+    public @ResponseBody void resetStats () {
+    	utilityModel.deleteAllWinRangeStats();
+    	utilityModel.deleteAllGoalsStats();
+    	utilityModel.deleteAllWinEhRangeStats();
     }
 
     @Autowired
@@ -145,8 +146,14 @@ public class FacadeController {
     private EventOddsRepo eventOddsRepo;
     @RequestMapping(value = "/removeAllEventOdds", method = RequestMethod.GET)
     public void removeAllEventOdds() {
-    	matchDao.removeAllEventOdds();
+//    	matchDao.removeAllEventOdds(); HHH
     	eventOddsRepo.deleteAll();
+    }  
+    
+    
+    @RequestMapping(value = "/removeAllNextMatch", method = RequestMethod.GET)
+    public void removeNextMatch() {
+    	matchDao.removeAllNextMatchesByChamp(ChampEnum.ENG_PREMIER);
     }  
     
 //	@GetMapping(path="/all")

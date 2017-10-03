@@ -15,6 +15,8 @@ public interface EventOddsRepo extends JpaRepository<EventOdds, Long> {
 //
 //	List<BetHouse> findByValue(@Param("value") String string);
 
+	void deleteByMatchChamp(Champ champ);
+
 //	List<GoalsStats> findByTeamAndPlayingField(Team team, String playingField);
 //
 //	int countByTeam(Team team);

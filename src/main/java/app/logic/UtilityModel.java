@@ -51,7 +51,11 @@ public class UtilityModel {
 
 	@Autowired
 	private WinRangeStatsRepo winRangeStatsRepo;
-	@Autowired
+
+//	@Autowired
+//	private WinEhRangeStatsRepo winEhRangeStatsRepo;
+	
+	@Autowired	
 	private GoalsStatsRepo goalsStatsRepo;
 
 	@Autowired
@@ -85,6 +89,11 @@ public class UtilityModel {
 	
 	public void initChampsTable() {
 		champDao.initTable();
+	}
+
+	public void deleteAllWinEhRangeStats() {
+//		winEhRangeStatsRepo.deleteAll();
+		
 	}
 	
 }

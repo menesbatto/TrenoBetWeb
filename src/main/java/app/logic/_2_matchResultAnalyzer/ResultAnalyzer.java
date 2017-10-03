@@ -13,14 +13,12 @@ import app.dao.tabelle.GoalsStatsDao;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.TeamDao;
 import app.dao.tabelle.WinRangeStatsDao;
-import app.dao.tabelle.entities.GoalsStats;
 import app.dao.tabelle.entities.WinRangeStats;
 import app.dao.tipologiche.OddsRangeDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.UoThresholdTypeDao;
 import app.dao.tipologiche.entities.OddsRange;
-import app.dao.tipologiche.entities.TimeType;
-import app.dao.tipologiche.entities.UoThresholdType;
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._1_matchesDownlaoder.model.MatchResultEnum;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
@@ -39,6 +37,9 @@ public class ResultAnalyzer {
 	@Autowired
 	private WinRangeStatsDao winRangeStatsDao;
 
+//	@Autowired
+//	private WinEhRangeStatsDao winEhRangeStatsDao;
+
 	@Autowired
 	private GoalsStatsDao goalsStatsDao;
 
@@ -56,6 +57,8 @@ public class ResultAnalyzer {
 
 	@Autowired
 	private UoThresholdTypeDao uoThresholdTypeDao;
+
+	private int i = 0;
 	
 	private static HashMap<ChampEnum, ArrayList<MatchResult>> allMatchesResults;
 	private static HashMap<ChampEnum, ArrayList<String>> allTeams;
@@ -79,8 +82,8 @@ public class ResultAnalyzer {
 			ArrayList<MatchResult> teamMatchesAway = matchDao.getDownloadedPastMatchByChampFull(champ);
 			Map<String, ArrayList<MatchResult>> homeMatchesMap = new HashMap<String, ArrayList<MatchResult>>();
 			createMatchMap(homeMatchesMap, teamMatchesAway, "H");
-			Map<String, ArrayList<MatchResult>> matchesMapAway = new HashMap<String, ArrayList<MatchResult>>();
-			createMatchMap(matchesMapAway, teamMatchesAway, "A");
+			Map<String, ArrayList<MatchResult>> awayMatchesMap = new HashMap<String, ArrayList<MatchResult>>();
+			createMatchMap(awayMatchesMap, teamMatchesAway, "A");
 			
 			ArrayList<String> teams = teamDao.findByChamp(champ);
 			ArrayList<String> teamsCorrect = new ArrayList<String>();
@@ -88,15 +91,327 @@ public class ResultAnalyzer {
 				team = Utils.cleanString(team);
 				teamsCorrect.add(team);
 			}
+			long start = System.nanoTime();
 			
-			analyzeWinOdds(champ, homeMatchesMap, matchesMapAway, teamsCorrect);
-			analyzeUnderOverOdds(champ, homeMatchesMap, matchesMapAway, teamsCorrect);
+			analyzeWinOdds				(champ, homeMatchesMap, awayMatchesMap, teamsCorrect, null);
+			long end1 = System.nanoTime();
+			long duration = (end1 - start)/1000000;  //divide by 1000000 to get milliseconds
+			System.out.println(duration);
+			
+			analyzeUnderOverOdds		(champ, homeMatchesMap, awayMatchesMap, teamsCorrect);
+			long end2 = System.nanoTime();
+			duration = (end2 - end1)/1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println(duration);
+//			
+			
+			analyzeEuropeanHandicapOdds	(champ, homeMatchesMap, awayMatchesMap, teamsCorrect);
+			long end3 = System.nanoTime();
+			duration = (end3 - end2)/1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println(duration);
 		}
 		
 		return null;
 	
 	}
+	
+	public void createMatchMap(Map<String, ArrayList<MatchResult>> matchesMap, ArrayList<MatchResult> teamHomeMatches, String playingField) {
+		for (MatchResult match : teamHomeMatches) {
+			String team = "";
+			if (playingField.equals("H")) {
+				team = match.getHomeTeam();
+			}
+			else { //if (playingField.equals("A")
+				team = match.getAwayTeam();
+			}
+			
+			//team = team.replace(" ", " ").trim(); sono due caratteri simili ma diversi
+			team = Utils.cleanString(team);
 
+			if ( !matchesMap.keySet().contains( team ) )
+				matchesMap.put(team, new ArrayList<MatchResult>()) ;
+
+			matchesMap.get(team).add(match);
+
+						
+		}
+	}
+	
+	// ogni volta che l'atalanta giocando in casa aveva quotato il -2 handicap a 1,6 si è comportata cosi
+	
+	// Probabilita che l'atalanta giocando in casa ed avendo quotato l'handicap a 2 (m2) ad una cifra tra 1,5 e 1,5 vinca
+	private void analyzeEuropeanHandicapOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams) {
+		
+		for (HomeVariationEnum homeVariation : HomeVariationEnum.values()) {
+			if (homeVariation.getValueNum() > -4 && homeVariation.getValueNum() < 4 )
+				analyzeWinOdds(champ, matchesMapHome, matchesMapAway, teams, homeVariation);
+		}
+		
+	}
+
+	
+
+	
+
+	
+
+	private void analyzeWinOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams, HomeVariationEnum homeVariation) {
+		List<WinRangeStats> createdWinRangeToSave = new ArrayList<WinRangeStats>();
+		
+		for (String teamName : teams) {
+			
+			// HOME
+			List<WinRangeStats> homeWinStats = analyzeTeamResultWin(teamName, matchesMapHome.get(teamName), champ, "H", homeVariation);
+			createdWinRangeToSave.addAll(homeWinStats);
+			
+			// AWAY
+			List<WinRangeStats> awayWinStats = analyzeTeamResultWin(teamName,  matchesMapAway.get(teamName), champ, "A", homeVariation);
+			createdWinRangeToSave.addAll(awayWinStats);
+			
+			// TOTAL
+//			winRangeStatsDao.calculateWinStatsNoPlayingField(teamName, champ);
+			
+		}
+		if (homeVariation== null) {
+			winRangeStatsDao.saveWinRangeStats(createdWinRangeToSave);
+		}
+		else {
+			winRangeStatsDao.saveWinRangeStats(createdWinRangeToSave);
+		}
+	}
+	
+	// Ogni volta che l'atalanta che gioca in casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
+	// Ogni volta che l'atalanta che gioca fuori casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
+	private List<WinRangeStats> analyzeTeamResultWin(String teamName, ArrayList<MatchResult> matches, ChampEnum champ, String playingField, HomeVariationEnum homeVariation) {
+		List<WinRangeStats> createdWinRangeToSave = new ArrayList<WinRangeStats>();
+		
+		List<TimeTypeEnum> timeTypes = timeTypeDao.findAllTimeTypeEnum();
+		List<OddsRange> oddsRangeList = oddsRangeDao.findAll();
+		
+		ArrayList<WinRangeStatsBean> allRanges = new ArrayList<WinRangeStatsBean>();
+		for (TimeTypeEnum timeType : timeTypes) {
+			ArrayList<WinRangeStatsBean> ranges = createRanges(oddsRangeList, timeType, teamName);
+			
+			WinRangeStatsBean winRangeStatsBean = new WinRangeStatsBean();
+			winRangeStatsBean.setTimeTypeBean(timeType);
+			if (matches ==  null) {
+				continue;
+			}
+			
+			for (MatchResult m : matches){
+				if (m.getFTHG() == null){
+					continue;
+				}
+				
+				Integer homeGoals = 0;
+				Integer awayGoals = 0;
+				String resultString = "";
+				String resultStringTest = null;			//da cancellare
+				_1x2Leaf avg1x2Odds;
+				if (homeVariation == null) {
+					avg1x2Odds = m.get_1x2().get(timeType).getAvg1x2Odds();
+				}
+				else {
+					avg1x2Odds = m.getEh().get(timeType).getMap().get(homeVariation).getAvg1x2Odds();
+				}
+				if (avg1x2Odds == null) {
+					continue;
+				}
+				Double homeOdds = avg1x2Odds.getOdd1();
+				Double drawOdds = avg1x2Odds.getOddX();
+				Double awayOdds = avg1x2Odds.getOdd2();
+				MatchResultEnum resultEnum = null;
+
+				switch (timeType) {
+					case _final:
+						homeGoals = m.getFTHG();
+						awayGoals = m.getFTAG();		
+						resultStringTest = m.getFTR();		//da cancellare
+//						result = MatchResultEnum.valueOf(resultString);
+						break;
+					case _1:
+						homeGoals = m.getHTHG();
+						awayGoals = m.getHTAG();
+						resultStringTest = m.getHTR();		//da cancellare
+//						result = MatchResultEnum.valueOf(resultString);
+						break;
+					case _2:
+						homeGoals = m.getFTHG() - m.getHTHG();
+						awayGoals = m.getFTAG() - m.getHTAG();
+						
+						break;
+	
+					default:
+						break;
+				}
+				if (homeVariation != null) 
+					homeGoals += homeVariation.getValueNum();
+				
+				
+				if (homeGoals > awayGoals)				resultString = "H";
+				else if (homeGoals == awayGoals)		resultString = "D";
+				else									resultString = "A";
+				
+				resultEnum = MatchResultEnum.valueOf(resultString);
+
+				
+				if (resultStringTest != null)
+					if (!resultStringTest.equals(resultString))
+						System.out.println("C'è un errore nel calcolo del risultato ");
+				
+				
+				// in caso non ci sono quote da cancellare
+				if (homeOdds == null || drawOdds == null || awayOdds == null){	
+					homeOdds = 0.0;
+					drawOdds = 0.0;
+					awayOdds = 0.0;
+				}
+				
+				Double percHome = 1/homeOdds;
+				Double percDraw = 1/drawOdds;
+				Double percAway = 1/awayOdds;
+				
+				Double percTotal = percHome + percDraw + percAway;
+	
+				Double percHomeAdjusted = percHome  / percTotal;
+				Double percDrawAdjusted = percDraw  / percTotal;
+				Double percAwayAdjusted = percAway  / percTotal;
+				
+				Double homeOddsAdjusted = 1 / percHomeAdjusted;
+				Double drawOddsAdjusted = 1 / percDrawAdjusted;
+				Double awayOddsAdjusted = 1 / percAwayAdjusted;
+				
+				Double oddsOfTeamAnalyzed = null;
+				
+				// capisce se la quota su cui andare a inserire la statistica � della squadra in casa o fuoricasa
+				if (teamName.equals(m.getHomeTeam()))
+					oddsOfTeamAnalyzed = homeOddsAdjusted;
+				else 
+					oddsOfTeamAnalyzed = awayOddsAdjusted;
+				
+				updateRangeStats(ranges, resultEnum, oddsOfTeamAnalyzed);
+				
+			}
+			
+			if (!matches.isEmpty())
+				enrichTeamResult(ranges, playingField);
+		
+			allRanges.addAll(ranges);
+		}
+		
+		//System.out.println(teamName + " " + this.i++ + " " + homeVariation);
+		List<WinRangeStats> createWinEhRangeToSave = winRangeStatsDao.createWinRangesToSave(allRanges, teamName, champ, playingField, homeVariation);
+		createdWinRangeToSave.addAll(createWinEhRangeToSave);
+		
+		return createdWinRangeToSave;
+	}
+
+	private ArrayList<WinRangeStatsBean> createRanges(List<OddsRange> oddsRangeList, TimeTypeEnum timeType, String teamName) {
+		ArrayList<WinRangeStatsBean> ranges = new ArrayList<WinRangeStatsBean>();
+		for (OddsRange elemRange : oddsRangeList) {
+			WinRangeStatsBean elem = new WinRangeStatsBean();
+			elem.setTeamName(teamName);
+			elem.setTimeTypeBean(timeType);
+			elem.setEdgeUp(elemRange.getValueUp());
+			elem.setEdgeDown(elemRange.getValueDown());
+			elem.setRange(elemRange.getValueUp() + "-" + elemRange.getValueDown());
+			ranges.add(elem);
+		}
+		return ranges;
+	}
+
+	private static void updateRangeStats(List<WinRangeStatsBean> ranges, MatchResultEnum result, Double hitOdds) {
+		for (WinRangeStatsBean range : ranges) {
+			if (hitOdds < range.getEdgeUp()){
+				if (result.equals(MatchResultEnum.H)){
+					range.setHomeHits(range.getHomeHits() + 1);
+					range.setDrawMisses(range.getDrawMisses() + 1);
+					range.setAwayMisses(range.getAwayMisses() + 1);
+				}
+				else if (result.equals(MatchResultEnum.D)){
+					range.setHomeMisses(range.getHomeMisses() + 1);
+					range.setDrawHits(range.getDrawHits() + 1);
+					range.setAwayMisses(range.getAwayMisses() + 1);
+				}
+				else {//if (result.equals(Result.A)){
+					range.setHomeMisses(range.getHomeMisses() + 1);
+					range.setDrawMisses(range.getDrawMisses() + 1);
+					range.setAwayHits(range.getAwayHits() + 1);
+				}
+				range.setTotal(range.getTotal() + 1);
+				break;
+			}
+		}
+		
+	}
+
+	private static void enrichTeamResult(ArrayList<WinRangeStatsBean> rangeList, String where) {
+		for (WinRangeStatsBean range : rangeList){
+			Double winPerc = null;
+			Double drawPerc = null;
+			Double losePerc = null;
+			if (range.getTotal() != null && range.getTotal() != 0){
+				if (where.equals("H")){
+					winPerc = new Double(range.getHomeHits()) / new Double (range.getTotal());
+					drawPerc = new Double(range.getDrawHits()) / new Double (range.getTotal());
+					losePerc = new Double(range.getAwayHits()) / new Double (range.getTotal());
+				}
+				else {//if (where.equals("A")){
+					winPerc = new Double(range.getAwayHits()) / new Double (range.getTotal());
+					drawPerc = new Double(range.getDrawHits()) / new Double (range.getTotal());
+					losePerc = new Double(range.getHomeHits()) / new Double (range.getTotal());
+				}
+			}
+			range.setWinPerc(winPerc);
+			range.setDrawPerc(drawPerc);
+			range.setLosePerc(losePerc);
+		}
+	}
+
+
+	private static void initStaticFields() {
+//		if (allMatchesResults == null)
+//			allMatchesResults =  ResultParserOld.retrieveAllMatchResults();
+////		allMatchesResults.get(ChampEnum.SPA_LIGA)
+////		System.out.println(matches);
+//		allTeams =  ResultParserOld.retrieveTeams();
+//		allAnalyzedChampsWinHome = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
+//		allAnalyzedChampsWinAway = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
+//		allAnalyzedChampsWinAll = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
+//		
+//		allAnalyzedChampsUoHome = new HashMap<ChampEnum, HashMap<String, GoalsStats>>();
+//		allAnalyzedChampsUoAway = new HashMap<ChampEnum, HashMap<String, GoalsStats>>();
+//		
+//		
+//		teamToMatchesHome = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
+//		teamToMatchesAway = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
+//		teamToMatchesAll = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
+//		
+//		for (ChampEnum champ : ChampEnum.values()){
+//			
+//			teamToMatchesHome.put(champ, new HashMap<String, ArrayList<MatchResult>>());
+//			teamToMatchesAway.put(champ, new HashMap<String, ArrayList<MatchResult>>());
+//			teamToMatchesAll.put(champ, new HashMap<String, ArrayList<MatchResult>>());
+//			for (String teamName : allTeams.get(champ)){
+//				teamToMatchesHome.get(champ).put(teamName, new ArrayList<MatchResult>());
+//				teamToMatchesAway.get(champ).put(teamName, new ArrayList<MatchResult>());
+//				teamToMatchesAll.get(champ).put(teamName, new ArrayList<MatchResult>());
+//			}
+//	
+//			for (MatchResult mr : allMatchesResults.get(champ)){
+//				teamToMatchesHome.get(champ).get(mr.getHomeTeam()).add(mr);
+//				
+//				teamToMatchesAway.get(champ).get(mr.getAwayTeam()).add(mr);
+//				
+//				teamToMatchesAll.get(champ).get(mr.getHomeTeam()).add(mr);
+//				teamToMatchesAll.get(champ).get(mr.getAwayTeam()).add(mr);
+//			}
+//		}
+//		
+//		IOUtils.write(AppConstants.TEAM_TO_MATCHES_ALL_PATH, teamToMatchesAll);
+
+	}
+	
+	
 	private void analyzeUnderOverOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams ) {
 		
 //		HashMap<String, GoalsStatsBean> teamToUOStatsHome = new HashMap<String, GoalsStatsBean>();
@@ -157,29 +472,7 @@ public class ResultAnalyzer {
 		
 		
 	}
-
-	public void createMatchMap(Map<String, ArrayList<MatchResult>> matchesMap, ArrayList<MatchResult> teamHomeMatches, String playingField) {
-		for (MatchResult match : teamHomeMatches) {
-			String team = "";
-			if (playingField.equals("H")) {
-				team = match.getHomeTeam();
-			}
-			else { //if (playingField.equals("A")
-				team = match.getAwayTeam();
-			}
-			
-			//team = team.replace(" ", " ").trim(); sono due caratteri simili ma diversi
-			team = Utils.cleanString(team);
-
-			if ( !matchesMap.keySet().contains( team ) )
-				matchesMap.put(team, new ArrayList<MatchResult>()) ;
-
-			matchesMap.get(team).add(match);
-
-						
-		}
-	}
-
+	
 	private List<GoalsStatsBean> analyzeTeamResultUo(String teamName, ArrayList<MatchResult> matches, ChampEnum champ, String playingField) {
 		List<TimeTypeEnum> timeTypes = timeTypeDao.findAllTimeTypeEnum();
 		
@@ -280,258 +573,8 @@ public class ResultAnalyzer {
 		}
 		
 	}
-
-	private void analyzeWinOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, 
-			Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams) {
-		
-		for (String teamName : teams) {
-			
-			// HOME
-//			int lastSeasonDayOddsH = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "H"); //USO GOALS PERCHE VANNO DI PARI PASSO
-//			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsH);
-			analyzeTeamResultWin(teamName, matchesMapHome.get(teamName), champ, "H");
-			
-			
-			// AWAY
-//			int lastSeasonDayOddsA = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "A"); //USO GOALS PERCHE VANNO DI PARI PASSO
-//			ArrayList<MatchResult> teamAwayMatches = matchDao.getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsA);
-			analyzeTeamResultWin(teamName,  matchesMapAway.get(teamName), champ, "A");
-			
-			
-			// TOTAL
-			winRangeStatsDao.calculateWinStatsNoPlayingField(teamName, champ);
-		}
-//		
-//		for (String teamName : teams) {
-//			
-//		}
-//
-//		for (String teamName : teams) {
-//			
-//		}
-		
-	}
 	
-	private static void enrichTeamResult(ArrayList<WinRangeStatsBean> rangeList, String where) {
-		for (WinRangeStatsBean range : rangeList){
-			Double winPerc = null;
-			Double drawPerc = null;
-			Double losePerc = null;
-			if (range.getTotal() != null && range.getTotal() != 0){
-				if (where.equals("H")){
-					winPerc = new Double(range.getHomeHits()) / new Double (range.getTotal());
-					drawPerc = new Double(range.getDrawHits()) / new Double (range.getTotal());
-					losePerc = new Double(range.getAwayHits()) / new Double (range.getTotal());
-				}
-				else {//if (where.equals("A")){
-					winPerc = new Double(range.getAwayHits()) / new Double (range.getTotal());
-					drawPerc = new Double(range.getDrawHits()) / new Double (range.getTotal());
-					losePerc = new Double(range.getHomeHits()) / new Double (range.getTotal());
-				}
-			}
-			range.setWinPerc(winPerc);
-			range.setDrawPerc(drawPerc);
-			range.setLosePerc(losePerc);
-		}
-	}
-
-
-	// Ogni volta che l'atalanta che gioca in casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
-	// Ogni volta che l'atalanta che gioca fuori casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
-	private void analyzeTeamResultWin(String teamName, ArrayList<MatchResult> matches, ChampEnum champ, String playingField) {
-		
-		List<TimeTypeEnum> timeTypes = timeTypeDao.findAllTimeTypeEnum();
-		List<OddsRange> oddsRangeList = oddsRangeDao.findAll();
-		
-		
-		ArrayList<WinRangeStatsBean> allRanges = new ArrayList<WinRangeStatsBean>();
-		for (TimeTypeEnum timeType : timeTypes) {
-			ArrayList<WinRangeStatsBean> ranges = createRanges(oddsRangeList, timeType, teamName);
-			
-			
-			//ArrayList<WinRangeStatsBean> ranges = winRangeStatsDao.findByTeamNameAndChampAndTimeTypeAndPlayingField(teamName, champ, timeType, playingField);
-			
-			WinRangeStatsBean winRangeStatsBean = new WinRangeStatsBean();
-			winRangeStatsBean.setTimeTypeBean(timeType);
-			if (matches ==  null) {
-				continue;
-			}
-			
-			for (MatchResult m : matches){
-				if (m.getFTHG() == null){
-					continue;
-				}
-				
-				Integer homeGoals = 0;
-				Integer awayGoals = 0;
-				String resultString = "";
-				_1x2Leaf avg1x2Odds =  m.get_1x2().get(timeType).getAvg1x2Odds();
-				Double homeOdds = avg1x2Odds.getOdd1();
-				Double drawOdds = avg1x2Odds.getOddX();
-				Double awayOdds = avg1x2Odds.getOdd2();
-				MatchResultEnum result = null;
-
-				switch (timeType) {
-					case _final:
-						homeGoals = m.getFTHG();
-						awayGoals = m.getFTAG();
-						resultString = m.getFTR();
-						result = MatchResultEnum.valueOf(resultString);
-						break;
-					case _1:
-						homeGoals = m.getHTHG();
-						awayGoals = m.getHTAG();
-						resultString = m.getHTR();
-						result = MatchResultEnum.valueOf(resultString);
-						break;
-					case _2:
-						homeGoals = m.getFTHG() - m.getHTHG();
-						awayGoals = m.getFTAG() - m.getHTAG();
-						
-						if (homeGoals > awayGoals)				resultString = "H";
-						else if (homeGoals == awayGoals)		resultString = "D";
-						else									resultString = "A";
-						
-						result = MatchResultEnum.valueOf(resultString);
-						break;
 	
-					default:
-						break;
-				}
-				
-				
-//				if (homeOdds == null || drawOdds == null || awayOdds == null){
-//					homeOdds = m.getBWH();
-//					drawOdds = m.getBWD();
-//					awayOdds = m.getBWA();
-//				}
-//				if (homeOdds == null || drawOdds == null || awayOdds == null){
-//					homeOdds = m.getPSCH();
-//					drawOdds = m.getPSCD();
-//					awayOdds = m.getPSCA();
-//				}	
-				if (homeOdds == null || drawOdds == null || awayOdds == null){
-					homeOdds = 0.0;
-					drawOdds = 0.0;
-					awayOdds = 0.0;
-				}
-				Double percHome = 1/homeOdds;
-				Double percDraw = 1/drawOdds;
-				Double percAway = 1/awayOdds;
-				
-				Double percTotal = percHome + percDraw + percAway;
-	
-				Double percHomeAdjusted = percHome  / percTotal;
-				Double percDrawAdjusted = percDraw  / percTotal;
-				Double percAwayAdjusted = percAway  / percTotal;
-				
-				Double homeOddsAdjusted = 1 / percHomeAdjusted;
-				Double drawOddsAdjusted = 1 / percDrawAdjusted;
-				Double awayOddsAdjusted = 1 / percAwayAdjusted;
-				
-				Double oddsOfTeamAnalyzed = null;
-				
-				// capisce se la quota su cui andare a inserire la statistica � della squadra in casa o fuoricasa
-				if (teamName.equals(m.getHomeTeam()))
-					oddsOfTeamAnalyzed = homeOddsAdjusted;
-				else 
-					oddsOfTeamAnalyzed = awayOddsAdjusted;
-				
-				updateRangeStats(ranges, result, oddsOfTeamAnalyzed);
-				
-			}
-			
-			if (!matches.isEmpty())
-				enrichTeamResult(ranges, playingField);
-		
-			allRanges.addAll(ranges);
-		}
-		List<WinRangeStats> saveWinRangeStats = winRangeStatsDao.saveWinRangeStats(allRanges, teamName, champ, playingField);
-		
-	}
-
-	private ArrayList<WinRangeStatsBean> createRanges(List<OddsRange> oddsRangeList, TimeTypeEnum timeType, String teamName) {
-		ArrayList<WinRangeStatsBean> ranges = new ArrayList<WinRangeStatsBean>();
-		for (OddsRange elemRange : oddsRangeList) {
-			WinRangeStatsBean elem = new WinRangeStatsBean();
-			elem.setTeamName(teamName);
-			elem.setTimeTypeBean(timeType);
-			elem.setEdgeUp(elemRange.getValueUp());
-			elem.setEdgeDown(elemRange.getValueDown());
-			elem.setRange(elemRange.getValueUp() + "-" + elemRange.getValueDown());
-			ranges.add(elem);
-		}
-		return ranges;
-	}
-
-	private static void updateRangeStats(List<WinRangeStatsBean> ranges, MatchResultEnum result, Double hitOdds) {
-		for (WinRangeStatsBean range : ranges) {
-			if (hitOdds < range.getEdgeUp()){
-				if (result.equals(MatchResultEnum.H)){
-					range.setHomeHits(range.getHomeHits() + 1);
-					range.setDrawMisses(range.getDrawMisses() + 1);
-					range.setAwayMisses(range.getAwayMisses() + 1);
-				}
-				else if (result.equals(MatchResultEnum.D)){
-					range.setHomeMisses(range.getHomeMisses() + 1);
-					range.setDrawHits(range.getDrawHits() + 1);
-					range.setAwayMisses(range.getAwayMisses() + 1);
-				}
-				else {//if (result.equals(Result.A)){
-					range.setHomeMisses(range.getHomeMisses() + 1);
-					range.setDrawMisses(range.getDrawMisses() + 1);
-					range.setAwayHits(range.getAwayHits() + 1);
-				}
-				range.setTotal(range.getTotal() + 1);
-				break;
-			}
-		}
-		
-	}
-
-
-	private static void initStaticFields() {
-//		if (allMatchesResults == null)
-//			allMatchesResults =  ResultParserOld.retrieveAllMatchResults();
-////		allMatchesResults.get(ChampEnum.SPA_LIGA)
-////		System.out.println(matches);
-//		allTeams =  ResultParserOld.retrieveTeams();
-//		allAnalyzedChampsWinHome = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
-//		allAnalyzedChampsWinAway = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
-//		allAnalyzedChampsWinAll = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
-//		
-//		allAnalyzedChampsUoHome = new HashMap<ChampEnum, HashMap<String, GoalsStats>>();
-//		allAnalyzedChampsUoAway = new HashMap<ChampEnum, HashMap<String, GoalsStats>>();
-//		
-//		
-//		teamToMatchesHome = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
-//		teamToMatchesAway = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
-//		teamToMatchesAll = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
-//		
-//		for (ChampEnum champ : ChampEnum.values()){
-//			
-//			teamToMatchesHome.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//			teamToMatchesAway.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//			teamToMatchesAll.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//			for (String teamName : allTeams.get(champ)){
-//				teamToMatchesHome.get(champ).put(teamName, new ArrayList<MatchResult>());
-//				teamToMatchesAway.get(champ).put(teamName, new ArrayList<MatchResult>());
-//				teamToMatchesAll.get(champ).put(teamName, new ArrayList<MatchResult>());
-//			}
-//	
-//			for (MatchResult mr : allMatchesResults.get(champ)){
-//				teamToMatchesHome.get(champ).get(mr.getHomeTeam()).add(mr);
-//				
-//				teamToMatchesAway.get(champ).get(mr.getAwayTeam()).add(mr);
-//				
-//				teamToMatchesAll.get(champ).get(mr.getHomeTeam()).add(mr);
-//				teamToMatchesAll.get(champ).get(mr.getAwayTeam()).add(mr);
-//			}
-//		}
-//		
-//		IOUtils.write(AppConstants.TEAM_TO_MATCHES_ALL_PATH, teamToMatchesAll);
-
-	}
 	
 	public static HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>>  retrieveTeamsToRangeStatsWinHome() {
 		HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> teamToRangeStatsWinHome = IOUtils.read(AppConstants.TEAM_TO_RANGE_STATS_WIN_HOME_PATH,  HashMap.class);
