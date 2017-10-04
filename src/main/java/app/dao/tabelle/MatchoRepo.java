@@ -27,6 +27,9 @@ public interface MatchoRepo extends JpaRepository<Matcho, Long> {
 	List<Matcho> findByHomeTeamNameAndAwayTeamNameAndChamp(String homeTeam, String awayTeam, Champ champ);
 	
 	void deleteByChampAndFullTimeResultIsNull(Champ champ);
+
+	void deleteById(Integer idMatch);
+	
 	
 //	@Query(value = "SELECT TOP ?1, * FROM MATCH WHERE CHAMP_ID = ?1", nativeQuery = true)
 //	List<Matcho> findByChampAndAwayTeamAndFullTimeResultIsNotNullTopN(Champ champ, Team team);

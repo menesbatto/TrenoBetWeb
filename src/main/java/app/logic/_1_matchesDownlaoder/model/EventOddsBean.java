@@ -75,8 +75,12 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 			
 			String uoOdds = getUoOdds(uoOddsMap);
 			String uoHeader = getUoHeader();
+			String ehOdds = getEhOdds(ehOddsMap);
+			String ehHeader = getEhHeader();
 			String uoH = getUoString(homeResultGoodness.getUoGoodness());
 			String uoA = getUoString(awayResultGoodness.getUoGoodness());
+			String ehH = getEhString(homeResultGoodness.getEhGoodness(), "H");
+			String ehA = getEhString(awayResultGoodness.getEhGoodness(), "A");
 			
 			String s =  
 	
@@ -84,11 +88,15 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	
 				Utils.redimString(homeTrend,16) + " " + "Utils.redimString(homeTrendUo,16)" + " - " + Utils.redimString(awayTrend,16) + " - " + "Utils.redimString(awayTrendUo,16)" +
 				
-				"\n\tQUOTE\t | " + "1 - " + "\t" + oddsH + "\t\t\t\t | " + "X - " + "\t" + oddsD + "\t | " + "2 - " + "\t" + oddsA + "\t\t\t\t | " + uoOdds +
+				
+				
+				
+				"\n\t        1x2          \n" + 
+				"\n\tQUOTE\t | " + "1 - " + "\t" + oddsH + "\t\t\t\t | " + "X - " + "\t" + oddsD + "\t | " + "2 - " + "\t" + oddsA + "\t\t\t\t | " + 
 				
 //				"\n\tWIN\t | " + oddsH + "\t\t\t\t\t | " + oddsD + "\t | " + oddsD +"\t\t\t\t\t | " + oddsU + "\t\t" + oddsO +
 
-				"\n\t\t | " + "clea" + "\t" + "mot" + "\t" + "withMot" + "\t" + "withTre" + "\t" + "withAll" + "\t | " + "clea" + "\t\t | "  + "clea" + "\t" + "mot" + "\t" + "withMot" + "\t" + "withTre" + "\t" + "withAll" + "\t | " + uoHeader + 
+				"\n\t\t | " + "clea" + "\t" + "mot" + "\t" + "withMot" + "\t" + "withTre" + "\t" + "withAll" + "\t | " + "clea" + "\t\t | "  + "clea" + "\t" + "mot" + "\t" + "withMot" + "\t" + "withTre" + "\t" + "withAll" + "\t | " + 
 				
 	//			"\n\tGOOD\t | " + homeResultGoodness.getGoodnessW() + "\t" + Utils.redimString(homeResultGoodness.getGoodnessWwithTrends()) + "\t | " + homeResultGoodness.getGoodnessD() + "\t | " + homeResultGoodness.getGoodnessL() + "\t" + Utils.redimString(homeResultGoodness.getGoodnessLwithTrends()) + "\t\t | " + homeResultGoodness.getGoodnessU() + "\t" + homeResultGoodness.getGoodnessO() +  
 	//			
@@ -105,7 +113,7 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 				"\t" +"null" +  // Utils.redimString(homeResultGoodness.getWinMotivation().getGoodnessL()) + 
 				"\t" + "null" +  //Utils.redimString(homeResultGoodness.getWinTrend().getGoodnessL()) + 
 				"\t" + "null" +  //Utils.redimString(homeResultGoodness.getWinFinal().getGoodnessL()) + 
-				"\t | " +  uoH  +  
+				  
 				
 				"\n\tA GOOD\t | " + Utils.redimString(awayResultGoodness.getWinClean().getGoodnessL()) + 
 				"\t" + "null" + //Utils.redimString(awayMotivation) + 
@@ -118,12 +126,96 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 				"\t" + "null" +  //Utils.redimString(awayResultGoodness.getWinMotivation().getGoodnessW()) +
 				"\t" +  "null" + //Utils.redimString(awayResultGoodness.getWinTrend().getGoodnessW()) + 
 				"\t" +  "null" + //Utils.redimString(awayResultGoodness.getWinFinal().getGoodnessW()) + 
-				"\t | " +  uoA + "\n\n";
+				"\n\n" +
+				"\t################### \n\n" +
+
+	
+				
+				"\t        UO          \n\n" + 
+				"\tQUOTE\t | " + uoOdds + "\n" + 
+				"\t\t | " + uoHeader + "\n" + 
+				"\n\tH GOOD\t |" +
+				" " +  uoH  +  
+
+				"\n\tA GOOD\t |" +
+				" " +  uoA + "\n\n" +
+				"\t################### \n\n" +
+				
+				
+				
+				
+				
+				"\t        EH          \n\n" + 
+				"\tQUOTE\t | " + ehOdds + "\n" + 
+				"\t\t | " + ehHeader + "\n" + 
+				"\n\tH GOOD\t |" +
+				" " +  ehH  +  
+	
+				"\n\tA GOOD\t |" +
+				" " +  ehA + "\n\n" +
+				"\t################### \n\n";
+				
+				
+				
 				
 //				"\n\tA GOOD\t | " + awayResultGoodness.getGoodnessL() + "\t" + Utils.redimString(awayMotivation) + "\t | " + awayResultGoodness.getGoodnessD() + "\t | " + awayResultGoodness.getGoodnessW() + "\t" + Utils.redimString(awayMotivation) + "\t\t | " + awayResultGoodness.getGoodnessU() + "\t" + awayResultGoodness.getGoodnessO() + "\n\n"; 
 	
 			return s;
 		}
+	}
+
+
+	private String getEhOdds(Map<HomeVariationEnum, _1x2Leaf> ehMap) {
+		String result = "";
+		
+		for (HomeVariationEnum key : HomeVariationEnum.getSubSet()) {
+			_1x2Leaf value = ehMap.get(key);
+			String _1;
+			String x;
+			String _2;
+			if (value != null) {
+				_1 = Utils.forceLength(value.getOdd1(), 4);
+				x = Utils.forceLength(value.getOddX(), 4);
+				_2 = Utils.forceLength(value.getOdd2(), 4);
+		
+			}
+			else {
+				_1 = "n/a ";
+				x = "n/a ";
+				_2 = "n/a ";
+			}
+				result += key + ": " + _1 + " " + x  + " " + _2 + "\t|";
+		}
+		return result;
+	}
+
+
+	private String getEhHeader() {
+		String result = "";
+		for (HomeVariationEnum thr : HomeVariationEnum.getSubSet()) {
+			result += thr + ": " + "1    x    2" + "\t|";
+		}
+		return result;
+	}
+
+
+	private String getEhString(Map<HomeVariationEnum, ResultGoodnessWDLBean> ehMap, String playingField) {
+		String result = "";
+		for (HomeVariationEnum homeVar : HomeVariationEnum.getSubSet()) {
+//			if (playingField == "H") {
+			if (ehMap.get(homeVar) != null) {
+				result += homeVar + ": " + Utils.forceLength(ehMap.get(homeVar).getGoodnessW(), 4) + " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessD(), 4)+ " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessL(), 4) + "\t|";
+			}
+			else {
+				result += homeVar + ": " + "n/a " + " " +  "n/a " + " " +  "n/a " + "\t|";
+				
+			}
+//			}
+//			else {//if (playingField == "A") {
+//				result += homeVar + ": " + Utils.forceLength(ehMap.get(homeVar).getGoodnessL(), 4) + " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessD(), 4)+ " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessW(), 4) + "\t|";
+//			}
+		}
+		return result;
 	}
 
 

@@ -353,7 +353,8 @@ public class MatchoDao {
 			bean.setHTR(ent.getHalfTimeResult());
 			
 			if (!light) {
-				//HashMap<TimeTypeEnum, _1x2Full> _1x2 = new HashMap<TimeTypeEnum, _1x2Full>();
+				
+				// Mapping 1x2
 				for (_1X2Odds oddsEnt : ent.get_1X2()) {
 					TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(oddsEnt.getTimeType());
 					
@@ -372,14 +373,12 @@ public class MatchoDao {
 					else {
 						_1x2Full.setAvg1x2Odds(oddsBean);
 					}
-					//_1x2.put(timeTypeEnum, _1x2Full);
 				
 				}
-				//bean.set_1x2(_1x2);
 			
 				
 				
-				//HashMap<TimeTypeEnum, UoTimeType> uoMapBean = new HashMap<TimeTypeEnum, UoTimeType>();
+				// Mapping Under Over
 				for (UoOdds uoOddsEnt : ent.getUo()) {
 					
 					TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(uoOddsEnt.getTimeType());
@@ -403,9 +402,33 @@ public class MatchoDao {
 					}
 					
 				}
-					
 				
-				//bean.setUo(uoMapBean);
+				
+				// Mapping European Handicap
+				for (EhOdds ehOddsEnt : ent.getEh()) {
+					
+					TimeTypeEnum timeTypeEnum = timeTypeDao.findBeanByEnt(ehOddsEnt.getTimeType());
+					Double _1 = ehOddsEnt.get_1();
+					Double x = ehOddsEnt.get_X();
+					Double _2 = ehOddsEnt.get_2();
+					_1x2Leaf oddsBean = new _1x2Leaf(_1, x, _2);
+					
+					EhTimeType ehTimeType = bean.getEh().get(timeTypeEnum);
+					HomeVariationType homeVarTypeEnt = ehOddsEnt.getHomeVariationType();
+					HomeVariationEnum homeVarTypeBean = homeVariationTypeDao.findBeanByEnt(homeVarTypeEnt);
+					
+					 _1x2Full ehFull = ehTimeType.getMap().get(homeVarTypeBean);
+					
+					BetHouse betHouseEnt = ehOddsEnt.getBetHouse();
+					if ( betHouseEnt != null) {
+						BetHouseEnum betHouseEnum = betHouseDao.findBeanByEnt(betHouseEnt);
+						ehFull.getBetHouseTo1x2Odds().put(betHouseEnum, oddsBean);
+					}
+					else {
+						ehFull.setAvg1x2Odds(oddsBean);
+					}
+					
+				}
 			
 			}
 			listBean.add(bean);
@@ -538,7 +561,29 @@ public class MatchoDao {
 		
 	}
 
+    @Transactional
+	public void deleteMatch(Integer idMatch) {
+		matchRepo.deleteById(idMatch);
+		
+	}
 
+   	public void updateEhOdds() {
+   		List<Matcho> all = matchRepo.findAll();
+   		
+   		for (Matcho m : all) {
+			for (EhOdds odds : m.getEh()) {
+				if (odds.getBetHouse()== null) {
+					Double get_1 = odds.get_1();
+					Double get_2 = odds.get_2();
+					odds.set_1(get_2);
+					odds.set_2(get_1);
+					
+				}
+			}
+   		}
+   		matchRepo.save(all);
+   		
+   	}
 
 
 	

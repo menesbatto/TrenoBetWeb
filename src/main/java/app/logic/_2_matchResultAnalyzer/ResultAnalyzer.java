@@ -92,17 +92,17 @@ public class ResultAnalyzer {
 				teamsCorrect.add(team);
 			}
 			long start = System.nanoTime();
-			
+			long duration;
 			analyzeWinOdds				(champ, homeMatchesMap, awayMatchesMap, teamsCorrect, null);
 			long end1 = System.nanoTime();
-			long duration = (end1 - start)/1000000;  //divide by 1000000 to get milliseconds
+			duration = (end1 - start)/1000000;  //divide by 1000000 to get milliseconds
 			System.out.println(duration);
 			
 			analyzeUnderOverOdds		(champ, homeMatchesMap, awayMatchesMap, teamsCorrect);
 			long end2 = System.nanoTime();
 			duration = (end2 - end1)/1000000;  //divide by 1000000 to get milliseconds.
 			System.out.println(duration);
-//			
+			
 			
 			analyzeEuropeanHandicapOdds	(champ, homeMatchesMap, awayMatchesMap, teamsCorrect);
 			long end3 = System.nanoTime();
@@ -141,11 +141,9 @@ public class ResultAnalyzer {
 	// Probabilita che l'atalanta giocando in casa ed avendo quotato l'handicap a 2 (m2) ad una cifra tra 1,5 e 1,5 vinca
 	private void analyzeEuropeanHandicapOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams) {
 		
-		for (HomeVariationEnum homeVariation : HomeVariationEnum.values()) {
-			if (homeVariation.getValueNum() > -4 && homeVariation.getValueNum() < 4 )
-				analyzeWinOdds(champ, matchesMapHome, matchesMapAway, teams, homeVariation);
-		}
-		
+		for (HomeVariationEnum homeVariation : HomeVariationEnum.getSubSet())
+			analyzeWinOdds(champ, matchesMapHome, matchesMapAway, teams, homeVariation);
+	
 	}
 
 	
@@ -171,12 +169,10 @@ public class ResultAnalyzer {
 //			winRangeStatsDao.calculateWinStatsNoPlayingField(teamName, champ);
 			
 		}
-		if (homeVariation== null) {
+		
 			winRangeStatsDao.saveWinRangeStats(createdWinRangeToSave);
-		}
-		else {
-			winRangeStatsDao.saveWinRangeStats(createdWinRangeToSave);
-		}
+			System.out.println(createdWinRangeToSave);
+		
 	}
 	
 	// Ogni volta che l'atalanta che gioca in casa � quotata a una quota che va da 1,5 a 1,7 allora finora si � comportata cosi. 
@@ -253,10 +249,10 @@ public class ResultAnalyzer {
 				
 				resultEnum = MatchResultEnum.valueOf(resultString);
 
-				
-				if (resultStringTest != null)
-					if (!resultStringTest.equals(resultString))
-						System.out.println("C'è un errore nel calcolo del risultato ");
+				if (homeVariation == null)
+					if (resultStringTest != null)
+						if (!resultStringTest.equals(resultString))
+							System.out.println("C'è un errore nel calcolo del risultato ");
 				
 				
 				// in caso non ci sono quote da cancellare

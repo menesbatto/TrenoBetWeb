@@ -189,11 +189,14 @@ public class WinRangeStats {
 	}
 	@Override
 	public String toString() {
-		return "WinRangeStats [id=" + id + ", team=" + team.getName() + ", range=" + range.getValueUp() + ", timeType=" + timeType.getValue()
-				+ ", playingField=" + playingField + ", homeHits=" + homeHits + ", homeMisses=" + homeMisses
-				+ ", winPerc=" + winPerc + ", drawHits=" + drawHits + ", drawMisses=" + drawMisses + ", drawPerc="
-				+ drawPerc + ", awayHits=" + awayHits + ", awayMisses=" + awayMisses + ", losePerc=" + losePerc
-				+ ", total=" + total + "]\n";
+		
+		String homeVarString = "null";//"homeVariation = " + homeVariation != null ? homeVariation.getValue() : "null" ;
+		
+				return "id=" + id + ",\t team=" + team.getName() + ",\t"+ homeVarString + ",\t range=" + range.getValueUp() + ",\t timeType=" + timeType.getValue()
+				+ ",\t playingField=" + playingField + ",\t homeHits=" + homeHits + ",\t homeMisses=" + homeMisses
+				+ ",\t winPerc=" + winPerc + ",\t drawHits=" + drawHits + ",\t drawMisses=" + drawMisses + ",\t drawPerc="
+				+ drawPerc + ",\t awayHits=" + awayHits + ",\t awayMisses=" + awayMisses + ",\t losePerc=" + losePerc
+				+ ",\t total=" + total + "]\n";
 	}
 	public HomeVariationType getHomeVariation() {
 		return homeVariation;

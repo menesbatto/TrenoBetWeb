@@ -131,6 +131,11 @@ public class EhTimeType implements Serializable{
 		this.map = map;
 	}
 
+	@Override
+	public String toString() {
+		return "map=" + map + "\n";
+	}
+
 
 	
 	

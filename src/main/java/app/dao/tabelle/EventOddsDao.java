@@ -493,4 +493,11 @@ public class EventOddsDao {
 		
 	}
 
+    @Transactional
+
+	public void removeByMatchId(Integer idMatch) {
+		eventOddsRepo.deleteByMatchId(idMatch);
+		
+	}
+
 }

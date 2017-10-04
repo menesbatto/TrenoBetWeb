@@ -55,14 +55,22 @@ public class WinRangeStatsDao {
 		List<WinRangeStats> ents = winRangeStatsRepo.findByTeamChampOrderByTeam(champ);
 		List<WinRangeStatsBean> beans = new ArrayList<WinRangeStatsBean>();
 		WinRangeStatsBean bean;
+		HomeVariationType homeVariation;
+		TimeTypeEnum timeTypeBean;
 		for (WinRangeStats ent : ents) {
 			bean = new WinRangeStatsBean();
 			mapper.map(ent, bean);
+			
+			homeVariation = ent.getHomeVariation();
+			if (homeVariation!= null) {
+				HomeVariationEnum homeVariationBean = homeVariationTypeDao.findBeanByEnt(homeVariation);
+				bean.setHomeVariationBean(homeVariationBean);
+			}
 			bean.setRange(ent.getRange().getValueDown() + "-" + ent.getRange().getValueUp());
 			bean.setEdgeDown(ent.getRange().getValueDown());
 			bean.setEdgeUp(ent.getRange().getValueUp());
 			bean.setTeamName(ent.getTeam().getName());
-			TimeTypeEnum timeTypeBean = timeTypeDao.findBeanByEnt(ent.getTimeType());
+			timeTypeBean = timeTypeDao.findBeanByEnt(ent.getTimeType());
 			bean.setTimeTypeBean(timeTypeBean);
 			bean.setPlayingField(ent.getPlayingField());
 			beans.add(bean);

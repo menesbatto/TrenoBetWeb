@@ -2,6 +2,7 @@ package app.logic._2_matchResultAnalyzer.model;
 
 import java.io.Serializable;
 
+import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
 
 public class WinRangeStatsBean implements Serializable{
@@ -39,6 +40,8 @@ public class WinRangeStatsBean implements Serializable{
 	private TimeTypeEnum timeTypeBean;
 	
 	private String playingField;
+	
+	private HomeVariationEnum homeVariationBean;
 	
 	
 	public WinRangeStatsBean() {
@@ -235,6 +238,16 @@ public class WinRangeStatsBean implements Serializable{
 
 	public void setPlayingField(String playingField) {
 		this.playingField = playingField;
+	}
+
+
+	public HomeVariationEnum getHomeVariationBean() {
+		return homeVariationBean;
+	}
+
+
+	public void setHomeVariationBean(HomeVariationEnum homeVariationBean) {
+		this.homeVariationBean = homeVariationBean;
 	}
 	
 

@@ -291,7 +291,7 @@ public class MatchesDownloader {
 			}
 		}
 		catch (Exception e) {
-			System.out.println("Problema nella creazione del match. " + e);
+			System.out.println("Problema nella creazione del match. " + e.getStackTrace());
 		}
 		return null;
 	}
@@ -360,8 +360,8 @@ public class MatchesDownloader {
 			// Setta l'avg
 			UoTimeType uoTimeType = m.getUo().get(timeType);
 			UoFull uoThreshold = getUoThreshold(uoThresholdEnum, uoTimeType);
-			Double underAvg = Double.valueOf(underAvgString);
-			Double overAvg = Double.valueOf(uoAvgElem.getElementsByTag("span").get(2).text());
+			Double underAvg = Double.valueOf(underAvgString);												//Invertiti
+			Double overAvg = Double.valueOf(uoAvgElem.getElementsByTag("span").get(2).text());				//Invertiti
 			UoLeaf uoAvgMatch = new UoLeaf(underAvg , overAvg);
 			uoThreshold.setAvgUoOdds(uoAvgMatch);
 			
@@ -371,8 +371,8 @@ public class MatchesDownloader {
 				Elements elementsMatchingText = tr.getElementsByAttributeValueStarting("title", "Go to");
 				if (elementsMatchingText.size() > 0){
 					String betHouseName = getBetHouseName(tr);
-					String underString = tr.getElementsByTag("div").get(2).text();
-					Double underBetRoom = !underString.equals("") ? Double.valueOf(underString) : 1.0;
+					String underString = tr.getElementsByTag("div").get(2).text();								//Corretti
+					Double underBetRoom = !underString.equals("") ? Double.valueOf(underString) : 1.0;			//Corretti
 					
 					String overSring = tr.getElementsByTag("div").get(1).text();
 					Double overBetRoom = !overSring.equals("") ? Double.valueOf(overSring) : 1.0;
@@ -426,7 +426,7 @@ public class MatchesDownloader {
 			}
 			Element uoAvgElem = uoAvgElems.get(0);
 			
-			String odds1AvgString = uoAvgElem.getElementsByTag("span").get(1).text();
+			String odds1AvgString = uoAvgElem.getElementsByTag("span").get(3).text();
 			if( odds1AvgString.equals("") ){
 				//qui becca il 0,75 che è roba nascosta...skippalo col try catch oppure in modo diverso
 				continue;
@@ -434,7 +434,7 @@ public class MatchesDownloader {
 			
 			
 			// Recupera l'enum della soglia
-			String ehThresholdRaw = handicap.getElementsByTag("strong").get(0).text();
+			String ehThresholdRaw = handicap.getElementsByTag("strong").get(0).text();				//Sono messi da destra a sinistra!!!!
 			String ehThresholdString = ehThresholdRaw.substring(ehThresholdRaw.lastIndexOf(" ")+1).replace("-", "m").replace("+", "p");
 			HomeVariationEnum ehThresholdEnum = HomeVariationEnum.valueOf(ehThresholdString);
 
@@ -444,29 +444,29 @@ public class MatchesDownloader {
 			
 			Double odds1Avg = !odds1AvgString.equals("") ? Double.valueOf(odds1AvgString) : 1.0;
 			
-			String oddsXavgString = uoAvgElem.getElementsByTag("span").get(2).text();
+			String oddsXavgString = uoAvgElem.getElementsByTag("span").get(2).text();				//Sono messi da destra a sinistra!!!!
 			Double oddsXAvg = !oddsXavgString.equals("") ? Double.valueOf(oddsXavgString) : 1.0;
 			
-			String odds2avgString = uoAvgElem.getElementsByTag("span").get(3).text();
+			String odds2avgString = uoAvgElem.getElementsByTag("span").get(1).text();				//Sono messi da destra a sinistra!!!!
 			Double odds2Avg = !odds2avgString.equals("") ? Double.valueOf(odds2avgString) : 1.0;
 			
 			_1x2Leaf _1x2AvgMatch = new _1x2Leaf(odds1Avg , oddsXAvg, odds2Avg);
 			
 			ehThreshold.setAvg1x2Odds(_1x2AvgMatch);
-			
+			System.out.println(ehTimeType);
 			// Setta per i valori di UO per tutte le betHouse
 			Elements allTrs = handicap.getElementsByTag("tbody").get(0).getElementsByTag("tr");
 			for (Element tr : allTrs){
 				Elements elementsMatchingText = tr.getElementsByAttributeValueStarting("title", "Go to");
 				if (elementsMatchingText.size() > 0){
 					String betHouseName = getBetHouseName(tr);
-					String odds1String = tr.getElementsByTag("div").get(3).text();
+					String odds1String = tr.getElementsByTag("div").get(1).text();					//Sono messi da sinistra a destra!!!! NORMALI
 					Double odd1 = !odds1String.equals("") ? Double.valueOf(odds1String) : 1.0;
 					
-					String oddsXString = tr.getElementsByTag("div").get(2).text();
+					String oddsXString = tr.getElementsByTag("div").get(2).text();					//Sono messi da sinistra a destra!!!! NORMALI
 					Double oddX =  !oddsXString.equals("") ? Double.valueOf(oddsXString) : 1.0;
 										
-					String odds2String = tr.getElementsByTag("div").get(1).text();
+					String odds2String = tr.getElementsByTag("div").get(3).text();					//Sono messi da sinistra a destra!!!! NORMALI
 					Double odd2 =  !odds2String.equals("") ? Double.valueOf(odds2String) : 1.0;
 					
 

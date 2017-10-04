@@ -91,9 +91,6 @@ public class UtilityModel {
 		champDao.initTable();
 	}
 
-	public void deleteAllWinEhRangeStats() {
-//		winEhRangeStatsRepo.deleteAll();
-		
-	}
+
 	
 }

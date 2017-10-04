@@ -2,12 +2,17 @@ package app;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import app.dao.tabelle.EventOddsDao;
 import app.dao.tabelle.EventOddsRepo;
 import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.MatchoRepo;
@@ -94,15 +99,29 @@ public class FacadeController {
     private ResultAnalyzer resultAnalyzer;
     @RequestMapping(value = "/avviaVecchio2", method = RequestMethod.GET)
     public void avviaVecchio2() {
+    	long startTime = System.nanoTime();
+    	
+
     	resetStats();
     	resultAnalyzer.execute();
+    	
+    	
+    	long currentTime = System.nanoTime();
+    	long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
+    	System.out.println("resultAnalyzer " + duration/1000000);
     }
     
     @RequestMapping(value = "/resetStats", method = RequestMethod.GET)
     public @ResponseBody void resetStats () {
+    	long startTime = System.nanoTime();
+    	
+    	
     	utilityModel.deleteAllWinRangeStats();
     	utilityModel.deleteAllGoalsStats();
-    	utilityModel.deleteAllWinEhRangeStats();
+    	
+    	long currentTime = System.nanoTime();
+    	long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
+    	System.out.println("resetStats " + duration/1000000);
     }
 
     @Autowired
@@ -123,14 +142,30 @@ public class FacadeController {
     private GoodnessCalculator goodnessCalculator;
     @RequestMapping(value = "/avviaVecchio5", method = RequestMethod.GET)
     public void avviaVecchio5() {
+    	long startTime = System.nanoTime();
+    	
+    	
     	goodnessCalculator.execute();
+    	
+    	
+    	long currentTime = System.nanoTime();
+    	long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
+    	System.out.println("goodnessCalculator " + duration/1000000);
     }  
     
     @Autowired
     private BetCreator betCreator;
     @RequestMapping(value = "/avviaVecchio6", method = RequestMethod.GET)
     public void avviaVecchio6() {
+    	long startTime = System.nanoTime();
+    	
+    	
     	betCreator.execute();
+    	
+    	
+    	long currentTime = System.nanoTime();
+    	long duration = (currentTime - startTime);  //divide by 1000000 to get milliseconds.
+    	System.out.println("betCreator " + duration/1000000);
     }  
     
 //    @Autowired
@@ -154,6 +189,20 @@ public class FacadeController {
     @RequestMapping(value = "/removeAllNextMatch", method = RequestMethod.GET)
     public void removeNextMatch() {
     	matchDao.removeAllNextMatchesByChamp(ChampEnum.ENG_PREMIER);
+    }  
+    
+    @RequestMapping(value = "/updateEhOdds", method = RequestMethod.GET)
+    public void updateEhOdds() {
+    	matchDao.updateEhOdds();
+    }  
+    
+    @Autowired
+    private EventOddsDao eventOddsDao;
+    @RequestMapping(value = "/deleteMatch/{idMatch}", method = RequestMethod.GET)
+    @Transactional
+    public void deleteMatch(@PathVariable Integer idMatch) {
+    	eventOddsDao.removeByMatchId(idMatch);
+    	matchDao.deleteMatch(idMatch);
     }  
     
 //	@GetMapping(path="/all")
