@@ -15,6 +15,12 @@ public class AppConstants {
 	public static final int BET_AMOUNT = 5;
 	public static final int TREND_SIZE_UO = 10;
 	public static final int TREND_SIZE_WIN = 5;
+	
+	
+	public static final boolean ENABLE_ODD_IMPROVEMENTS_ALGHORITM = false;	//abiliata la ricerca nei range vicini, limita la goodness se esistono pochi precedenti
+	public static final boolean PERCENTIFY_ODDS_ON = false;
+	
+	
 	public static boolean PROXY_ACTIVE = true;
 	public static String PROXY_HOST = "10.0.1.251";
 	public static String PROXY_PORT = "3128";

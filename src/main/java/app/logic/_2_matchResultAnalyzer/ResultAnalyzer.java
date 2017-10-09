@@ -171,7 +171,7 @@ public class ResultAnalyzer {
 		}
 		
 			winRangeStatsDao.saveWinRangeStats(createdWinRangeToSave);
-			System.out.println(createdWinRangeToSave);
+//			System.out.println(createdWinRangeToSave);
 		
 	}
 	
@@ -280,9 +280,15 @@ public class ResultAnalyzer {
 				
 				// capisce se la quota su cui andare a inserire la statistica � della squadra in casa o fuoricasa
 				if (teamName.equals(m.getHomeTeam()))
-					oddsOfTeamAnalyzed = homeOddsAdjusted;
+					if (AppConstants.PERCENTIFY_ODDS_ON)
+						oddsOfTeamAnalyzed = homeOddsAdjusted;
+					else
+						oddsOfTeamAnalyzed = percHome;
 				else 
-					oddsOfTeamAnalyzed = awayOddsAdjusted;
+					if (AppConstants.PERCENTIFY_ODDS_ON)
+						oddsOfTeamAnalyzed = awayOddsAdjusted;
+					else
+						oddsOfTeamAnalyzed = percAway;
 				
 				updateRangeStats(ranges, resultEnum, oddsOfTeamAnalyzed);
 				
@@ -309,7 +315,7 @@ public class ResultAnalyzer {
 			elem.setTimeTypeBean(timeType);
 			elem.setEdgeUp(elemRange.getValueUp());
 			elem.setEdgeDown(elemRange.getValueDown());
-			elem.setRange(elemRange.getValueUp() + "-" + elemRange.getValueDown());
+			elem.setRange(elemRange.getValueDown() + "-" + elemRange.getValueUp());
 			ranges.add(elem);
 		}
 		return ranges;

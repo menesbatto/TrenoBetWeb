@@ -202,18 +202,17 @@ public class EventOddsBean implements Serializable, Comparable<EventOddsBean>{
 	private String getEhString(Map<HomeVariationEnum, ResultGoodnessWDLBean> ehMap, String playingField) {
 		String result = "";
 		for (HomeVariationEnum homeVar : HomeVariationEnum.getSubSet()) {
-//			if (playingField == "H") {
-			if (ehMap.get(homeVar) != null) {
-				result += homeVar + ": " + Utils.forceLength(ehMap.get(homeVar).getGoodnessW(), 4) + " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessD(), 4)+ " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessL(), 4) + "\t|";
+			if (ehMap.get(homeVar) == null) {
+				result += homeVar + ": " + "n/a " + " " +  "n/a " + " " +  "n/a " + "\t|";
 			}
 			else {
-				result += homeVar + ": " + "n/a " + " " +  "n/a " + " " +  "n/a " + "\t|";
-				
+				if (playingField == "H") {
+					result += homeVar + ": " + Utils.forceLength(ehMap.get(homeVar).getGoodnessW(), 4) + " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessD(), 4)+ " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessL(), 4) + "\t|";
+				}
+				else {//if (playingField == "A") {
+					result += homeVar + ": " + Utils.forceLength(ehMap.get(homeVar).getGoodnessL(), 4) + " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessD(), 4)+ " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessW(), 4) + "\t|";
+				}
 			}
-//			}
-//			else {//if (playingField == "A") {
-//				result += homeVar + ": " + Utils.forceLength(ehMap.get(homeVar).getGoodnessL(), 4) + " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessD(), 4)+ " " + Utils.forceLength(ehMap.get(homeVar).getGoodnessW(), 4) + "\t|";
-//			}
 		}
 		return result;
 	}

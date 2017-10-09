@@ -62,7 +62,6 @@ public class MatchesDownloader {
 			champSuffixUrl = champ.getNextMatchesUrl();
 		}
 		else {//if (type == "Past"){
-			matchDao.removeAllNextMatchesByChamp(champ);
 			downloadedMatches = matchDao.getDownloadedPastMatchByChampLight(champ);
 			champSuffixUrl = champ.getResultsUrl();
 		}
@@ -453,7 +452,7 @@ public class MatchesDownloader {
 			_1x2Leaf _1x2AvgMatch = new _1x2Leaf(odds1Avg , oddsXAvg, odds2Avg);
 			
 			ehThreshold.setAvg1x2Odds(_1x2AvgMatch);
-			System.out.println(ehTimeType);
+
 			// Setta per i valori di UO per tutte le betHouse
 			Elements allTrs = handicap.getElementsByTag("tbody").get(0).getElementsByTag("tr");
 			for (Element tr : allTrs){

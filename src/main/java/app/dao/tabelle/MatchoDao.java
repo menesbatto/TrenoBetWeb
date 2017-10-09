@@ -86,7 +86,21 @@ public class MatchoDao {
 		
 	}
 
+	
+	public Matcho findById(Integer id) {
+		Matcho m = matchRepo.findById(id);
+		return m;
+	}
 
+	
+	public Matcho findByHomeTeamNameAndAwayTeamName(String homeTeam, String awayTeam) {
+		Matcho m = matchRepo.findByHomeTeamNameAndAwayTeamName(homeTeam, awayTeam);
+		List<Matcho> matches = new ArrayList<Matcho>();
+		matches.add(m);
+//		ArrayList<MatchResult> mapMatchosToMatchesResults = mapMatchosToMatchesResults(ChampEnum.ENG_PREMIER, matches, false);
+		//mapMatchosToMatchesResults.get(0).getEh().get(TimeTypeEnum._final).getMap().get(HomeVariationEnum.m1);
+		return m;
+	}
 	public MatchResult save(MatchResult bean) {
 		Matcho ent = new Matcho();
 		ent = matchRepo.save(ent);
@@ -584,6 +598,14 @@ public class MatchoDao {
    		matchRepo.save(all);
    		
    	}
+
+
+	public void removeAllNextMatches() {
+		for (ChampEnum champEnum : ChampEnum.values()) {
+			removeAllNextMatchesByChamp(champEnum);
+		}
+		
+	}
 
 
 	

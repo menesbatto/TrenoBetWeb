@@ -139,6 +139,7 @@ public class GoodnessCalculator {
 		Map<HomeVariationEnum,	Map<String, HashMap<String, HashMap<TimeTypeEnum, ArrayList<WinRangeStatsBean>>>>> 	mapTeamWinEhRangStats = createWinEhRangeStatsMap(teamWinEhRangeStats);
 		
 		
+//		System.out.println(mapTeamWinEhRangStats.get(HomeVariationEnum.m1).get("Liverpool").get("H").get(TimeTypeEnum._final));
 		// ##########################
 		// #### CALCOLO GOODNESS ####
 		// ##########################
@@ -146,10 +147,10 @@ public class GoodnessCalculator {
 		for (TimeTypeEnum timeType : timeTypes) {		
 			for (EventOddsBean eo : mapNextMatchOdds.get(timeType)){
 				
-				ResultGoodnessBean resultGoodnessHome = createPlayingFieldStats(mapTeamWinRangStats, mapTeamGoalsStats, mapTeamWinEhRangStats, timeType, "H", eo.getHomeTeam(), eo.getOddsH());
+				ResultGoodnessBean resultGoodnessHome = createPlayingFieldStats(mapTeamWinRangStats, mapTeamGoalsStats, mapTeamWinEhRangStats, timeType, "H", eo);
 				eo.setHomeResultGoodness(resultGoodnessHome);
 				
-				ResultGoodnessBean resultGoodnessAway = createPlayingFieldStats(mapTeamWinRangStats, mapTeamGoalsStats, mapTeamWinEhRangStats, timeType, "A", eo.getAwayTeam(), eo.getOddsA());
+				ResultGoodnessBean resultGoodnessAway = createPlayingFieldStats(mapTeamWinRangStats, mapTeamGoalsStats, mapTeamWinEhRangStats, timeType, "A", eo);
 				eo.setAwayResultGoodness(resultGoodnessAway);
 				
 				
@@ -177,10 +178,12 @@ public class GoodnessCalculator {
 				eo.setTimeType(timeType);
 				
 			}
-			System.out.println("###############################");
-			System.out.println(timeType);
-			System.out.println("###############################");
-			System.out.println(mapNextMatchOdds.get(timeType));
+			if (timeType == TimeTypeEnum._final) {
+				System.out.println("###############################");
+				System.out.println(timeType);
+				System.out.println("###############################");
+				System.out.println(mapNextMatchOdds.get(timeType));
+			}
 		}
 		
 		
@@ -200,7 +203,19 @@ public class GoodnessCalculator {
 			Map<String, HashMap<String, HashMap<TimeTypeEnum, GoalsStatsBean>>> mapTeamGoalsStats,
 			Map<HomeVariationEnum, Map<String, HashMap<String, HashMap<TimeTypeEnum, ArrayList<WinRangeStatsBean>>>>> mapTeamWinEhRangStats,
 			TimeTypeEnum timeType, 
-			String playingField, String teamName, Double oddsToWin) {
+			String playingField, EventOddsBean eo ) {
+		
+		Double oddsToWin;
+		String teamName;
+		if (playingField.equals("H")) {
+			teamName = eo.getHomeTeam();
+			oddsToWin =  eo.getOddsH(); 
+			
+		}
+		else {
+			teamName = eo.getAwayTeam(); 
+			oddsToWin = eo.getOddsA();
+		} 
 		
 		ResultGoodnessBean resultGoodnessHome = new ResultGoodnessBean();
 		
@@ -214,10 +229,21 @@ public class GoodnessCalculator {
 		calculateAllUoResultsGoodness(goalsStatsByTeamFieldTimeHome, resultGoodnessHome);
 		
 		// EH
-		// Quando l'atalanta è quotata in 1x2 a 1.5, nell'EH m2 allora ci azzecca questo numero di volte
+		// Quando l'atalanta è quotata in m2 a 1.5, nell'EH m2 allora ci azzecca questo numero di volte
 		for (HomeVariationEnum homeVariation : mapTeamWinEhRangStats.keySet()) {
 			rangesStatsByTeamFieldTimeHome = mapTeamWinEhRangStats.get(homeVariation).get(teamName).get(playingField).get(timeType);
-			ResultGoodnessWDLBean winCleanEhResultGoodnessH = calculateAllWinResultsGoodness(rangesStatsByTeamFieldTimeHome, oddsToWin);
+			
+			Double oddsToWinWithHomeVariation = null;
+			if (eo.getEhOddsMap().get(homeVariation) != null) {
+				if (playingField.equals("H")) {
+					oddsToWinWithHomeVariation = eo.getEhOddsMap().get(homeVariation).getOdd1();
+				}
+				else {
+					oddsToWinWithHomeVariation = eo.getEhOddsMap().get(homeVariation).getOdd2();
+				}
+			}
+			
+			ResultGoodnessWDLBean winCleanEhResultGoodnessH = calculateAllWinResultsGoodness(rangesStatsByTeamFieldTimeHome, oddsToWinWithHomeVariation);
 			resultGoodnessHome.getEhGoodness().put(homeVariation, winCleanEhResultGoodnessH);
 			
 		}
@@ -637,37 +663,41 @@ public class GoodnessCalculator {
 													case L:		sameRangeHitPercentage = new Double(sameRange.getLosePerc()!=null ? sameRange.getLosePerc() : 0.0);		break;
 													default:	break;	}
 					
-					WinRangeStatsBean nearRange = null;
-					if (needToCheckNextRange(rangesStats, i, teamResulOfInterest, odds)){
-						nearRange = rangesStats.get(i + 1);
-					}
-					else if (needToCheckPrevRange(rangesStats, i, teamResulOfInterest, odds)){
-						nearRange = rangesStats.get(i - 1);
-					}
-					
-
-					if (nearRange != null){
-
-						Double nearRangeHitPercentage = null;
-						switch (teamResulOfInterest) {	case W:		nearRangeHitPercentage = new Double(nearRange.getWinPerc());		break;
-														case D:		nearRangeHitPercentage = new Double(nearRange.getDrawPerc());		break;
-														case L:		nearRangeHitPercentage = new Double(nearRange.getLosePerc());		break;
-														default:	break;	}
+					if (AppConstants.ENABLE_ODD_IMPROVEMENTS_ALGHORITM) {
+										
 						
-						Double bothRangeHitPercentage = null;
-						Integer sameRangeTotal = sameRange.getTotal();
-						Integer nearRangeTotal = nearRange.getTotal();
+						WinRangeStatsBean nearRange = null;
+						if (needToCheckNextRange(rangesStats, i, teamResulOfInterest, odds)){
+							nearRange = rangesStats.get(i + 1);
+						}
+						else if (needToCheckPrevRange(rangesStats, i, teamResulOfInterest, odds)){
+							nearRange = rangesStats.get(i - 1);
+						}
 						
-						
-						if (sameRangeHitPercentage > nearRangeHitPercentage)
-							bothRangeHitPercentage = (sameRangeHitPercentage * sameRangeTotal * 4 + nearRangeHitPercentage * nearRangeTotal * 1) / ( sameRangeTotal * 4 + nearRangeTotal * 1);
-						else
-							bothRangeHitPercentage = (sameRangeHitPercentage * sameRangeTotal * 1 + nearRangeHitPercentage * nearRangeTotal * 4) / ( sameRangeTotal * 1 + nearRangeTotal * 4);
-//														1					*	3			* 	4	 + 0,5				*	3		* 1 / ( 3 * 4 + 3*1)
-						
-						Double goodness = improveGoodness(sameRangeTotal + nearRangeTotal , bothRangeHitPercentage);
-						
-						return goodness;
+	
+						if (nearRange != null){
+	
+							Double nearRangeHitPercentage = null;
+							switch (teamResulOfInterest) {	case W:		nearRangeHitPercentage = new Double(nearRange.getWinPerc());		break;
+															case D:		nearRangeHitPercentage = new Double(nearRange.getDrawPerc());		break;
+															case L:		nearRangeHitPercentage = new Double(nearRange.getLosePerc());		break;
+															default:	break;	}
+							
+							Double bothRangeHitPercentage = null;
+							Integer sameRangeTotal = sameRange.getTotal();
+							Integer nearRangeTotal = nearRange.getTotal();
+							
+							
+							if (sameRangeHitPercentage > nearRangeHitPercentage)
+								bothRangeHitPercentage = (sameRangeHitPercentage * sameRangeTotal * 4 + nearRangeHitPercentage * nearRangeTotal * 1) / ( sameRangeTotal * 4 + nearRangeTotal * 1);
+							else
+								bothRangeHitPercentage = (sameRangeHitPercentage * sameRangeTotal * 1 + nearRangeHitPercentage * nearRangeTotal * 4) / ( sameRangeTotal * 1 + nearRangeTotal * 4);
+	//														1					*	3			* 	4	 + 0,5				*	3		* 1 / ( 3 * 4 + 3*1)
+							
+							Double goodness = improveGoodness(sameRangeTotal + nearRangeTotal , bothRangeHitPercentage);
+							
+							return goodness;
+						}
 					}
 					
 					Double goodness = improveGoodness(sameRange.getTotal() , sameRangeHitPercentage);
@@ -740,19 +770,24 @@ public class GoodnessCalculator {
 	}
 	
 	private static Double improveGoodness(Integer total, Double hitPercentage) {
-		Double index = 4.0 - total;
-		if (index < 0){
-			index = 0.0;
-		} 
 		
 		Double goodness;
-		
-		if (hitPercentage == 0) {
-			goodness =  1 - Math.pow(0.9, index);  
+		if (AppConstants.ENABLE_ODD_IMPROVEMENTS_ALGHORITM) {
+			Double index = 4.0 - total;
+			if (index < 0){
+				index = 0.0;
+			} 
+			
+			if (hitPercentage == 0) {
+				goodness =  1 - Math.pow(0.9, index);  
+			}
+			else
+				goodness = hitPercentage * Math.pow(0.9, index);
 		}
-		else
-			goodness = hitPercentage * Math.pow(0.9, index);
-
+		else {
+			goodness = hitPercentage;
+		}	
+		
 		if (goodness.toString().length() > 5)
 			goodness =  new Double(goodness.toString().substring(0,5));
 
