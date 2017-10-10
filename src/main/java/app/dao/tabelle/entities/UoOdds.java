@@ -12,7 +12,7 @@ import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
 
 @Entity
-public class UoOdds implements IBet{
+public class UoOdds {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

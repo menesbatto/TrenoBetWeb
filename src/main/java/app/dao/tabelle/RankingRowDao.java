@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.RankingRowEnt;
 import app.dao.tabelle.entities.Team;
-import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
 import app.logic._3_rankingCalculator.model.RankingRow;
 import app.utils.ChampEnum;
 import ma.glasnost.orika.MapperFacade;

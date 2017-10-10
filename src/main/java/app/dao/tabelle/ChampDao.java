@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import app.dao.tabelle.entities.Champ;
 import app.dao.tipologiche.RankingCriteriaDao;
 import app.dao.tipologiche.entities.RankingCriteria;
-import app.logic._1_matchesDownlaoder.modelNew.ChampBean;
 import app.utils.ChampEnum;
 import app.utils.RankCritEnum;
 
@@ -78,12 +77,6 @@ public class ChampDao {
 
 
 
-//	private ChampImpPos saveChampImpPos(ChampEnum champEnum, Champ champEnt) {
-//		ChampImpPos champImpPos = new ChampImpPos(champEnt, champEnum.getImportantPositions());
-//		champImpPosRepo.save(champImpPos);
-//		return champImpPos;
-//	}
-
 	private Champ saveChamp(ChampEnum champEnum) {
 		Champ champEnt = new Champ(	champEnum.getName(),		champEnum.getStartYear(), 	champEnum.getNation(), 
 									champEnum.getResultsUrl(), 	champEnum.getNextMatchesUrl());
@@ -91,60 +84,8 @@ public class ChampDao {
 		return champEnt;
 	}
 	
-//	public ChampUrls saveChampDett(ChampEnum champEnum, String resultsUrl, String oddsWinUrl, String oddsUoUrl,	String oddsHtUrl) {
-//		Champ champ = findByChampEnum(champEnum);
-//		ChampUrls champUrls = new ChampUrls(champ, resultsUrl, oddsWinUrl, oddsUoUrl, oddsHtUrl);
-//		champUrlsRepo.save(champUrls);
-//		return champUrls;
-//	}
-//
-//	public ChampUrls saveChampUrls(ChampEnum champEnum, Champ champEnt) {
-//		ChampUrls champUrls = new ChampUrls(champEnt, champEnum.getResultsUrl(), champEnum.getOddsWinUrl(),	champEnum.getOddsUoUrl(), champEnum.getOddsHtUrl());
-//		champUrlsRepo.save(champUrls);
-//		return champUrls;
-//	}	
 	
 	
 	
-	
-	@Deprecated
-	private Champ saveChamp(String name, int startYear, String nation) {
-		Champ champ = new Champ();
-		champ.setName(name);
-		champ.setStartYear(startYear);
-		champ.setNation(nation);
-		champRepo.save(champ);
-		return champ;
-	}
-	
-
-	@Deprecated
-	public Champ findByNameAndStartYearAndNation(String name, int startYear, String nation) {
-		List<Champ> findAll = champRepo.findByNameAndStartYearAndNation(name, startYear, nation);
-		Champ first = findAll.get(0);
-		
-		return first;
-	}
-	
-	
-	@Deprecated
-	public Champ findByChampBean(ChampBean champ) {
-		String name = champ.getName();
-		int startYear = champ.getStartYear();
-		String nation = champ.getNation();
-		List<Champ> findAll = champRepo.findByNameAndStartYearAndNation(name, startYear, nation);
-		Champ first = findAll.get(0);
-			
-		return first;
-	}
-
-	@Deprecated
-	private void initTimeTypeMap() {
-//		timeTypeMap = new HashMap<String, TimeType>();
-//		for (Iterator<TimeType> iter = findAll.iterator(); iter.hasNext(); ) {
-//			TimeType element = iter.next();
-//			timeTypeMap.put(element.getValue(), element);
-//		}	
-	}
 	
 }

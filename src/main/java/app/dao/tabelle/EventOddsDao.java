@@ -36,7 +36,6 @@ import app.logic._1_matchesDownlaoder.model.UoLeaf;
 import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 import app.logic._1_matchesDownlaoder.model._1x2Leaf;
 import app.utils.ChampEnum;
-import ma.glasnost.orika.MapperFacade;
 
 @Service
 public class EventOddsDao {
@@ -46,9 +45,6 @@ public class EventOddsDao {
 
 	@Autowired
 	private UoThresholdTypeDao uoThresholdTypeDao;
-
-	@Autowired
-	private TeamDao teamDao;
 
 	@Autowired
 	private ChampDao champDao;
@@ -62,9 +58,6 @@ public class EventOddsDao {
 	@Autowired
 	private HomeVariationTypeDao homeVariationTypeDao;
 
-	@Autowired
-	private MapperFacade mapper;
-	
 
 	public void save(Map<TimeTypeEnum, ArrayList<EventOddsBean>> eventsOddsBeanMap, ChampEnum champEnum) {
 		EventOdds ent;
@@ -168,8 +161,11 @@ public class EventOddsDao {
 			for (Entry<HomeVariationEnum, ResultGoodnessWDLBean> entry : mapBean.entrySet()) {
 				ResultGoodnessWDLBean bean = entry.getValue();
 				
+				HomeVariationEnum key = entry.getKey();
+
+				bean.setHomeVariationType(key);
 				ent = createResultGoodnessWdlEnt(bean);
-				
+
 				listEnt.add(ent);
 			}
 		}
@@ -478,7 +474,7 @@ public class EventOddsDao {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		List<EventOdds> eventsOddsEnts = eventOddsRepo.findByMatchChamp(champ);
 		EventOddsBean bean;
-		for (EventOdds ent : eventsOddsEnts) { // ce ne sono 3 una per ogni tempo _1, _2, final
+		for (EventOdds ent : eventsOddsEnts) { // ce ne sono 3 una per ogni tempo _1, _2, final qui mi arrivano gli eh tutti a null
 			bean = createEventOddsBean(ent);
 			beans.add(bean);
 		}

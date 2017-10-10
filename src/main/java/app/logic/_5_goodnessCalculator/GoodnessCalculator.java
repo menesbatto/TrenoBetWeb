@@ -178,12 +178,12 @@ public class GoodnessCalculator {
 				eo.setTimeType(timeType);
 				
 			}
-			if (timeType == TimeTypeEnum._final) {
+//			if (timeType == TimeTypeEnum._final) {
 				System.out.println("###############################");
 				System.out.println(timeType);
 				System.out.println("###############################");
 				System.out.println(mapNextMatchOdds.get(timeType));
-			}
+//			}
 		}
 		
 		

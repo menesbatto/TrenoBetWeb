@@ -54,6 +54,8 @@ public class ResultGoodnessWdl {
 	public Double getGoodnessL() {
 		return goodnessL;
 	}
+	
+	
 
 	public void setGoodnessL(Double goodnessL) {
 		this.goodnessL = goodnessL;
@@ -65,6 +67,12 @@ public class ResultGoodnessWdl {
 
 	public void setHomeVariationType(HomeVariationType homeVariationType) {
 		this.homeVariationType = homeVariationType;
+	}
+
+	@Override
+	public String toString() {
+		return "id=" + id + ", goodnessW=" + goodnessW + ", goodnessD=" + goodnessD + ", goodnessL="
+				+ goodnessL + ", homeVariationType=" + homeVariationType + "\n";
 	}
 	
 	

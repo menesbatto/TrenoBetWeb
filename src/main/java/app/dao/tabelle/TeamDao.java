@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.entities.Champ;
 import app.dao.tabelle.entities.Team;
-import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
 import app.utils.ChampEnum;
 
 @Service
@@ -22,14 +21,9 @@ public class TeamDao {
 	private ChampDao champDao;
 	
 	private HashMap<Champ, HashMap<String, Team>> cacheMap;
-	
-//	public Team findByTeamBean(TeamBean team) {
-//		List<Team> list = teamRepo.findByName(team.getName());
-//		Team first = list.get(0);
-//		return first;
-//		
-//	}
 
+	
+	
 	public ArrayList<String> findByChamp(ChampEnum champEnum) {
 		Champ champ = champDao.findByChampEnum(champEnum);
 		List<Team> teams = teamRepo.findByChamp(champ);
@@ -39,7 +33,6 @@ public class TeamDao {
 		}
 		return teamsNames;
 	}
-	
 	
 	public Team findByNameAndChamp(String name, Champ champ) {
 		Team first = findInCache(name, champ);
@@ -63,9 +56,6 @@ public class TeamDao {
 		
 	}
 
-	
-	
-
 	private Team findInCache(String teamName, Champ champ) {
 		if (cacheMap == null) {
 			cacheMap = new HashMap<Champ, HashMap<String, Team>>();
@@ -77,30 +67,6 @@ public class TeamDao {
 		return teamMap.get(teamName);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	@Deprecated
-	public void initTable() {
-		//bet365, Betclic,  bwin, PaddyPower, Tipico, Unibet, WilliamHill
-		Champ serieA = champDao.findByNameAndStartYearAndNation("Serie A", 2017, "Italy");
-		Team juventus = new Team("juventus", serieA);
-		teamRepo.save(juventus);
-		Team inter = new Team("inter", serieA);
-		teamRepo.save(inter);
-		Team roma = new Team("roma", serieA);
-		teamRepo.save(roma);
-		Team pescara = new Team("pescara", serieA);
-		teamRepo.save(pescara);
-
-
-	}
-
 	public void removeTeamById(Long id) {
 		teamRepo.delete(id);
 		return;

@@ -12,7 +12,7 @@ import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.TimeType;
 
 @Entity
-public class EhOdds implements IBet{
+public class EhOdds {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

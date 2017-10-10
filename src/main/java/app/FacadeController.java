@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,8 +21,6 @@ import app.dao.tabelle.entities.Matcho;
 import app.logic.UtilityModel;
 import app.logic._1_matchesDownlaoder.NextMatchesDownloader;
 import app.logic._1_matchesDownlaoder.PastMatchesDownlaoder;
-import app.logic._1_matchesDownlaoder.ResultParserOLD;
-import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
 import app.logic._2_matchResultAnalyzer.ResultAnalyzer;
 import app.logic._3_rankingCalculator.RankingCalculator;
 import app.logic._4_trendCalculator.TrendCalculator;
@@ -34,8 +31,6 @@ import app.utils.ChampEnum;
 @Controller // This means that this class is a Controller
 @RequestMapping(path = "/api2") // This means URL's start with /demo (after Application path)
 public class FacadeController {
-	@Autowired
-	private ResultParserOLD eventsOddsDownloaderOld;
 
 	@Autowired
 	private UtilityModel utilityModel;
@@ -62,7 +57,10 @@ public class FacadeController {
 	private BetCreator betCreator;
 
 	
-
+	// ###################################################
+	// ##########            1                ############
+	// ###################################################
+	
 	@RequestMapping(value = "/downloadNextMatches", method = RequestMethod.GET)
 	public ResponseEntity<String> downloadNextMatches1() {
 		nextMatchesDownloader.execute();
@@ -71,7 +69,9 @@ public class FacadeController {
 		return response;
 	}
 
-	
+	// ###################################################
+	// ##########            2                ############
+	// ###################################################
 	@RequestMapping(value = "/downloadPastMatches", method = RequestMethod.GET)
 	public ResponseEntity<String>  downloadPastMatches2() {
 		matchDao.removeAllNextMatches();
@@ -81,7 +81,9 @@ public class FacadeController {
 		return response;
 	}
 
-
+	// ###################################################
+	// ##########            3                ############
+	// ###################################################
 	@RequestMapping(value = "/calculateTeamsStats", method = RequestMethod.GET)
 	public ResponseEntity<String>  calculateTeamsStats3() {
 		long startTime = System.nanoTime();
@@ -98,7 +100,9 @@ public class FacadeController {
 		return response;
 	}
 	
-	
+	// ###################################################
+	// ##########            4                ############
+	// ###################################################
 	@RequestMapping(value = "/calculateRankings", method = RequestMethod.GET)
 	public ResponseEntity<String>  calculateRankings4() {
 		rankingCalculator.execute();
@@ -108,7 +112,9 @@ public class FacadeController {
 		return response;
 	}
 
-
+	// ###################################################
+	// ##########            5                ############
+	// ###################################################
 	@RequestMapping(value = "/calculateTrends", method = RequestMethod.GET)
 	public ResponseEntity<String>  calculateTrends5() {
 		trendCalculator.execute();
@@ -118,11 +124,14 @@ public class FacadeController {
 		return response;
 	}
 
-
+	// ###################################################
+	// ##########            6                ############
+	// ###################################################
 	@RequestMapping(value = "/calculateOddsGoodness", method = RequestMethod.GET)
 	public ResponseEntity<String>  calculateOddsGoodness6() {
 		long startTime = System.nanoTime();
-
+		
+		removeAllEventOdds();
 		goodnessCalculator.execute();
 
 		long currentTime = System.nanoTime();
@@ -134,7 +143,9 @@ public class FacadeController {
 		return response;
 	}
 
-
+	// ###################################################
+	// ##########            7                ############
+	// ###################################################
 	@RequestMapping(value = "/createBet", method = RequestMethod.GET)
 	public ResponseEntity<String>  createBet6() {
 		long startTime = System.nanoTime();
@@ -222,7 +233,6 @@ public class FacadeController {
 	
 	@RequestMapping(value = "/removeAllEventOdds", method = RequestMethod.GET)
 	public void removeAllEventOdds() {
-		// matchDao.removeAllEventOdds(); HHH
 		eventOddsRepo.deleteAll();
 	}
 	

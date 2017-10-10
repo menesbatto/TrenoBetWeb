@@ -1,10 +1,7 @@
 package app.dao.tabelle;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,14 +11,12 @@ import app.dao.tabelle.entities.Team;
 import app.dao.tabelle.entities.WinRangeStats;
 import app.dao.tipologiche.HomeVariationTypeDao;
 import app.dao.tipologiche.OddsRangeDao;
-import app.dao.tipologiche.OddsRangeRepo;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.OddsRange;
 import app.dao.tipologiche.entities.TimeType;
 import app.logic._1_matchesDownlaoder.model.HomeVariationEnum;
 import app.logic._1_matchesDownlaoder.model.TimeTypeEnum;
-import app.logic._1_matchesDownlaoder.modelNew.TeamBean;
 import app.logic._2_matchResultAnalyzer.model.WinRangeStatsBean;
 import app.utils.ChampEnum;
 import ma.glasnost.orika.MapperFacade;

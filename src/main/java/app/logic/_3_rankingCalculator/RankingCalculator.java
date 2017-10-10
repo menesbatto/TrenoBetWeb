@@ -17,20 +17,15 @@ import app.logic._1_matchesDownlaoder.model.MatchResult;
 import app.logic._2_matchResultAnalyzer.ResultAnalyzer;
 import app.logic._3_rankingCalculator.model.Distances;
 import app.logic._3_rankingCalculator.model.RankingRow;
-import app.utils.AppConstants;
 import app.utils.ChampEnum;
-import app.utils.IOUtils;
 import app.utils.RankCritEnum;
 import app.utils.Utils;
 
 @Service
 public class RankingCalculator {
 	
-	private static HashMap<ChampEnum, ArrayList<String>> allTeams;
 	
 	private static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> teamsToMatchesAll; 
-
-	private static HashMap<ChampEnum, ArrayList<RankingRow>> rankings; 
 
 	@Autowired
 	private MatchoDao matchDao;
@@ -43,12 +38,10 @@ public class RankingCalculator {
 	
 	
 	public void execute(){
-//		initStaticFields();
 		
 		for (ChampEnum champ : ChampEnum.values()){
 			calculateChampRanking(champ);
 		}
-//		IOUtils.write(AppConstants.RANKINGS, rankings);
 
 	}
 	
@@ -70,8 +63,6 @@ public class RankingCalculator {
 			}
 			calculateAvgs(rr);
 			ranking.add(rr);
-//			if (rr.getTeamName().equals("Real Madrid"))
-//				rr.setAllPlayedMatches(34);
 		}
 		
 		applyCriteria(champ, ranking);
@@ -95,10 +86,6 @@ public class RankingCalculator {
 		rankingRowDao.saveRanking(champ, ranking);
 		
 	}
-
-
-
-
 
 
 	private static void calculateMotivationalIndexes(ArrayList<RankingRow> ranking, ChampEnum champ, boolean thereAreMatchesToRecover) {
@@ -1035,16 +1022,4 @@ public class RankingCalculator {
 		
 	}
 	
-
-	private static void initStaticFields() {
-		teamsToMatchesAll = ResultAnalyzer.retrieveTeamsToMatchesAll();
-//		allTeams =  ResultParserOld.retrieveTeams();
-		rankings = new HashMap<ChampEnum, ArrayList<RankingRow>>(); 
-		
-	}
-	
-	public static HashMap<ChampEnum, ArrayList<RankingRow>> retrieveRankings() {
-		HashMap<ChampEnum, ArrayList<RankingRow>> rankings  = IOUtils.read(AppConstants.RANKINGS,  HashMap.class);
-		return rankings;
-	}
 }

@@ -19,12 +19,13 @@ public class AppConstants {
 	
 	public static final boolean ENABLE_ODD_IMPROVEMENTS_ALGHORITM = false;	//abiliata la ricerca nei range vicini, limita la goodness se esistono pochi precedenti
 	public static final boolean PERCENTIFY_ODDS_ON = false;
+	public static final boolean ENABLE_DOWNLOAD_ONLY_NEAR_MATCHES = true;
 	
 	
-	public static boolean PROXY_ACTIVE = true;
-	public static String PROXY_HOST = "10.0.1.251";
-	public static String PROXY_PORT = "3128";
-	
+//	public static boolean PROXY_ACTIVE = true;
+//	public static String PROXY_HOST = "10.0.1.251";
+//	public static String PROXY_PORT = "3128";
+//	
 	
 
 	

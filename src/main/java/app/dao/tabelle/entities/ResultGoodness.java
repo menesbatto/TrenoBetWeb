@@ -1,19 +1,14 @@
 package app.dao.tabelle.entities;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-
-import app.dao.tipologiche.entities.UoThresholdType;
-import app.logic._1_matchesDownlaoder.model.ResultGoodnessWDLBean;
 
 @Entity
 public class ResultGoodness {
@@ -25,22 +20,6 @@ public class ResultGoodness {
 	@OneToOne(cascade = CascadeType.ALL)
 	private EventOdds eventOdds;
 	
-//	private Double goodnessWfinal;
-//	private Double goodnessDfinal;
-//	private Double goodnessLfinal;
-//
-//	private Double goodnessW;
-//	private Double goodnessD;
-//	private Double goodnessL;
-//	
-//	private Double goodnessWwithTrends;
-//	private Double goodnessDwithTrends;
-//	private Double goodnessLwithTrends;
-//
-//	private Double goodnessWwithMotivation;
-//	private Double goodnessDwithMotivation;
-//	private Double goodnessLwithMotivation;
-//	
 	@OneToOne(cascade = CascadeType.ALL)
 	private ResultGoodnessWdl winFinal;
 	
@@ -144,8 +123,8 @@ public class ResultGoodness {
 
 	@Override
 	public String toString() {
-		return "id=" + id + ", eventOdds=" + eventOdds + ", winFinal=" + winFinal + ", winClean="
-				+ winClean + ", winTrend=" + winTrend + ", winMotivation=" + winMotivation + ", uo=" + uo + ", eh=" + eh
+		return "id=" + id + ", eventOdds=" + eventOdds + "\n, winFinal=" + winFinal + ", winClean="
+				+ winClean + ", winTrend=" + winTrend + ", winMotivation=" + winMotivation + "\n uo=" + uo + "\n eh=" + eh
 				+ "\n";
 	}
 

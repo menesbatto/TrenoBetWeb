@@ -71,18 +71,13 @@ public class MatchesDownloader {
 		doc = HttpUtils.getHtmlPage(champSubsetUrl);
 
 		int size = 0;
-//		if (type == "Next")
-//			size = matchDao.countDownloadedNextMatchByChamp(champ); 
-//		else //if (type == "Past")
-//			size = matchDao.countDownloadedPastMatchByChamp(champ); 
-		
+
 		Element matchesTable;
-//		if (size < 50){
-			matchesTable = doc.getElementById("tournamentTable");
-			int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, downloadedMatches);
-			size = 50;
-//			size = savedMatchesNum;
-//		}
+
+		matchesTable = doc.getElementById("tournamentTable");
+		int savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, downloadedMatches);
+		size = 50;
+
 		
 		// Calcolo numero di pagine in cui sono divisi i risultati
 		Element paginationElement = doc.getElementById("pagination");
@@ -95,7 +90,6 @@ public class MatchesDownloader {
 				doc = HttpUtils.getHtmlPage(champSubsetUrl);
 				matchesTable = doc.getElementById("tournamentTable");
 				savedMatchesNum = createMatches(matchesTable, champSubsetUrl, champ, downloadedMatches);
-//				size += savedMatchesNum; 
 				size += 50; 
 				
 			}
@@ -162,10 +156,12 @@ public class MatchesDownloader {
 				//Scarico solo i matches che stanno a meno di 7 giorni di distanza da oggi
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, +7);
-				Date expiringDate = cal.getTime();
-//				if (matchDate.after(expiringDate)) {
-//					return savedMatches;
-//				}
+				if (AppConstants.ENABLE_DOWNLOAD_ONLY_NEAR_MATCHES) {
+					Date expiringDate = cal.getTime();
+					if (matchDate.after(expiringDate)) {
+						return savedMatches;
+					}
+				}
 			}
 //			else if (row.hasClass("deactivate")){ 
 //			else if (row.hasClass("odd") || row.hasAttr("heid")){ //next xxx
@@ -562,31 +558,8 @@ public class MatchesDownloader {
 		
 	}
 
-	private static ArrayList<String> getTeams(ArrayList<MatchResult> matchesResults) {
-		Set<String> teams = new HashSet<String>();
-		for (int i = 0; i < 30; i++){
-			teams.add(matchesResults.get(i).getHomeTeam());
-			teams.add(matchesResults.get(i).getAwayTeam());
-		}
-		ArrayList<String> teamsList = new ArrayList<String>(teams);
-		return teamsList;
-	}
 	
-	public static HashMap<ChampEnum, ArrayList<String>>  retrieveTeams() {
-		HashMap<ChampEnum, ArrayList<String>> teams = IOUtils.read(AppConstants.TEAMS_PATH, HashMap.class);
-		if (teams == null){
-			teams = new HashMap<ChampEnum, ArrayList<String>>();
-		}
-		return teams;
-	}
 	
-	public static HashMap<ChampEnum, ArrayList<MatchResult>> retrieveAllMatchResults() {
-		HashMap<ChampEnum,ArrayList<MatchResult>>  matches = IOUtils.read(AppConstants.MATCHES_RESULTS_PATH, HashMap.class);
-		if (matches == null){
-			matches = new HashMap<ChampEnum,ArrayList<MatchResult>>();
-		}
-		return matches;
-	}
 	
 	
 }

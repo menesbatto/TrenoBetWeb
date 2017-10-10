@@ -55,25 +55,6 @@ public class ResultAnalyzer {
 	@Autowired
 	private OddsRangeDao oddsRangeDao;
 
-	@Autowired
-	private UoThresholdTypeDao uoThresholdTypeDao;
-
-	private int i = 0;
-	
-	private static HashMap<ChampEnum, ArrayList<MatchResult>> allMatchesResults;
-	private static HashMap<ChampEnum, ArrayList<String>> allTeams;
-	
-	private static HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> allAnalyzedChampsWinHome;
-	private static HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> allAnalyzedChampsWinAway;
-	private static HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> allAnalyzedChampsWinAll;
-	
-	private static HashMap<ChampEnum, HashMap<String, GoalsStatsBean>> allAnalyzedChampsUoHome;
-	private static HashMap<ChampEnum, HashMap<String, GoalsStatsBean>> allAnalyzedChampsUoAway;
-	private static HashMap<ChampEnum, HashMap<String, GoalsStatsBean>> allAnalyzedChampsUoAll;
-	private static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> teamToMatchesAll;
-	private static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> teamToMatchesAway;
-	private static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> teamToMatchesHome;
-
 	public ArrayList<MatchResult> execute(){
 		
 		for (ChampEnum champ : ChampEnum.values()){
@@ -171,7 +152,6 @@ public class ResultAnalyzer {
 		}
 		
 			winRangeStatsDao.saveWinRangeStats(createdWinRangeToSave);
-//			System.out.println(createdWinRangeToSave);
 		
 	}
 	
@@ -369,109 +349,28 @@ public class ResultAnalyzer {
 		}
 	}
 
-
-	private static void initStaticFields() {
-//		if (allMatchesResults == null)
-//			allMatchesResults =  ResultParserOld.retrieveAllMatchResults();
-////		allMatchesResults.get(ChampEnum.SPA_LIGA)
-////		System.out.println(matches);
-//		allTeams =  ResultParserOld.retrieveTeams();
-//		allAnalyzedChampsWinHome = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
-//		allAnalyzedChampsWinAway = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
-//		allAnalyzedChampsWinAll = new HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStats>>>();
-//		
-//		allAnalyzedChampsUoHome = new HashMap<ChampEnum, HashMap<String, GoalsStats>>();
-//		allAnalyzedChampsUoAway = new HashMap<ChampEnum, HashMap<String, GoalsStats>>();
-//		
-//		
-//		teamToMatchesHome = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
-//		teamToMatchesAway = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
-//		teamToMatchesAll = new HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>();
-//		
-//		for (ChampEnum champ : ChampEnum.values()){
-//			
-//			teamToMatchesHome.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//			teamToMatchesAway.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//			teamToMatchesAll.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//			for (String teamName : allTeams.get(champ)){
-//				teamToMatchesHome.get(champ).put(teamName, new ArrayList<MatchResult>());
-//				teamToMatchesAway.get(champ).put(teamName, new ArrayList<MatchResult>());
-//				teamToMatchesAll.get(champ).put(teamName, new ArrayList<MatchResult>());
-//			}
-//	
-//			for (MatchResult mr : allMatchesResults.get(champ)){
-//				teamToMatchesHome.get(champ).get(mr.getHomeTeam()).add(mr);
-//				
-//				teamToMatchesAway.get(champ).get(mr.getAwayTeam()).add(mr);
-//				
-//				teamToMatchesAll.get(champ).get(mr.getHomeTeam()).add(mr);
-//				teamToMatchesAll.get(champ).get(mr.getAwayTeam()).add(mr);
-//			}
-//		}
-//		
-//		IOUtils.write(AppConstants.TEAM_TO_MATCHES_ALL_PATH, teamToMatchesAll);
-
-	}
 	
 	
 	private void analyzeUnderOverOdds(ChampEnum champ, Map<String, ArrayList<MatchResult>> matchesMapHome, Map<String, ArrayList<MatchResult>> matchesMapAway, ArrayList<String> teams ) {
-		
-//		HashMap<String, GoalsStatsBean> teamToUOStatsHome = new HashMap<String, GoalsStatsBean>();
-//		HashMap<String, GoalsStatsBean> teamToUOStatsAway = new HashMap<String, GoalsStatsBean>();
-//		HashMap<String, GoalsStatsBean> teamToUOStatsAll = new HashMap<String, GoalsStatsBean>();
-		
+		List<GoalsStatsBean> analyzeTeamResultUoAll = new ArrayList<GoalsStatsBean>();
+		List<GoalsStatsBean> analyzeTeamResultUoH;
+		List<GoalsStatsBean> analyzeTeamResultUoA;
 
 		for (String teamName : teams) {
 
 			// HOME
-//			int lastSeasonDayOddsH = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "H");
-//			ArrayList<MatchResult> teamHomeMatches = matchDao.getDownloadedPastMatchByChampAndHomeTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsH);
-		
-			
-			
-			
-			List<GoalsStatsBean> analyzeTeamResultUoH = analyzeTeamResultUo(teamName, matchesMapHome.get(teamName), champ, "H");
-			
-			
+			analyzeTeamResultUoH = analyzeTeamResultUo(teamName, matchesMapHome.get(teamName), champ, "H");
+			analyzeTeamResultUoAll.addAll(analyzeTeamResultUoH);
 			// AWAY
-//			int lastSeasonDayOddsA = goalsStatsDao.getLastSeasonDayOddsAndPlayingField(teamName, champ, "A");
-//			ArrayList<MatchResult> teamAwayMatches = matchDao.getDownloadedPastMatchByChampAndAwayTeamAfterSeasonDay(champ, teamName, lastSeasonDayOddsA);
-			List<GoalsStatsBean> analyzeTeamResultUoA = analyzeTeamResultUo(teamName, matchesMapAway.get(teamName), champ, "A");
+			analyzeTeamResultUoA = analyzeTeamResultUo(teamName, matchesMapAway.get(teamName), champ, "A");
+			analyzeTeamResultUoAll.addAll(analyzeTeamResultUoA);
+			
 			
 			// TOTAL
-			goalsStatsDao.calculateGoalsStatsNoPlayingField(teamName, champ, analyzeTeamResultUoH, analyzeTeamResultUoA);
+			//goalsStatsDao.calculateGoalsStatsNoPlayingField(teamName, champ, analyzeTeamResultUoH, analyzeTeamResultUoA);
 		}
 		
-//		for (String teamName : teams) {
-//			int lastSeasonDayOdds = goalsStatsDao.getLastSeasonDayOdds(teamName, champ);
-//		}
-		
-//		for (String teamName : teams) {
-//			
-//		}
-		
-		
-//		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesHome.get(champ).entrySet()) {
-//		    analyzeTeamResultUo(entry.getKey(), entry.getValue(), teamToUOStatsHome);
-//		}
-//		
-//		for (Map.Entry<String, ArrayList<MatchResult>> entry : teamToMatchesAway.get(champ).entrySet()) {
-//			analyzeTeamResultUo(entry.getKey(), entry.getValue(), teamToUOStatsAway);
-//			//System.out.println(entry.getKey() + "/" + entry.getValue());
-//		}
-
-		
-//		System.out.println(allAnalyzedChampsUoHome);
-//		System.out.println(allAnalyzedChampsUoAway);
-
-//		allAnalyzedChampsUoHome.put(champ, teamToUOStatsHome);
-//		allAnalyzedChampsUoAway.put(champ, teamToUOStatsAway);
-//		allAnalyzedChampsUoAll.put(champ, teamToRangeStatsAll);
-		
-//		IOUtils.write(AppConstants.TEAM_TO_RANGE_STATS_UO_HOME_PATH, allAnalyzedChampsUoHome);
-//		IOUtils.write(AppConstants.TEAM_TO_RANGE_STATS_UO_AWAY_PATH, allAnalyzedChampsUoAway);
-//		IOUtils.write(AppConstants.TEAM_TO_RANGE_STATS_ALL_PATH, allAnalyzedChampsWinAll);
-		
+		goalsStatsDao.saveGoalsStats(analyzeTeamResultUoAll, champ);
 		
 	}
 	
@@ -495,46 +394,46 @@ public class ResultAnalyzer {
 				}
 		
 				switch (timeType) {
-				case _final:
-					if (teamName.equals(m.getHomeTeam())){
-						strikedGoals = m.getFTHG();
-						takenGoals = m.getFTAG();
-					}
-					else if (teamName.equals(m.getAwayTeam())){
-						takenGoals = m.getFTAG();
-						strikedGoals = m.getFTHG();
-					}
-					break;
+					case _final:
+						if (teamName.equals(m.getHomeTeam())){
+							strikedGoals = m.getFTHG();
+							takenGoals = m.getFTAG();
+						}
+						else if (teamName.equals(m.getAwayTeam())){
+							takenGoals = m.getFTAG();
+							strikedGoals = m.getFTHG();
+						}
+						break;
+						
+					case _1:
+						if (teamName.equals(m.getHomeTeam())){
+							strikedGoals = m.getHTHG();
+							takenGoals = m.getHTAG();
+						}
+						else if (teamName.equals(m.getAwayTeam())){
+							takenGoals = m.getHTAG();
+							strikedGoals = m.getHTHG();
+						}
+						break;
 					
-				case _1:
-					if (teamName.equals(m.getHomeTeam())){
-						strikedGoals = m.getHTHG();
-						takenGoals = m.getHTAG();
-					}
-					else if (teamName.equals(m.getAwayTeam())){
-						takenGoals = m.getHTAG();
-						strikedGoals = m.getHTHG();
-					}
-					break;
-					
-				case _2:
-					if (teamName.equals(m.getHomeTeam())){
-						strikedGoals = m.getFTHG() - m.getHTHG();
-						takenGoals = m.getFTAG() - m.getHTAG();
-					}
-					else if (teamName.equals(m.getAwayTeam())){
-						takenGoals = m.getFTAG() - m.getHTAG();
-						strikedGoals = m.getFTHG() - m.getHTHG();
-					}
-					break;
-
-				default:
-					break;
-			}
+					case _2:
+						if (teamName.equals(m.getHomeTeam())){
+							strikedGoals = m.getFTHG() - m.getHTHG();
+							takenGoals = m.getFTAG() - m.getHTAG();
+						}
+						else if (teamName.equals(m.getAwayTeam())){
+							takenGoals = m.getFTAG() - m.getHTAG();
+							strikedGoals = m.getFTHG() - m.getHTHG();
+						}
+						break;
+	
+					default:
+						break;
+				}
 			
 
-			updateGoalsStats(goalsStatsBean, takenGoals, strikedGoals, teamName);
-				
+				updateGoalsStats(goalsStatsBean, takenGoals, strikedGoals, teamName);
+				goalsStatsBean.setPlayingField(playingField);
 			}
 			
 			//CALCOLA LE PERCENTUALI
@@ -549,9 +448,8 @@ public class ResultAnalyzer {
 	
 			goalsStatsBeans.add(goalsStatsBean);
 		}
-		List<GoalsStatsBean> saveGoalsStats = goalsStatsDao.saveGoalsStats(goalsStatsBeans, teamName, champ, playingField);
 		
-		return saveGoalsStats;
+		return goalsStatsBeans;
 	}
 
 	private void updateGoalsStats(GoalsStatsBean goalsStatsBean, Integer takenGoals, Integer strikedGoals, String teamName) {
@@ -575,38 +473,5 @@ public class ResultAnalyzer {
 		}
 		
 	}
-	
-	
-	
-	public static HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>>  retrieveTeamsToRangeStatsWinHome() {
-		HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> teamToRangeStatsWinHome = IOUtils.read(AppConstants.TEAM_TO_RANGE_STATS_WIN_HOME_PATH,  HashMap.class);
-		return teamToRangeStatsWinHome;
-	}
-	
-	public static HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>>  retrieveTeamsToRangeStatsWinAway() {
-		HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> teamToRangeStatsWinAway = IOUtils.read(AppConstants.TEAM_TO_RANGE_STATS_WIN_AWAY_PATH,  HashMap.class);
-		return teamToRangeStatsWinAway;
-	}
-	
-	public static  HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>>  retrieveTeamsToRangeStatsWinAll() {
-		HashMap<ChampEnum, HashMap<String, ArrayList<WinRangeStatsBean>>> teamToRangeStatsWinAll = IOUtils.read(AppConstants.TEAM_TO_RANGE_STATS_WIN_ALL_PATH,  HashMap.class);
-		return teamToRangeStatsWinAll;
-	}
-
-	public static HashMap<ChampEnum, HashMap<String, GoalsStatsBean>>  retrieveTeamsToRangeStatsUoHome() {
-		HashMap<ChampEnum, HashMap<String, GoalsStatsBean>> teamToRangeStatsUoHome = IOUtils.read(AppConstants.TEAM_TO_RANGE_STATS_UO_HOME_PATH,  HashMap.class);
-		return teamToRangeStatsUoHome;
-	}
-	
-	public static HashMap<ChampEnum, HashMap<String, GoalsStatsBean>>  retrieveTeamsToRangeStatsUoAway() {
-		HashMap<ChampEnum, HashMap<String, GoalsStatsBean>> teamToRangeStatsUoAway = IOUtils.read(AppConstants.TEAM_TO_RANGE_STATS_UO_AWAY_PATH,  HashMap.class);
-		return teamToRangeStatsUoAway;
-	}
-	
-	public static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>>  retrieveTeamsToMatchesAll() {
-		HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> teamToMatchesAll = IOUtils.read(AppConstants.TEAM_TO_MATCHES_ALL_PATH,  HashMap.class);
-		return teamToMatchesAll;
-	}
-	
 	
 }

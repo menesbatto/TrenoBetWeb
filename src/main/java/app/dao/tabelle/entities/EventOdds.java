@@ -16,7 +16,6 @@ import javax.persistence.OneToOne;
 import app.dao.tipologiche.entities.HomeVariationType;
 import app.dao.tipologiche.entities.TimeType;
 import app.dao.tipologiche.entities.UoThresholdType;
-import app.logic._1_matchesDownlaoder.model.UoThresholdEnum;
 
 @Entity
 public class EventOdds {
@@ -195,8 +194,8 @@ public class EventOdds {
 
 	@Override
 	public String toString() {
-		return "id=" + id + ", match=" + match + ", timeType=" + timeType + ", homeResultGoodness="
-				+ homeResultGoodness + ", awayResultGoodness=" + awayResultGoodness + ", totalResultGoodness="
+		return "id=" + id + ", match=" + match + ", timeType=" + timeType + "\n homeResultGoodness="
+				+ homeResultGoodness + "\n awayResultGoodness=" + awayResultGoodness + "\n totalResultGoodness="
 				+ totalResultGoodness + ", homeMotivation=" + homeMotivation + ", awayMotivation=" + awayMotivation
 				+ ", homeTrend=" + homeTrend + ", awayTrend=" + awayTrend + ", homeTrendUo=" + homeTrendUo
 				+ ", awayTrendUo=" + awayTrendUo + ", homeTrendEh=" + homeTrendEh + ", awayTrendEh=" + awayTrendEh

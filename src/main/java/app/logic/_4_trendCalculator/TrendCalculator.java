@@ -18,11 +18,6 @@ import app.utils.ChampEnum;
 @Service
 public class TrendCalculator {
 	
-//	private static HashMap<ChampEnum, ArrayList<String>> allTeams;
-//	
-//	private static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> teamsToMatchesAll; 
-//
-//	private static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> trends; 
 
 	@Autowired
 	private ResultAnalyzer resultAnalyzer;
@@ -30,23 +25,12 @@ public class TrendCalculator {
 	@Autowired
 	private MatchoDao matchDao;
 	
-//	public static void main(String args[]) {
-//		execute();
-//	}
-	
-	
 	
 	public void execute(){
-//		initStaticFields();
 		
 		for (ChampEnum champ : ChampEnum.values()){
 			calculateChampTrend(champ);
 		}
-//		IOUtils.write(AppConstants.TRENDS, trends);
-		
-		
-		
-//		System.out.println(trends);
 
 	}
 	
@@ -70,25 +54,9 @@ public class TrendCalculator {
 				}
 			});
 			
-//			lastFive = new ArrayList<MatchResult>(allMatches.subList(0, AppConstants.TREND_SIZE_UO));
 			int lastMatches = allMatches.size() < AppConstants.TREND_SIZE_UO ? allMatches.size() : AppConstants.TREND_SIZE_UO;
 			lastFive = new ArrayList<MatchResult>(allMatches.subList(0, lastMatches));
 			
-//			trends.get(champ).put(teamName, lastFive);
 		}
 	}
-
-//	private static void initStaticFields() {
-//		teamsToMatchesAll = ResultAnalyzer.retrieveTeamsToMatchesAll();
-//		allTeams =  ResultParserOld.retrieveTeams();
-//		trends = new HashMap<ChampEnum, HashMap<String,ArrayList<MatchResult>>>();
-//		for (ChampEnum champ : ChampEnum.values()){
-//			trends.put(champ, new HashMap<String, ArrayList<MatchResult>>());
-//		}
-//	}
-	
-//	public static HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> retrieveTrends() {
-//		HashMap<ChampEnum, HashMap<String, ArrayList<MatchResult>>> trends  = IOUtils.read(AppConstants.TRENDS,  HashMap.class);
-//		return trends;
-//	}
 }

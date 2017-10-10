@@ -1,12 +1,8 @@
 package app;
  
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.impl.ConfigurableMapper;
- 
 import org.springframework.stereotype.Component;
 
-import app.dao.tabelle.entities._1X2Odds;
-import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
+import ma.glasnost.orika.impl.ConfigurableMapper;
  
 @Component
 public class MyCustomMapper extends ConfigurableMapper {

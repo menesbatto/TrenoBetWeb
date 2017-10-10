@@ -6,19 +6,15 @@ import org.springframework.stereotype.Service;
 
 import app.dao.tabelle.ChampDao;
 import app.dao.tabelle.GoalsStatsRepo;
-import app.dao.tabelle.MatchoDao;
 import app.dao.tabelle.MatchoRepo;
 import app.dao.tabelle.TeamDao;
 import app.dao.tabelle.WinRangeStatsRepo;
-import app.dao.tabelle._1X2OddsDao;
 import app.dao.tipologiche.BetHouseDao;
 import app.dao.tipologiche.HomeVariationTypeDao;
 import app.dao.tipologiche.OddsRangeDao;
 import app.dao.tipologiche.RankingCriteriaDao;
 import app.dao.tipologiche.TimeTypeDao;
 import app.dao.tipologiche.UoThresholdTypeDao;
-import app.logic._1_matchesDownlaoder.modelNew._1X2OddsBean;
-import app.utils.ChampEnum;
 
 @Service
 public class UtilityModel {
